@@ -1,3 +1,8 @@
+RoomXR React Native Client
+==========================
+This is the Android / iOS client that connects with RoomXR Server, built with React Native, Mediasoup and Socket.io. 
+
+
 Project Initialization
 ======================
 
@@ -26,6 +31,9 @@ fixes:
 if error java.lang.NoSuchMethodError: No static method createEgl14([I)Lorg/webrtc/EglBase14; in class Lorg/webrtc/EglBase;
 then you have to set minSdkVersion = 24 in build.gradle
 
+if using react navigation, please follow the instructions on prerequisites on: https://reactnavigation.org/docs/getting-started/ (add override in mainactivity)  
+any way the code changes are reflected to git, so it should be present as is.
+
 Android Build APK
 =================
 create the folder asset in  android/app/src/main/assets/ if not present 
@@ -43,22 +51,29 @@ the apk is now in: yourProject/android/app/build/outputs/apk/debug/app-debug.apk
 
 TODO:
 =====
-- why closeproducer is not called
+- Implement Device Chooser (camera and audio)...
+- Implement Screen Navigation System using: https://reactnative.dev/docs/navigation or reactnavigation.org
+- Implement QRCode Reader
 - test on iOS
-- implement git
-- implement chat messages
 - implement whiteboard using: https://github.com/wobsoriano/rn-perfect-sketch-canvas
-- fix screen sharing Start/Stop
 - implement login
 - implement room choice
 - explore expo compilation
+- implement voice recognition with: pocketsphynx
 
 
 IN PROGRESS:
 ============
 - implement chat with: https://github.com/FaridSafi/react-native-gifted-chat
+- investigate why closeproducer is not called
 
 DONE:
 =====
+- implement git (done with github)
 - if room is empty crashes
-- transform roomclient to functional component... please read the mediasoup example in order to understand.
+- fix screen sharing Start/Stop
+- transform roomclient to functional component, please read the mediasoup example in order to understand.
+
+
+ChangeList:
+===========

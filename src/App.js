@@ -7,49 +7,22 @@
  */
 
 import React from 'react';
-import type { Node } from 'react';
+import { Node, useState, useEffect } from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
   StyleSheet,
-  Text,
   useColorScheme,
-  View,
 } from 'react-native';
-
 import {Colors} from 'react-native/Libraries/NewAppScreen';
-
-import MainPage from './component/MainPage';
 import Store from './global/Store';
 import {SocketContext, socket} from './global/socket';
+import { Camera} from 'react-native-vision-camera';
+import { CameraPage } from './component/CameraPage';
+import { PermissionsPage } from './component/PermissionPage';
+import { TestPage } from './component/TestPage';
 
-
-const Section = ({ children, title }): Node => {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-};
+const Stack = createNativeStackNavigator();
 
 const App: () => Node = () => {
   const isDarkMode = useColorScheme() === 'dark';
@@ -58,48 +31,43 @@ const App: () => Node = () => {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
 
+  const [cameraPermission, setCameraPermission] = useState();
+  const [microphonePermission, setMicrophonePermission] = useState();
+  
+  useEffect(() => {
+    Camera.getCameraPermissionStatus().then(setCameraPermission);
+    Camera.getMicrophonePermissionStatus().then(setMicrophonePermission);
+  }, []);
 
+  console.log(`Re-rendering Navigator. Camera: ${cameraPermission} | Microphone: ${microphonePermission}`);
+
+  if (cameraPermission == null || microphonePermission == null) {
+    // still loading
+    return null;
+  }
+  const showPermissionsPage = cameraPermission !== 'authorized' || microphonePermission === 'not-determined';
+  
 
 return (
-  <SocketContext.Provider value={socket}>
-  <Store>
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        {/*<Header />*/}
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <MainPage></MainPage>
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+  <NavigationContainer>
+    <SocketContext.Provider value={socket}>
+      <Store>
+        <Stack.Navigator
+          screenOptions={{
+            headerShown: false,
+            statusBarStyle: 'dark',
+            animationTypeForReplace: 'push',
+          }}
+          initialRouteName={showPermissionsPage ? 'PermissionsPage' : 'TestPage'}>
+          <Stack.Screen name="PermissionsPage" component={PermissionsPage} />
+          <Stack.Screen name="CameraPage" component={CameraPage} />
+          <Stack.Screen name="TestPage" component={TestPage} />
+        </Stack.Navigator>    
   </Store>
   </SocketContext.Provider>
+  </NavigationContainer>
   
 );
  };
-
-const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-});
 
 export default App;

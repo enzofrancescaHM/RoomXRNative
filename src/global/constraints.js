@@ -50,6 +50,7 @@
                     max: 2160,
                 },
                 deviceId: deviceId,
+                //facingMode: "environment",
                 aspectRatio: 1.777, // 16:9
                 frameRate: {
                     min: 5,

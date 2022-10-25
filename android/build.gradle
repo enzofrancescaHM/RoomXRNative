@@ -40,6 +40,10 @@ allprojects {
             // Android JSC is installed from npm
             url("$rootDir/../node_modules/jsc-android/dist")
         }
+         maven {
+            // Test to include webrtc aar
+            url("$rootDir/../test_aar/")
+        }
         mavenCentral {
             // We don't want to fetch react-native from Maven Central as there are
             // older versions over there.

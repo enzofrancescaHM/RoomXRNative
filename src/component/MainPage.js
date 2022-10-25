@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState, useContext } from "react";
-import Section from "./Section.native";
+//import Section from "./Section.native";
 import { Button, Text, useWindowDimensions, View } from "react-native";
 import { RTCView } from "react-native-webrtc";
 import RoomClient from "./RoomClient";
-import SocketIOClient from 'socket.io-client'
+//import SocketIOClient from 'socket.io-client'
 import * as mediasoupClient from "mediasoup-client";
 import { mediaDevices, registerGlobals } from "react-native-webrtc";
 import Store, {Context} from '../global/Store';
@@ -12,6 +12,7 @@ import {SocketContext} from '../global/socket';
 function MainPage() {
     const mounted = useRef()
     const [count, setCount] = useState(0)
+    const [debugTest, setDebugTest] = useState("---");
     const [rc, setRc] = useState(null);
     const [debugLine, setDebugLine] = useState("this is the debug line... ;)")
     const [state, dispatch] = useContext(Context);
@@ -24,27 +25,10 @@ function MainPage() {
     let isEnumerateVideoDevices = false;
     let isMobileDevice = true;
 
-    //dispatch({type: 'SET_MEDIASOUPCLIENT', payload: mediasoupClient});
-/*
-    let mysocket = SocketIOClient("https://roomxr.eu:5001", { transports: ['websocket'] });
-    mysocket.on("connect", () => {
-        console.log("[main page] first connect...socket id: " + socket.id);
-        dispatch({type: 'SET_SOCKET', payload: mysocket});
-    });
-
-*/
     useEffect(function componentDidMount() {
         console.log("%c MainPage componetDidMount", "color:green;");
 
         dispatch({type: 'SET_MEDIASOUPCLIENT', payload: mediasoupClient});
-
-/*
-        let mysocket = SocketIOClient("https://roomxr.eu:5001", { transports: ['websocket'] });
-        mysocket.on("connect", () => {
-            console.log("[main page] first connect...socket id: " + socket.id);
-            dispatch({type: 'SET_SOCKET', payload: mysocket});
-        });*/
-
 
 
         return function componentWillUnmount() {
@@ -60,8 +44,6 @@ function MainPage() {
     useEffect(function ComponentDidUpdateForCount() {
         console.log("%c MainPage CompontDidUpdateForCount", "color:blue;")
     }, [count])
-
-
 
     useEffect(function runComponentDidUpdate() {
         if (!isComponetMounted()) {
@@ -101,6 +83,14 @@ function MainPage() {
         dispatch({type: 'SET_CONNECTED', payload: true});
         //joinRoom(state.peer_name, state.room_id);
 
+    }
+
+    function switchCamera(){
+        
+        state.localstream.getVideoTracks().forEach((track) => {
+            console.log('sc',track);
+            track._switchCamera();
+        })
     }
 
     function setParticipantsCount(newval) {
@@ -189,11 +179,15 @@ function MainPage() {
 
     function enumerateVideoDevices(stream) {
         console.log('03 ----> Get Video Devices');
+        var dText = "...";
         mediaDevices
             .enumerateDevices()
             .then((devices) =>
                 devices.forEach((device) => {
                     let el = null;
+                    console.log("device: ", device);
+                    dText = dText + JSON.stringify(device);
+                    setDebugTest(dText);
                     if ('videoinput' === device.kind) {
                         //el = videoSelect;
                         //RoomClient.DEVICES_COUNT.video++;
@@ -399,9 +393,14 @@ function MainPage() {
                     backgroundColor: '#00FF00' 
                 }}>
                     <Button style={{width:"100%", height:30}}
-                        title="Connect!"
+                        title="GO"
                         enabled
                         onPress={createRoomClient}
+                    />
+                    <Button style={{width:"100%", height:30}}
+                        title="()"
+                        enabled
+                        onPress={switchCamera}
                     />
                     {/*<Text style={{width:"100%", backgroundColor: '#AAAAAA' }}>
                         {rc == null ? "Room Id: empty" : "Room Id: " + rc.room_id} - {"Debug Messages: " + debugLine} {"\n"}
@@ -409,6 +408,7 @@ function MainPage() {
                         {state.remotestream == "empty" ? "Remote Stream ID: empty" : "Remote Stream ID: " + state.remotestream.toURL()}
                     
                     </Text>*/}
+                    <Text>{debugTest}</Text>
                     { state.connected ? <RoomClient></RoomClient> : <Text>not connected yet...</Text> }
                 </View>
                 <View style={{
