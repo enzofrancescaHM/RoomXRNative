@@ -79,9 +79,11 @@ public class ReactNativeUsbModule extends ReactContextBaseJavaModule {
     try {
       HashMap<String, UsbDevice> deviceList = manager.getDeviceList();
       Iterator<UsbDevice> deviceIterator = deviceList.values().iterator();
-
+      Log.d(TAG, "devicelist: " + deviceList);
       while (deviceIterator.hasNext()) {
         UsbDevice device = deviceIterator.next();
+        
+        Log.d(TAG, "device: " + device);
         /*if (device.getVendorId() == vendorId && device.getProductId() == productId)*/{
           this.device = device;
         }

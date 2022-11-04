@@ -87,3 +87,10 @@ USB CAMERA TEST
 - follow the readme instruction in order to modify but not this one: "Add new ReactNativeUsbPackage() to the list returned by the getPackages() method"  
   otherwise an error will occur
 - change ReactNativeUsbModule.java accordingly with the file stored in the changes folder
+- add UsbCapturer.java from changes directory
+- add to the build gradle of webrtcnative the folowing:  
+'''implementation("com.serenegiant:common:${commonLibVersion}") {
+	    exclude module: 'support-v4'
+    }'''
+
+
