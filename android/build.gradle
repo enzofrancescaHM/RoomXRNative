@@ -5,9 +5,18 @@ import org.apache.tools.ant.taskdefs.condition.Os
 buildscript {
     ext {
         buildToolsVersion = "31.0.0"
-        minSdkVersion = 21
+        minSdkVersion = 24
         compileSdkVersion = 31
         targetSdkVersion = 31
+
+        supportLibVersion = '27.1.1'  // variable that can be referenced to keep support libs consistent
+        commonLibVersion= '2.12.4'
+        versionBuildTool = '27.0.3'
+        versionCompiler = 30
+        versionTarget = 30
+        versionNameString = '1.0.0'
+        javaSourceCompatibility = JavaVersion.VERSION_1_8
+        javaTargetCompatibility = JavaVersion.VERSION_1_8
 
         if (System.properties['os.arch'] == "aarch64") {
             // For M1 Users we need to use the NDK 24 which added support for aarch64
@@ -53,5 +62,8 @@ allprojects {
         }
         google()
         maven { url 'https://www.jitpack.io' }
+        maven {url 'http://raw.github.com/saki4510t/libcommon/master/repository/'
+            allowInsecureProtocol = true}
+
     }
 }

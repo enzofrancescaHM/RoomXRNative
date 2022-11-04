@@ -18,7 +18,7 @@ import {Colors} from 'react-native/Libraries/NewAppScreen';
 import Store from './global/Store';
 import {SocketContext, socket} from './global/socket';
 import { Camera} from 'react-native-vision-camera';
-import { CameraPage } from './component/CameraPage';
+//import { CameraPage } from './component/CameraPage';
 import { PermissionsPage } from './component/PermissionPage';
 import { TestPage } from './component/TestPage';
 
@@ -60,7 +60,6 @@ return (
           }}
           initialRouteName={showPermissionsPage ? 'PermissionsPage' : 'TestPage'}>
           <Stack.Screen name="PermissionsPage" component={PermissionsPage} />
-          <Stack.Screen name="CameraPage" component={CameraPage} />
           <Stack.Screen name="TestPage" component={TestPage} />
         </Stack.Navigator>    
   </Store>

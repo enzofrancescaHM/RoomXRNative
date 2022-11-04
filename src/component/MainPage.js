@@ -8,6 +8,7 @@ import * as mediasoupClient from "mediasoup-client";
 import { mediaDevices, registerGlobals } from "react-native-webrtc";
 import Store, {Context} from '../global/Store';
 import {SocketContext} from '../global/socket';
+import usb from 'react-native-usb';
 
 function MainPage() {
     const mounted = useRef()
@@ -68,6 +69,12 @@ function MainPage() {
     }
 
     async function createRoomClient() {
+
+
+        //TEST, REQUEST USB PERMISSION        
+        usb.connect(0, 0)
+        .then((data) => console.log(data))
+        .catch((error) => console.error(error));
 
         console.log('00 ----> init Socket.IO');
         //dispatch({type: 'SET_SOCKET', payload: SocketIOClient("https://roomxr.eu:5001", { transports: ['websocket'] })});

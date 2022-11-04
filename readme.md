@@ -77,3 +77,13 @@ DONE:
 
 ChangeList:
 ===========
+
+
+
+USB CAMERA TEST
+===============
+
+- install ReactNativeUsbModule from: https://github.com/andy-shea/react-native-usb
+- follow the readme instruction in order to modify but not this one: "Add new ReactNativeUsbPackage() to the list returned by the getPackages() method"  
+  otherwise an error will occur
+- change ReactNativeUsbModule.java accordingly with the file stored in the changes folder
