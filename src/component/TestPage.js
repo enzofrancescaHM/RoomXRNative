@@ -9,7 +9,7 @@ import {
     View,
     useColorScheme,
   } from 'react-native';
-  import MainPage from './MainPage';
+  import MainPageDebug from './MainPageDebug';
 
 
 export function TestPage(){
@@ -31,7 +31,7 @@ export function TestPage(){
         style={{
           backgroundColor: isDarkMode ? Colors.black : Colors.white,
         }}>
-        <MainPage></MainPage>
+        <MainPageDebug></MainPageDebug>
       </View>
     </ScrollView>
   </SafeAreaView>

@@ -28,6 +28,7 @@ const initialState = {
     peer_id: null,
     peer_hand: false,
     connected: false,
+    chat_array: "",
 
 };
 

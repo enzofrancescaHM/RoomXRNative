@@ -13,6 +13,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import {
   StyleSheet,
   useColorScheme,
+  StatusBar,
 } from 'react-native';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 import Store from './global/Store';
@@ -21,6 +22,7 @@ import { Camera} from 'react-native-vision-camera';
 //import { CameraPage } from './component/CameraPage';
 import { PermissionsPage } from './component/PermissionPage';
 import { TestPage } from './component/TestPage';
+import { HomePage } from './component/HomePage';
 
 const Stack = createNativeStackNavigator();
 
@@ -49,18 +51,24 @@ const App: () => Node = () => {
   
 
 return (
+  
   <NavigationContainer>
+    <StatusBar
+        animated={true}
+        backgroundColor="transparent"
+      />
     <SocketContext.Provider value={socket}>
       <Store>
         <Stack.Navigator
           screenOptions={{
             headerShown: false,
-            statusBarStyle: 'dark',
+            //statusBarStyle: 'dark',
             animationTypeForReplace: 'push',
           }}
-          initialRouteName={showPermissionsPage ? 'PermissionsPage' : 'TestPage'}>
+          initialRouteName={showPermissionsPage ? 'PermissionsPage' : 'HomePage'}>
           <Stack.Screen name="PermissionsPage" component={PermissionsPage} />
           <Stack.Screen name="TestPage" component={TestPage} />
+          <Stack.Screen name="HomePage" component={HomePage} />
         </Stack.Navigator>    
   </Store>
   </SocketContext.Provider>

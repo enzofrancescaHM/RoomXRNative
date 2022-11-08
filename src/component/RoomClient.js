@@ -1,7 +1,7 @@
 import { mediaDevices } from "react-native-webrtc";
 import { mediaType, _EVENTS, DEVICES_COUNT } from "../global/constants";
 import React, { useEffect, useRef, useState, useContext } from "react";
-import { Text } from "react-native";
+import { Text, StatusBar } from "react-native";
 import Store, { Context } from '../global/Store';
 import { SocketContext } from '../global/socket';
 import {setIsAudio, setIsVideo, setIsScreen, getAudioConstraints, getVideoConstraints} from "../global/constraints"
@@ -20,6 +20,7 @@ function RoomClient() {
 
     useEffect(function componentDidMount() {
         console.log("%c [RoomClientComp] componetDidMount", "color:green;");
+        StatusBar.setHidden(true, 'none');
         initComp();
         return function componentWillUnmount() {
             console.log("%c [RoomClientComp] componetWillUnmount", "color:red")
@@ -35,6 +36,7 @@ function RoomClient() {
             return
         }
         (function componentDidUpdate() {
+            StatusBar.setHidden(true, 'none');
             console.log("%c [RoomClientComp] CompontDidUpdateForAnyVariable", "color:orange;")
         })()
     });
@@ -413,6 +415,8 @@ function RoomClient() {
             'message',
             function (data) {
                 console.log('[RoomClientComp] New message:', data);
+                dispatch({ type: 'ADD_CHAT_MESSAGE',  payload: state.chat_array + data.peer_name + ": " + data.peer_msg + "\n"});
+                console.log('chatarray: ', state.chat_array);
                 //this.showMessage(data);
             }.bind(this),
         );
@@ -1519,13 +1523,10 @@ function removeVideoOff(peer_id) {
         }
     }
 
-  
-
     return (
         <>
-            <Text style={{ width: "100%", backgroundColor: '#AAAAAA' }}>
-                {state.localstream == "empty" ? "Local Stream ID: empty" : "Local Stream ID: " + state.localstream.toURL()} {"\n"}
-                {state.remotestream == "empty" ? "Remote Stream ID: empty" : "Remote Stream ID: " + state.remotestream.toURL()}
+            <Text style={{ width: "100%", color: "#00000000", backgroundColor: '#AAAAAA00' }}>
+               test
             </Text>
         </>
     )

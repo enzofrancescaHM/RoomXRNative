@@ -50,6 +50,11 @@ const Reducer = (state, action) => {
                     ...state,
                     remoteaudiostream: action.payload
                 };
+        case 'ADD_CHAT_MESSAGE':
+            return{
+                ...state,
+                chat_array: action.payload
+            };
         default:
             return state;
     }

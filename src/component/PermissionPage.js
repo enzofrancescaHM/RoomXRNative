@@ -33,7 +33,7 @@ export function PermissionsPage({ navigation }) {
   }, []);
 
   useEffect(() => {
-    if (cameraPermissionStatus === 'authorized' && microphonePermissionStatus === 'authorized') navigation.replace('TestPage');
+    if (cameraPermissionStatus === 'authorized' && microphonePermissionStatus === 'authorized') navigation.replace('HomePage');
   }, [cameraPermissionStatus, microphonePermissionStatus, navigation]);
 
   return (

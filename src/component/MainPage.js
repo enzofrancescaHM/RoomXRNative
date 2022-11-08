@@ -1,14 +1,17 @@
+// react realated imports
 import React, { useEffect, useRef, useState, useContext } from "react";
-//import Section from "./Section.native";
-import { Button, Text, useWindowDimensions, View } from "react-native";
-import { RTCView } from "react-native-webrtc";
-import RoomClient from "./RoomClient";
-//import SocketIOClient from 'socket.io-client'
+import { Button, Switch,Text, useWindowDimensions, View, StatusBar } from "react-native";
+import { RTCView, mediaDevices, registerGlobals } from "react-native-webrtc";
+//import usb from 'react-native-usb';
+
+// mediasoup import
 import * as mediasoupClient from "mediasoup-client";
-import { mediaDevices, registerGlobals } from "react-native-webrtc";
+
+// local project imports
 import Store, {Context} from '../global/Store';
 import {SocketContext} from '../global/socket';
-import usb from 'react-native-usb';
+import RoomClient from "./RoomClient";
+
 
 function MainPage() {
     const mounted = useRef()
@@ -18,20 +21,22 @@ function MainPage() {
     const [debugLine, setDebugLine] = useState("this is the debug line... ;)")
     const [state, dispatch] = useContext(Context);
     const socket = useContext(SocketContext);
+    const [debugIsEnabled, setDebugIsEnabled] = useState(false);
+    const toggleDebug = () => setDebugIsEnabled(previousState => !previousState);
 
     // ####################################################
     // DYNAMIC SETTINGS
     // ####################################################
     let isEnumerateAudioDevices = false;
     let isEnumerateVideoDevices = false;
-    let isMobileDevice = true;
+    //let isMobileDevice = true;
 
     useEffect(function componentDidMount() {
         console.log("%c MainPage componetDidMount", "color:green;");
+        
+        StatusBar.setHidden(true, 'none');
 
         dispatch({type: 'SET_MEDIASOUPCLIENT', payload: mediasoupClient});
-
-
         return function componentWillUnmount() {
             console.log("%c MainPage componetWillUnmount", "color:red")
         }
@@ -40,7 +45,6 @@ function MainPage() {
     useEffect(function componentDidMountAndCompontDidUpdate() {
         console.log("%c MainPage componentDidMountAndCompontDidUpdate", "color:teal;")
     })
-
 
     useEffect(function ComponentDidUpdateForCount() {
         console.log("%c MainPage CompontDidUpdateForCount", "color:blue;")
@@ -51,6 +55,7 @@ function MainPage() {
             return
         }
         (function componentDidUpdate() {
+            StatusBar.setHidden(true, 'none');
             console.log("%c MainPage CompontDidUpdateForAnyVariable", "color:orange;")
         })()
     });
@@ -69,15 +74,12 @@ function MainPage() {
     }
 
     async function createRoomClient() {
-
-
         //TEST, REQUEST USB PERMISSION        
-        usb.connect(0, 0)
-        .then((data) => console.log(data))
-        .catch((error) => console.error(error));
+        //usb.connect(0, 0)
+        //.then((data) => console.log(data))
+        //.catch((error) => console.error(error));
 
         console.log('00 ----> init Socket.IO');
-        //dispatch({type: 'SET_SOCKET', payload: SocketIOClient("https://roomxr.eu:5001", { transports: ['websocket'] })});
         console.log("[main page] first connect...socket id: " + socket.id);
         console.log('00.1 ----> registerGlobals');
         registerGlobals();
@@ -85,47 +87,16 @@ function MainPage() {
         await initEnumerateAudioDevices();
         await initEnumerateVideoDevices();
         checkMedia();
-        console.log('04 ----> Who are you');
-        //getPeerInfo();
-        dispatch({type: 'SET_CONNECTED', payload: true});
-        //joinRoom(state.peer_name, state.room_id);
-
+        console.log('04 ----> Who are you');        
+        dispatch({type: 'SET_CONNECTED', payload: true});        
     }
 
-    function switchCamera(){
-        
+    function switchCamera(){        
         state.localstream.getVideoTracks().forEach((track) => {
             console.log('sc',track);
             track._switchCamera();
         })
     }
-
-    function setParticipantsCount(newval) {
-        participantsCount = newval;
-    }
-
-    function setProducer(newval) {
-        producer = newval;
-    }
-
-    function getProducer() {
-        return producer;
-    }
-
-    function getParticipantsCount() {
-        return participantsCount;
-    }
-
-    function setMyStream(newval) {
-        //setMyLocalStream(newval);
-        dispatch({type: 'SET_LOCAL_STREAM', payload: newval});
-    }
-
-    function setYourStream(newval) {
-        //setMyRemoteStream(newval);
-        dispatch({type: 'SET_REMOTE_STREAM', payload: newval});
-    }
-
 
     async function initEnumerateAudioDevices() {
         if (isEnumerateAudioDevices) return;
@@ -186,14 +157,14 @@ function MainPage() {
 
     function enumerateVideoDevices(stream) {
         console.log('03 ----> Get Video Devices');
-        var dText = "...";
+        var dText = "Debug Devices:\n";
         mediaDevices
             .enumerateDevices()
             .then((devices) =>
                 devices.forEach((device) => {
                     let el = null;
                     console.log("device: ", device);
-                    dText = dText + JSON.stringify(device);
+                    dText = dText + "dev: " + JSON.stringify(device) + "\n";
                     setDebugTest(dText);
                     if ('videoinput' === device.kind) {
                         //el = videoSelect;
@@ -235,213 +206,91 @@ function MainPage() {
         }
     }
 
-    function getPeerInfo() {
-
-        let mypeer_info = {
-            user_agent: "android",
-            detect_rtc_version: '1.4.1'/*DetectRTC.version*/,
-            is_webrtc_supported: true/*DetectRTC.isWebRTCSupported*/,
-            is_desktop_device: false,
-            is_mobile_device: isMobileDevice,
-            is_tablet_device: false,
-            is_ipad_pro_device: false,
-            os_name: 'Windows'/*DetectRTC.osName*/,
-            os_version: '10'/*DetectRTC.osVersion*/,
-            browser_name: 'Chrome'/*DetectRTC.browser.name*/,
-            browser_version: '104'/*DetectRTC.browser.version*/,
-            peer_id: null,
-            peer_name: state.peer_name,
-            peer_audio: state.isAudioAllowed,
-            peer_video: state.isVideoAllowed,
-            peer_screen: state.isScreenAllowed,
-            peer_hand: false,
-        };
-      
-        return mypeer_info;
-    
-    }
-
-    function joinRoom(peer_name, room_id) {
-        if (rc && rc.isConnected()) {
-            console.log('Already connected to a room');
-        } else {
-            console.log('05 ----> join Room ' + room_id);
-            var cicciolo = new RoomClient(
-                mediasoupClient,
-                socket,
-                state.room_id,
-                state.peer_name,
-                state.peer_geo,
-                getPeerInfo(),
-                state.isAudioAllowed,
-                state.isVideoAllowed,
-                state.isScreenAllowed,
-                roomIsReady,
-                getProducer,
-                getParticipantsCount,
-                setProducer,
-                setParticipantsCount,
-                setMyStream,
-                setYourStream
-            );
-            handleRoomClientEvents(cicciolo);
-            setRc(cicciolo);
-
-        }
-    }
-
-    function roomIsReady() {
-
-    }
-
-
-    // ####################################################
-    // ROOM CLIENT EVENT LISTNERS
-    // ####################################################
-
-    function handleRoomClientEvents(newval) {/*
-        newval.on(RoomClient.EVENTS.startRec, () => {
-            console.log('Room Client start recoding');
-            setDebugLine("Room Client start recoding");
-            //startRecordingTimer();
-        });
-        newval.on(RoomClient.EVENTS.pauseRec, () => {
-            console.log('Room Client pause recoding');
-            setDebugLine("Room Client pause recoding");
-        });
-        newval.on(RoomClient.EVENTS.resumeRec, () => {
-            console.log('Room Client resume recoding');
-            setDebugLine("Room Client resume recoding");
-        });
-        newval.on(RoomClient.EVENTS.stopRec, () => {
-            console.log('Room Client stop recoding');
-            setDebugLine("Room Client stop recoding");
-        });
-        newval.on(RoomClient.EVENTS.raiseHand, () => {
-            console.log('Room Client raise hand');
-            setDebugLine("'Room Client raise hand");
-        });
-        newval.on(RoomClient.EVENTS.lowerHand, () => {
-            console.log('Room Client lower hand');
-            setDebugLine("Room Client lower hand");
-        });
-        newval.on(RoomClient.EVENTS.startAudio, () => {
-            console.log('Room Client start audio');
-            setDebugLine("Room Client start audio");
-        });
-        newval.on(RoomClient.EVENTS.pauseAudio, () => {
-            console.log('Room Client pause audio');
-            setDebugLine("Room Client pause audio");
-        });
-        newval.on(RoomClient.EVENTS.resumeAudio, () => {
-            console.log('Room Client resume audio');
-            setDebugLine("Room Client resume audio");
-        });
-        newval.on(RoomClient.EVENTS.stopAudio, () => {
-            console.log('Room Client stop audio');
-            setDebugLine("Room Client stop audio");
-        });
-        newval.on(RoomClient.EVENTS.startVideo, () => {
-            console.log('Room Client start video');
-            setDebugLine("Room Client start video");
-        });
-        newval.on(RoomClient.EVENTS.pauseVideo, () => {
-            console.log('Room Client pause video');
-            setDebugLine("Room Client pause video");
-        });
-        newval.on(RoomClient.EVENTS.resumeVideo, () => {
-            console.log('Room Client resume video');
-            setDebugLine("Room Client resume video");
-        });
-        newval.on(RoomClient.EVENTS.stopVideo, () => {
-            console.log('Room Client stop video');
-            setDebugLine("Room Client start recoding");
-        });
-        newval.on(RoomClient.EVENTS.startScreen, () => {
-            console.log('Room Client start screen');
-            setDebugLine("Room Client stop video");
-        });
-        newval.on(RoomClient.EVENTS.pauseScreen, () => {
-            console.log('Room Client pause screen');
-            setDebugLine("Room Client pause screen");
-        });
-        newval.on(RoomClient.EVENTS.resumeScreen, () => {
-            console.log('Room Client resume screen');
-            setDebugLine("Room Client resume screen");
-        });
-        newval.on(RoomClient.EVENTS.stopScreen, () => {
-            console.log('Room Client stop screen');
-            setDebugLine("Room Client stop screen");
-        });
-        newval.on(RoomClient.EVENTS.roomLock, () => {
-            console.log('Room Client lock room');
-            setDebugLine("Room Client lock room");
-            isRoomLocked = true;
-        });
-        newval.on(RoomClient.EVENTS.roomUnlock, () => {
-            console.log('Room Client unlock room');
-            setDebugLine("Room Client unlock room");
-            isRoomLocked = false;
-        });
-        newval.on(RoomClient.EVENTS.exitRoom, () => {
-            console.log('Room Client leave room');
-            setDebugLine("Room Client leave room");
-        });*/
-    }
-
     return (
         <>
-            {/*<Section title="Debug">*/}
                 <View style={{
+                    height:40,
+                    //flex: 0.1,
+                    position: "absolute",
+                    top:0,
+                    left:0,
                     flexDirection: "row",
-                    width:"100%",
-                    //height: 250,
-                    padding: 2,
-                    backgroundColor: '#00FF00' 
+                    padding: 0,
+                    backgroundColor: '#00FF0000',
+                    zIndex:2, 
                 }}>
-                    <Button style={{width:"100%", height:30}}
-                        title="GO"
+                    <Button style={{width:"100%", height:"100%"}}
+                        title="Connect"
                         enabled
                         onPress={createRoomClient}
-                    />
-                    <Button style={{width:"100%", height:30}}
-                        title="()"
+                    />                   
+                </View>
+                <View style={{
+                    height:"30%",
+                    //flex: 0.1,
+                    position: "absolute",
+                    top:"10%",
+                    bottom:0,
+                    //flexDirection: "row",
+                    padding: 2,
+                    backgroundColor: '#00FF0000',
+                    zIndex:2, 
+                }}>                   
+                    <Text style={debugIsEnabled?{width:"100%", height:"100%", color:"white"}:{color:"#00000000"}}>{debugTest}</Text>
+                    <Text style={debugIsEnabled?{width:"100%", height:"100%", color:"white"}:{color:"#00000000"}}>
+                            {state.localstream == "empty" ? "Local Stream ID: empty" : "Local Stream ID: " + state.localstream.toURL()} {"\n"}
+                            {state.remotestream == "empty" ? "Remote Stream ID: empty" : "Remote Stream ID: " + state.remotestream.toURL()}
+                    </Text>
+                    { state.connected ? <RoomClient></RoomClient> : <Text style={{width:"100%", height:"100%", color:"white"}}>Room disconnected...</Text> }
+                    <Text style={{width:"100%", height:"100%", color:"white"}}>{state.chat_array}</Text>
+                </View>
+                <View style={{
+                    height:40,
+                    //flex: 0.1,
+                    position: "absolute",
+                    bottom:0,
+                    left:0,
+                    flexDirection: "row",
+                    padding: 2,
+                    backgroundColor: '#00FF0000',
+                    zIndex:2, 
+                }}>
+                    <Button style={{width:"100%", height:"100%"}}
+                        title="Switch"
                         enabled
                         onPress={switchCamera}
                     />
-                    {/*<Text style={{width:"100%", backgroundColor: '#AAAAAA' }}>
-                        {rc == null ? "Room Id: empty" : "Room Id: " + rc.room_id} - {"Debug Messages: " + debugLine} {"\n"}
-                        {state.localstream == "empty" ? "Local Stream ID: empty" : "Local Stream ID: " + state.localstream.toURL()} {"\n"}
-                        {state.remotestream == "empty" ? "Remote Stream ID: empty" : "Remote Stream ID: " + state.remotestream.toURL()}
-                    
-                    </Text>*/}
-                    <Text>{debugTest}</Text>
-                    { state.connected ? <RoomClient></RoomClient> : <Text>not connected yet...</Text> }
-                </View>
+                    <Switch
+                        trackColor={{ false: "#767577", true: "#81b0ff" }}
+                        thumbColor={debugIsEnabled ? "#f5dd4b" : "#f4f3f4"}
+                        ios_backgroundColor="#3e3e3e"
+                        onValueChange={toggleDebug}
+                        value={debugIsEnabled}
+                    />
+                    </View>
                 <View style={{
+                    flex:1,
                     flexDirection: "row",
-                    height: 250,
-                    padding: 10,
-                    backgroundColor: '#0000FF' 
+                    height: "100%",
+                    padding: 2,
+                    backgroundColor: '#000000' 
                 }}>
                 <RTCView
-                    style={{ width: "50%", height: 250, backgroundColor: '#00FF00' }}
+                    style={{ width: "100%", height: "100%", backgroundColor: '#000000', zIndex:0 }}
                     mirror={true}
-                    objectFit={'contain'}
-                    streamURL={state.localstream == "empty" ? "" : state.localstream.toURL()}
-                    zOrder={0}>
-                </RTCView>
-                <RTCView
-                    style={{ width: "50%", height: 250, backgroundColor: '#ff0000' }}
-                    mirror={false}
                     objectFit={'contain'}
                     streamURL={state.remotestream == "empty" ? "" : state.remotestream.toURL()}
                     zOrder={0}>
                 </RTCView>
+                <RTCView
+                    style={{ position: "absolute", right: 0, bottom: 0, width: "30%", height: "30%", backgroundColor: '#00000000', zIndex:1 }}
+                    mirror={false}
+                    objectFit={'contain'}
+                    streamURL={state.localstream == "empty" ? "" : state.localstream.toURL()}
+                    zOrder={1}>
+                </RTCView>
                 </View>
-
-           {/*  </Section> */}
-           
+            
         </>
     )
 }
