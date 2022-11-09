@@ -52,7 +52,6 @@ the apk is now in: yourProject/android/app/build/outputs/apk/debug/app-debug.apk
 TODO:
 =====
 - Implement Device Chooser (camera and audio)...
-- Implement Screen Navigation System using: https://reactnative.dev/docs/navigation or reactnavigation.org
 - Implement QRCode Reader
 - test on iOS
 - implement whiteboard using: https://github.com/wobsoriano/rn-perfect-sketch-canvas
@@ -73,6 +72,7 @@ DONE:
 - if room is empty crashes
 - fix screen sharing Start/Stop
 - transform roomclient to functional component, please read the mediasoup example in order to understand.
+- Implement Screen Navigation System using: https://reactnative.dev/docs/navigation or reactnavigation.org
 
 
 ChangeList:
