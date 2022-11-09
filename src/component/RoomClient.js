@@ -415,8 +415,10 @@ function RoomClient() {
             'message',
             function (data) {
                 console.log('[RoomClientComp] New message:', data);
-                dispatch({ type: 'ADD_CHAT_MESSAGE',  payload: state.chat_array + data.peer_name + ": " + data.peer_msg + "\n"});
-                console.log('chatarray: ', state.chat_array);
+                var localChatArray = data.peer_name + ": " + data.peer_msg + "\n";
+                console.log('chatarray: ', localChatArray);
+                dispatch({ type: 'ADD_CHAT_MESSAGE',  payload: localChatArray});
+                
                 //this.showMessage(data);
             }.bind(this),
         );
@@ -1146,6 +1148,7 @@ function RoomClient() {
 
         switch (type) {
             case mediaType.video:
+            case mediaType.screen:
                 //let remotePeerAudio = peer_info.peer_audio;
                 //this.removeVideoOff(remotePeerId);
                 console.log("[RoomClientComp] remote stream cambiata!");

@@ -23,6 +23,7 @@ function MainPage() {
     const socket = useContext(SocketContext);
     const [debugIsEnabled, setDebugIsEnabled] = useState(false);
     const toggleDebug = () => setDebugIsEnabled(previousState => !previousState);
+    const testChat = () => dispatch({ type: 'ADD_CHAT_MESSAGE', payload:"Messaggio di prova\n"});
 
     // ####################################################
     // DYNAMIC SETTINGS
@@ -266,6 +267,11 @@ function MainPage() {
                         ios_backgroundColor="#3e3e3e"
                         onValueChange={toggleDebug}
                         value={debugIsEnabled}
+                    />
+                    <Button style={{width:"100%", height:"100%"}}
+                        title="TestChat"
+                        enabled
+                        onPress={testChat}
                     />
                     </View>
                 <View style={{

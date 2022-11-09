@@ -53,7 +53,7 @@ const Reducer = (state, action) => {
         case 'ADD_CHAT_MESSAGE':
             return{
                 ...state,
-                chat_array: action.payload
+                chat_array: [...state.chat_array, action.payload]
             };
         default:
             return state;
