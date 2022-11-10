@@ -1,6 +1,6 @@
 // react realated imports
 import React, { useEffect, useRef, useState, useContext } from "react";
-import { Button, Switch,Text, useWindowDimensions, View, StatusBar } from "react-native";
+import { StyleSheet, Button, Switch,Text, useWindowDimensions, View, StatusBar, ScrollView } from "react-native";
 import { RTCView, mediaDevices, registerGlobals } from "react-native-webrtc";
 //import usb from 'react-native-usb';
 
@@ -24,6 +24,7 @@ function MainPage() {
     const [debugIsEnabled, setDebugIsEnabled] = useState(false);
     const toggleDebug = () => setDebugIsEnabled(previousState => !previousState);
     const testChat = () => dispatch({ type: 'ADD_CHAT_MESSAGE', payload:"Messaggio di prova\n"});
+    const scrollViewRef = useRef();
 
     // ####################################################
     // DYNAMIC SETTINGS
@@ -207,56 +208,99 @@ function MainPage() {
         }
     }
 
+    const styles = StyleSheet.create({
+        textDebugOn: {
+            color:"white"
+        },
+        textDebugOff: {
+            color:"#00000000"
+        },
+        scrollView: {
+          backgroundColor: '#FF000000',
+          marginLeft: 20,
+        },
+        debugContainer: {
+            height:"80%",
+            position: "absolute",
+            top:"10%",
+            bottom:0,
+            flexDirection: "column",
+            padding: 2,
+            backgroundColor: '#00FF0000',
+            zIndex:2, 
+        },
+        headerContainer: {
+            height:40,
+            position: "absolute",
+            top:0,
+            left:0,
+            flexDirection: "row",
+            padding: 0,
+            backgroundColor: '#00FF0000',
+            zIndex:2, 
+        },
+        bottomContainer: {
+            height:40,
+            position: "absolute",
+            bottom:0,
+            left:0,
+            flexDirection: "row",
+            padding: 2,
+            backgroundColor: '#00FF0000',
+            zIndex:2, 
+        },
+        mainArea: {
+            flex:1,
+            flexDirection: "row",
+            height: "100%",
+            padding: 2,
+            backgroundColor: '#000000' 
+        },
+        remoteStream: {
+            width: "100%", 
+            height: "100%", 
+            backgroundColor: '#000000', 
+            zIndex:0
+        },
+        localStream: { 
+            position: "absolute", 
+            right: 0, 
+            bottom: 0, 
+            width: "30%", 
+            height: "30%", 
+            backgroundColor: '#00000000', 
+            zIndex:1 
+        },
+      });
+
     return (
         <>
-                <View style={{
-                    height:40,
-                    //flex: 0.1,
-                    position: "absolute",
-                    top:0,
-                    left:0,
-                    flexDirection: "row",
-                    padding: 0,
-                    backgroundColor: '#00FF0000',
-                    zIndex:2, 
-                }}>
-                    <Button style={{width:"100%", height:"100%"}}
+                <View style={styles.headerContainer}>
+                    <Button
                         title="Connect"
                         enabled
                         onPress={createRoomClient}
                     />                   
                 </View>
-                <View style={{
-                    height:"30%",
-                    //flex: 0.1,
-                    position: "absolute",
-                    top:"10%",
-                    bottom:0,
-                    //flexDirection: "row",
-                    padding: 2,
-                    backgroundColor: '#00FF0000',
-                    zIndex:2, 
-                }}>                   
-                    <Text style={debugIsEnabled?{width:"100%", height:"100%", color:"white"}:{color:"#00000000"}}>{debugTest}</Text>
-                    <Text style={debugIsEnabled?{width:"100%", height:"100%", color:"white"}:{color:"#00000000"}}>
+                <View style={styles.debugContainer}>                   
+                    <Text style={ debugIsEnabled ? styles.textDebugOn : styles.textDebugOff }>
+                        {debugTest}
+                    </Text>
+                    <Text style={ debugIsEnabled ? styles.textDebugOn : styles.textDebugOff }>
                             {state.localstream == "empty" ? "Local Stream ID: empty" : "Local Stream ID: " + state.localstream.toURL()} {"\n"}
                             {state.remotestream == "empty" ? "Remote Stream ID: empty" : "Remote Stream ID: " + state.remotestream.toURL()}
                     </Text>
-                    { state.connected ? <RoomClient></RoomClient> : <Text style={{width:"100%", height:"100%", color:"white"}}>Room disconnected...</Text> }
-                    <Text style={{width:"100%", height:"100%", color:"white"}}>{state.chat_array}</Text>
+                    { state.connected ? <RoomClient></RoomClient> : <Text style={styles.textDebugOn}>Room disconnected...</Text> }
+                    <ScrollView 
+                        style={styles.scrollView}
+                        ref={scrollViewRef}
+                        onContentSizeChange={(contentWidth, contentHeight)=>{        
+                        scrollViewRef.current.scrollToEnd({animated: true});}}>
+                        <Text style={styles.textDebugOn}>{state.chat_array}</Text>
+                    </ScrollView>
                 </View>
-                <View style={{
-                    height:40,
-                    //flex: 0.1,
-                    position: "absolute",
-                    bottom:0,
-                    left:0,
-                    flexDirection: "row",
-                    padding: 2,
-                    backgroundColor: '#00FF0000',
-                    zIndex:2, 
-                }}>
-                    <Button style={{width:"100%", height:"100%"}}
+                <View style={styles.bottomContainer}>
+                    <Button 
                         title="Switch"
                         enabled
                         onPress={switchCamera}
@@ -268,28 +312,22 @@ function MainPage() {
                         onValueChange={toggleDebug}
                         value={debugIsEnabled}
                     />
-                    <Button style={{width:"100%", height:"100%"}}
+                    <Button 
                         title="TestChat"
                         enabled
                         onPress={testChat}
                     />
-                    </View>
-                <View style={{
-                    flex:1,
-                    flexDirection: "row",
-                    height: "100%",
-                    padding: 2,
-                    backgroundColor: '#000000' 
-                }}>
+                </View>
+                <View style={styles.mainArea}>
                 <RTCView
-                    style={{ width: "100%", height: "100%", backgroundColor: '#000000', zIndex:0 }}
+                    style={styles.remoteStream}
                     mirror={true}
                     objectFit={'contain'}
                     streamURL={state.remotestream == "empty" ? "" : state.remotestream.toURL()}
                     zOrder={0}>
                 </RTCView>
                 <RTCView
-                    style={{ position: "absolute", right: 0, bottom: 0, width: "30%", height: "30%", backgroundColor: '#00000000', zIndex:1 }}
+                    style={styles.localStream}
                     mirror={false}
                     objectFit={'contain'}
                     streamURL={state.localstream == "empty" ? "" : state.localstream.toURL()}
