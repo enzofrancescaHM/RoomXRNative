@@ -28,6 +28,7 @@ const initialState = {
     peer_id: null,
     peer_hand: false,
     connected: false,
+    usbcamera:false,
     chat_array: [],
 
 };

@@ -94,3 +94,10 @@ USB CAMERA TEST
     }'''
 
 
+
+NOTES
+=====
+A normal external USB Camera works as is with no usb external libraries, i.e. the one on the helmet is working properly
+
+
+

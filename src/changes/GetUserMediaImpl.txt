@@ -48,6 +48,7 @@ class GetUserMediaImpl {
     private final Map<String, TrackPrivate> tracks = new HashMap<>();
 
     private final WebRTCModule webRTCModule;
+    private boolean usbcameraflag;
 
     private Promise displayMediaPromise;
     private Intent mediaProjectionPermissionResultData;
@@ -185,6 +186,11 @@ class GetUserMediaImpl {
 
         AudioTrack audioTrack = null;
         VideoTrack videoTrack = null;
+
+        if(constraints.hasKey("usb"))
+            this.usbcameraflag = true;
+        else
+            this.usbcameraflag = false;
 
         if (constraints.hasKey("audio")) {
             audioTrack = createAudioTrack(constraints);
@@ -361,12 +367,23 @@ class GetUserMediaImpl {
     private VideoTrack createVideoTrack(AbstractVideoCaptureController videoCaptureController) {
         videoCaptureController.initializeVideoCapturer();
 
-        /*VideoCapturer videoCapturer = videoCaptureController.videoCapturer;
+        VideoCapturer videoCapturer = null;
+        if(this.usbcameraflag == false){
+            videoCapturer = videoCaptureController.videoCapturer;
+        }
+        else{
+            Log.d("ciccio2!", "prima della new UsbCapturer");
+            SurfaceViewRenderer surfaceViewRenderer = new SurfaceViewRenderer(reactContext);
+            UsbCapturer myvideoCapturer = new UsbCapturer(reactContext,surfaceViewRenderer);
+            videoCapturer = myvideoCapturer;
+        }
+            
+        
         if (videoCapturer == null) {
             return null;
-        }*/
+        }
 
-        UsbCapturer videoCapturer = new UsbCapturer(reactContext);
+        
 
         PeerConnectionFactory pcFactory = webRTCModule.mFactory;
         EglBase.Context eglContext = EglUtils.getRootEglBaseContext();
@@ -388,6 +405,7 @@ class GetUserMediaImpl {
         track.setEnabled(true);
         tracks.put(id, new TrackPrivate(track, videoSource, videoCaptureController, surfaceTextureHelper));
 
+        Log.d("ciccio2!", "prima della new startCapture");
         videoCaptureController.startCapture();
 
         return track;

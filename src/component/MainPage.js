@@ -2,7 +2,7 @@
 import React, { useEffect, useRef, useState, useContext } from "react";
 import { StyleSheet, Button, Switch,Text, useWindowDimensions, View, StatusBar, ScrollView } from "react-native";
 import { RTCView, mediaDevices, registerGlobals } from "react-native-webrtc";
-//import usb from 'react-native-usb';
+import usb from 'react-native-usb';
 
 // mediasoup import
 import * as mediasoupClient from "mediasoup-client";
@@ -24,6 +24,7 @@ function MainPage() {
     const [debugIsEnabled, setDebugIsEnabled] = useState(false);
     const toggleDebug = () => setDebugIsEnabled(previousState => !previousState);
     const testChat = () => dispatch({ type: 'ADD_CHAT_MESSAGE', payload:"Messaggio di prova\n"});
+    const clearChat = () => dispatch({ type: 'CLEAR_CHAT', payload:""});
     const scrollViewRef = useRef();
 
     // ####################################################
@@ -75,11 +76,39 @@ function MainPage() {
         return true;
     }
 
-    async function createRoomClient() {
-        //TEST, REQUEST USB PERMISSION        
-        //usb.connect(0, 0)
-        //.then((data) => console.log(data))
-        //.catch((error) => console.error(error));
+    async function requireUSBPermissions(){
+         //TEST, REQUEST USB PERMISSION        
+         await usb.connect(1155, 41734)
+         .then((data) => console.log(data))
+         .catch((error) => console.error(error));
+
+         await usb.connect(0, 0)
+         .then((data) => console.log(data))
+         .catch((error) => console.error(error));
+
+         await usb.connect(13028, 1045)
+         .then((data) => console.log(data))
+         .catch((error) => console.error(error));
+    }
+
+    async function invokeCreateRoomClient(){
+        createRoomClient(false);
+    }
+
+    async function invokeCreateRoomClientUSB(){
+        createRoomClient(true);
+    }
+
+
+    async function createRoomClient(usbcameracase) {
+
+        if (usbcameracase){
+            dispatch({ type: 'SET_USBCAMERA', payload:true});
+
+           
+        }
+
+
 
         console.log('00 ----> init Socket.IO');
         console.log("[main page] first connect...socket id: " + socket.id);
@@ -87,11 +116,27 @@ function MainPage() {
         registerGlobals();
         console.log('01 ----> init Enumerate Devices');
         await initEnumerateAudioDevices();
-        await initEnumerateVideoDevices();
+        console.log('03 ----> Get Video Devices');
+        var dText = "Debug Devices:\n";
+        mediaDevices
+            .enumerateDevices()
+            .then((devices) =>
+                devices.forEach((device) => {                    
+                    console.log("device: ", device);
+                    dText = dText + "dev: " + JSON.stringify(device) + "\n";
+                    setDebugTest(dText);
+                    if ('videoinput' === device.kind) {
+                    }                    
+                }),
+            )
+
+        //await initEnumerateVideoDevices();
         checkMedia();
         console.log('04 ----> Who are you');        
         dispatch({type: 'SET_CONNECTED', payload: true});        
     }
+
+   
 
     function switchCamera(){        
         state.localstream.getVideoTracks().forEach((track) => {
@@ -279,8 +324,18 @@ function MainPage() {
                     <Button
                         title="Connect"
                         enabled
-                        onPress={createRoomClient}
-                    />                   
+                        onPress={invokeCreateRoomClient}
+                    /> 
+                      <Button
+                        title="USB Perms"
+                        enabled
+                        onPress={requireUSBPermissions}
+                    />             
+                     <Button
+                        title="Connect USB"
+                        enabled
+                        onPress={invokeCreateRoomClientUSB}
+                    />           
                 </View>
                 <View style={styles.debugContainer}>                   
                     <Text style={ debugIsEnabled ? styles.textDebugOn : styles.textDebugOff }>
@@ -313,9 +368,14 @@ function MainPage() {
                         value={debugIsEnabled}
                     />
                     <Button 
-                        title="TestChat"
+                        title="Test Chat"
                         enabled
                         onPress={testChat}
+                    />
+                    <Button 
+                        title="Clear Chat"
+                        enabled
+                        onPress={clearChat}
                     />
                 </View>
                 <View style={styles.mainArea}>

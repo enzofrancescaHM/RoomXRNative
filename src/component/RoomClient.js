@@ -587,6 +587,8 @@ function RoomClient() {
                 if (swapCamera) {
                     mediaConstraints = getCameraConstraints();
                 } else {
+                    if(state.usbcamera)
+                        mediaConstraints = getVideoConstraintsUSB(deviceId);
                     mediaConstraints = getVideoConstraints(deviceId);
                 }
                 break;

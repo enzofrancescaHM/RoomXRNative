@@ -60,6 +60,32 @@
             },
         };
     }
+    function getVideoConstraintsUSB(deviceId) {
+        return {
+            usb:true,
+            audio: false,
+            video: {
+                width: {
+                    min: 640,
+                    ideal: 1920,
+                    max: 3840,
+                },
+                height: {
+                    min: 480,
+                    ideal: 1080,
+                    max: 2160,
+                },
+                deviceId: deviceId,
+                //facingMode: "environment",
+                aspectRatio: 1.777, // 16:9
+                frameRate: {
+                    min: 5,
+                    ideal: 15,
+                    max: 30,
+                },
+            },
+        };
+    }
 
     function getScreenConstraints() {
         return {

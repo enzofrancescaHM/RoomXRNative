@@ -50,11 +50,22 @@ const Reducer = (state, action) => {
                     ...state,
                     remoteaudiostream: action.payload
                 };
+        case 'SET_USBCAMERA':
+            return{
+                ...state,
+                usbcamera: action.payload
+            };
         case 'ADD_CHAT_MESSAGE':
             return{
                 ...state,
                 chat_array: [...state.chat_array, action.payload]
             };
+        case 'CLEAR_CHAT':
+            return{
+                ...state,
+                chat_array: []
+            };
+    
         default:
             return state;
     }
