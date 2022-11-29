@@ -4,15 +4,24 @@ import android.content.Context;
 import android.hardware.usb.UsbDevice;
 import android.util.Log;
 import android.view.SurfaceView;
+import android.view.Surface;
+import android.view.SurfaceHolder;
+import android.graphics.SurfaceTexture;
 import android.view.ViewGroup;
 import android.view.View;
 import android.app.Activity;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.SystemClock;
+import java.util.concurrent.TimeUnit;
 
 import com.serenegiant.usb.IFrameCallback;
 import com.serenegiant.usb.USBMonitor;
-import com.serenegiant.usb.UVCCamera;
+//import com.serenegiant.usb.UVCCamera;
 import com.serenegiant.usbcameracommon.UVCCameraHandler;
 import com.serenegiant.usbcameracommon.UvcCameraDataCallBack;
+import com.serenegiant.widget.UVCCameraTextureView;
+import com.serenegiant.widget.CameraViewInterface;
 
 import com.facebook.react.bridge.ReactApplicationContext;
 
@@ -27,7 +36,7 @@ import java.nio.ByteBuffer;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.Arrays;
-//import java.util.ArrayUtils;
+
 
 import org.webrtc.*;
 
@@ -67,11 +76,7 @@ public class UsbCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
 
     @Override
     public void stopCapture() throws InterruptedException {
-        if(camera != null){
-            camera.stopPreview();
-            camera.close();
-            camera.destroy();
-        }
+        
     }
 
     @Override
@@ -104,9 +109,14 @@ public class UsbCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
         
     }
 
-    UVCCamera camera;
-    //UVCCameraHandler mHandlerFirst;
-    //UVCCameraTextureView mUVCCameraViewFirst;
+    UvcCameraDataCallBack firstDataCallBack = new UvcCameraDataCallBack() {
+        public final void getData(byte[] bArr) {
+             VideoFrame videoFrame = new VideoFrame(new NV21Buffer(bArr, 1280, 720, (Runnable) null), 0, TimeUnit.MILLISECONDS.toNanos(SystemClock.elapsedRealtime()));
+            capturerObserver.onFrameCaptured(videoFrame);
+            videoFrame.release();
+            
+        }
+    };
 
     @Override
     public void onConnect(UsbDevice device, USBMonitor.UsbControlBlock ctrlBlock, boolean createNew) {
@@ -123,47 +133,18 @@ public class UsbCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
                     {
                         weFoundIt = true;
 
-                        Log.d("ciccio!", "prima della new UVCCamera");
-                        camera = new UVCCamera();
-                        Log.d("ciccio!", "prima della open");
-                        camera.open(ctrlBlock);
-                        try {
-                            Log.d("ciccio!", "prima della setpreviewsize");
-                            camera.setPreviewSize(640, 480, UVCCamera.FRAME_FORMAT_MJPEG);
-                        } catch (final IllegalArgumentException e) {
-                            try {
-                                Log.d("ciccio!", "prima dello strano try");
-                                camera.setPreviewSize(640, 480, UVCCamera.DEFAULT_PREVIEW_MODE);
-                            } catch (final IllegalArgumentException e1) {
-                                Log.d("ciccio!", "uh oh!");
-                                camera.destroy();
-                                camera = null;
-                            }
-                        }
-
-                        // Il problema è creare una superfice per la preview...
-                        //SurfaceView surface = new SurfaceView(context);
-                        
-                        // try with SurfaceTExtureHelper
-                        //EglBase.Context eglContext = EglUtils.getRootEglBaseContext();
-                        //SurfaceTextureHelper surfaceTextureHelper = SurfaceTextureHelper.create("CaptureThread", eglContext);
-                        //if (surfaceTextureHelper == null) {
-                        //    Log.d("ciccio!", "Error creating SurfaceTextureHelper");  
-                        //}
-                        //camera.setPreviewDisplay(surfaceTextureHelper.getSurfaceTexture().getHolder());
-                        
-                        // original code
-                        //camera.setPreviewDisplay(svVideoRender.getHolder());
-
 
                         // try by finding the main window view... I don't know... :)
                         ViewGroup rootView = (ViewGroup) ((ReactApplicationContext)context).getCurrentActivity().getWindow().getDecorView();
 
+                        View myView = null;
+                        
                         try {
                             //ViewGroup rootView = (ViewGroup) getView();
                             int childViewCount = rootView.getChildCount();
                             for (int i=0; i<childViewCount;i++){
                                 View workWithMe = rootView.getChildAt(i);
+                                myView = workWithMe;
                                 Log.d("ciccio view!", "id: " + workWithMe.getId());
                             }
                         } catch (ClassCastException e){
@@ -171,13 +152,60 @@ public class UsbCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
                         } catch (NullPointerException e){
                             //Root view is null
                         }
+
+                        SurfaceView surface = new SurfaceView(context);
+                        surface.getHolder().setFixedSize(640, 480);
+
+                        // it may be called from another thread, so make sure we're in main looper
+                        Handler handler = new Handler(Looper.getMainLooper());
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                 
+                                 
+                                 // this code is similar to UNIVET OFFICIAL
+                                 UVCCameraTextureView mUVCCameraViewFirst =  new UVCCameraTextureView(context);
+                                 mUVCCameraViewFirst.setId(98765342);
+                                 rootView.addView(mUVCCameraViewFirst, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                                 mUVCCameraViewFirst.invalidate();
+
+                                 CameraViewInterface uvcCameraInterface;
+                                 uvcCameraInterface = (CameraViewInterface) ((ReactApplicationContext)context).getCurrentActivity().findViewById(98765342);
+                                 if(uvcCameraInterface != null){
+                                    uvcCameraInterface.setAspectRatio(1280, 720);
+                                    UVCCameraHandler createHandler = UVCCameraHandler.createHandler(((ReactApplicationContext)context).getCurrentActivity(), mUVCCameraViewFirst, 1280, 720, 0.5f, firstDataCallBack);
+
+
+                                    final Handler handler = new Handler();
+                                    handler.postDelayed(new Runnable() {
+                                        public void run() {
+                                            if (!createHandler.isOpened()) {
+                                                createHandler.open(ctrlBlock);
+                                                
+                                                
+                                                
+                                                SurfaceTexture surfaceTexture = mUVCCameraViewFirst.getSurfaceTexture();
+                                                if (surfaceTexture != null) {
+                                                    
+                                                    createHandler.startPreview(new Surface(surfaceTexture));
+                                                    
+                                                    return;
+                                                }
+                                                
+                                            }
+                                        }
+                                    }, 1000);
+
+                                 }
+
+                                 
+
+                              
+                            }
+                        });
+                         
                         
-                        //camera.setPreviewDisplay(((SurfaceView)view).getHolder().getSurface());
-                        
-                        Log.d("ciccio!", "prima dellla setframecallback");
-                        camera.setFrameCallback(UsbCapturer.this, UVCCamera.PIXEL_FORMAT_NV21);
-                        Log.d("ciccio!", "prima della startpreview");
-                        camera.startPreview();
+                      
                     }
                 }
                 else{
@@ -202,19 +230,7 @@ public class UsbCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
         @Override
         public void run() {
             Log.d("ciccio","siamo nel frame catturato!!!!!!!!!!");
-            byte[] imageArray = new byte[frame.remaining()];
-            frame.get(imageArray);
-            Long imageTime = System.currentTimeMillis();
-
-            VideoFrame.Buffer mNV21Buffer = new NV21Buffer(imageArray, 640, 480, null);
-
-            VideoFrame mVideoFrame = new VideoFrame(mNV21Buffer, 0, imageTime);
-            capturerObserver.onFrameCaptured(mVideoFrame);
-
-
-            //capturerObserver.onByteBufferFrameCaptured(imageArray, UVCCamera.DEFAULT_PREVIEW_WIDTH, UVCCamera.DEFAULT_PREVIEW_HEIGHT, 0, imageTime);
         }
     });
-
 }
 }

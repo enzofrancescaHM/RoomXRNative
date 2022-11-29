@@ -5,7 +5,7 @@ import { Text, StatusBar } from "react-native";
 import Store, { Context } from '../global/Store';
 import { SocketContext } from '../global/socket';
 import {setIsAudio, setIsVideo, setIsScreen, getAudioConstraints, getVideoConstraints} from "../global/constraints"
-import {getScreenConstraints, getEncoding, getMapKeyByValue} from "../global/constraints"
+import {getScreenConstraints, getEncoding, getMapKeyByValue, getVideoConstraintsUSB} from "../global/constraints"
 let chatMessage = "chatMessage";
 let receiveFileInfo = "receiveFileInfo";
 let receiveFileDiv = "receiveFileDiv";
@@ -588,8 +588,17 @@ function RoomClient() {
                     mediaConstraints = getCameraConstraints();
                 } else {
                     if(state.usbcamera)
+                    {
+                        console.log('[RoomClientComp] 11,5 ----> USBCAMERA');
                         mediaConstraints = getVideoConstraintsUSB(deviceId);
-                    mediaConstraints = getVideoConstraints(deviceId);
+                    }
+                    else
+                    {
+                        console.log('[RoomClientComp] 11,5 ----> NORMAL CAMERA');
+                        mediaConstraints = getVideoConstraints(deviceId);
+                    }
+                        
+                    
                 }
                 break;
             case mediaType.screen:

@@ -125,4 +125,4 @@
         }
     }
 
-    export {setIsAudio, setIsVideo, setIsScreen, getAudioConstraints, getVideoConstraints, getScreenConstraints, getEncoding, getMapKeyByValue}
+    export {setIsAudio, setIsVideo, setIsScreen, getAudioConstraints, getVideoConstraints, getVideoConstraintsUSB, getScreenConstraints, getEncoding, getMapKeyByValue}
