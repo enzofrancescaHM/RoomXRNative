@@ -13,6 +13,8 @@ import com.roomxr.newarchitecture.MainApplicationReactNativeHost;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import me.andyshea.ReactNativeUsbPackage;
+import org.wonday.orientation.OrientationPackage;
+import org.wonday.orientation.OrientationActivityLifecycle;
 
 public class MainApplication extends Application implements ReactApplication {
 
@@ -30,6 +32,7 @@ public class MainApplication extends Application implements ReactApplication {
           // Packages that cannot be autolinked yet can be added manually here, for example:
           // packages.add(new MyReactNativePackage());
             //packages.add(new ReactNativeUsbPackage());
+            //packages.add(new OrientationPackage());
           return packages;
         }
 
@@ -58,6 +61,7 @@ public class MainApplication extends Application implements ReactApplication {
     ReactFeatureFlags.useTurboModules = BuildConfig.IS_NEW_ARCHITECTURE_ENABLED;
     SoLoader.init(this, /* native exopackage */ false);
     initializeFlipper(this, getReactNativeHost().getReactInstanceManager());
+    registerActivityLifecycleCallbacks(OrientationActivityLifecycle.getInstance());
   }
 
   /**

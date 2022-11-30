@@ -17,7 +17,6 @@ import java.util.concurrent.TimeUnit;
 
 import com.serenegiant.usb.IFrameCallback;
 import com.serenegiant.usb.USBMonitor;
-//import com.serenegiant.usb.UVCCamera;
 import com.serenegiant.usbcameracommon.UVCCameraHandler;
 import com.serenegiant.usbcameracommon.UvcCameraDataCallBack;
 import com.serenegiant.widget.UVCCameraTextureView;
@@ -37,9 +36,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.Arrays;
 
-
 import org.webrtc.*;
-
 
 public class UsbCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectListener, IFrameCallback {
     private Context context;
@@ -125,27 +122,24 @@ public class UsbCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
             public void run() {
                 if (monitor.hasPermission(device)) 
                 {
-                    Log.d("ciccio!", "permission OK!");
-                    Log.d("ciccio!", "vendorID= " + device.getVendorId());
-                    Log.d("ciccio",String.format("DEV: %s - PID: %x - VID: %x", device.getProductName(), device.getProductId(), device.getVendorId()));
+                    Log.d("USB-CAMERA", "permission OK!");
+                    Log.d("USB-CAMERA", "vendorID= " + device.getVendorId());
+                    Log.d("USB-CAMERA",String.format("DEV: %s - PID: %x - VID: %x", device.getProductName(), device.getProductId(), device.getVendorId()));
 
                     if(weFoundIt == false && device.getProductId() == 0 && device.getVendorId() == 0)
                     {
                         weFoundIt = true;
 
-
-                        // try by finding the main window view... I don't know... :)
+                        // try by finding the main window view.
                         ViewGroup rootView = (ViewGroup) ((ReactApplicationContext)context).getCurrentActivity().getWindow().getDecorView();
-
                         View myView = null;
                         
-                        try {
-                            //ViewGroup rootView = (ViewGroup) getView();
+                        try {                            
                             int childViewCount = rootView.getChildCount();
                             for (int i=0; i<childViewCount;i++){
                                 View workWithMe = rootView.getChildAt(i);
                                 myView = workWithMe;
-                                Log.d("ciccio view!", "id: " + workWithMe.getId());
+                                Log.d("USB-CAMERA view: ", "id: " + workWithMe.getId());
                             }
                         } catch (ClassCastException e){
                             //Not a viewGroup here
@@ -153,21 +147,30 @@ public class UsbCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
                             //Root view is null
                         }
 
-                        SurfaceView surface = new SurfaceView(context);
-                        surface.getHolder().setFixedSize(640, 480);
-
                         // it may be called from another thread, so make sure we're in main looper
                         Handler handler = new Handler(Looper.getMainLooper());
                         handler.post(new Runnable() {
                             @Override
-                            public void run() {
+                            public void run() {                                 
                                  
-                                 
-                                 // this code is similar to UNIVET OFFICIAL
+                                 // this code is similar to UNIVET OFFICIAL APP
+                                 // create a UVCCameraTextureView
                                  UVCCameraTextureView mUVCCameraViewFirst =  new UVCCameraTextureView(context);
+                                 // set an arbitrary ID
                                  mUVCCameraViewFirst.setId(98765342);
-                                 rootView.addView(mUVCCameraViewFirst, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-                                 mUVCCameraViewFirst.invalidate();
+                                 // add to the groupview with z-order parameter so that the view is not visible
+                                 rootView.addView(mUVCCameraViewFirst, 0, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                                 // invalidate the view in order to make it real
+                                 mUVCCameraViewFirst.invalidate();                                 
+                                 // reduce view dimensions
+                                 ViewGroup.LayoutParams params = mUVCCameraViewFirst.getLayoutParams();
+                                 params.height = (int) (50);
+                                 params.width = (int) (50);
+                                 mUVCCameraViewFirst.setLayoutParams(params);
+
+
+
+
 
                                  CameraViewInterface uvcCameraInterface;
                                  uvcCameraInterface = (CameraViewInterface) ((ReactApplicationContext)context).getCurrentActivity().findViewById(98765342);
@@ -182,34 +185,22 @@ public class UsbCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
                                             if (!createHandler.isOpened()) {
                                                 createHandler.open(ctrlBlock);
                                                 
-                                                
-                                                
                                                 SurfaceTexture surfaceTexture = mUVCCameraViewFirst.getSurfaceTexture();
                                                 if (surfaceTexture != null) {
-                                                    
-                                                    createHandler.startPreview(new Surface(surfaceTexture));
-                                                    
+                                                    createHandler.startPreview(new Surface(surfaceTexture));                                                    
                                                     return;
                                                 }
                                                 
                                             }
                                         }
                                     }, 1000);
-
                                  }
-
-                                 
-
-                              
                             }
                         });
-                         
-                        
-                      
                     }
                 }
                 else{
-                    Log.d("ciccio!", "permission problem...");
+                    Log.d("USB-CAMERA", "permission problem...");
                 }
             }
         });
@@ -223,14 +214,7 @@ public class UsbCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
     public void onCancel(UsbDevice device) {
     }
 
-
     @Override
     public void onFrame(ByteBuffer frame) {
-    executor.execute(new Runnable() {
-        @Override
-        public void run() {
-            Log.d("ciccio","siamo nel frame catturato!!!!!!!!!!");
-        }
-    });
-}
+    }
 }

@@ -73,6 +73,7 @@ DONE:
 - fix screen sharing Start/Stop
 - transform roomclient to functional component, please read the mediasoup example in order to understand.
 - Implement Screen Navigation System using: https://reactnative.dev/docs/navigation or reactnavigation.org
+- Implement Univet Glasses Stream
 
 
 ChangeList:

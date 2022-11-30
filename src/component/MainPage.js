@@ -11,6 +11,8 @@ import * as mediasoupClient from "mediasoup-client";
 import Store, {Context} from '../global/Store';
 import {SocketContext} from '../global/socket';
 import RoomClient from "./RoomClient";
+import Orientation from 'react-native-orientation-locker';
+
 
 
 function MainPage() {
@@ -38,6 +40,7 @@ function MainPage() {
         console.log("%c MainPage componetDidMount", "color:green;");
         
         StatusBar.setHidden(true, 'none');
+        Orientation.lockToLandscapeLeft();
 
         dispatch({type: 'SET_MEDIASOUPCLIENT', payload: mediasoupClient});
         return function componentWillUnmount() {
@@ -383,14 +386,14 @@ function MainPage() {
                     style={styles.remoteStream}
                     mirror={true}
                     objectFit={'contain'}
-                    streamURL={state.remotestream == "empty" ? "" : state.remotestream.toURL()}
+                    streamURL={state.localstream == "empty" ? "" : state.localstream.toURL()}
                     zOrder={0}>
                 </RTCView>
                 <RTCView
                     style={styles.localStream}
                     mirror={false}
                     objectFit={'contain'}
-                    streamURL={state.localstream == "empty" ? "" : state.localstream.toURL()}
+                    streamURL={state.remotestream == "empty" ? "" : state.remotestream.toURL()}
                     zOrder={1}>
                 </RTCView>
                 </View>
