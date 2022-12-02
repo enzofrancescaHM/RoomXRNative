@@ -97,7 +97,7 @@ USB CAMERA TEST
 - it's better the following;
 ''' implementation 'com.licheedev:usbcameracommon:1.0.1' '''
 
-- add the folder Encoder, UsbCameraCommon and Widget from external
+
 
 
 

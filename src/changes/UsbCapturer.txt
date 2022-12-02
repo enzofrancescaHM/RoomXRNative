@@ -38,6 +38,7 @@ import java.util.Arrays;
 
 import org.webrtc.*;
 
+
 public class UsbCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectListener, IFrameCallback {
     private Context context;
     private USBMonitor monitor;
@@ -108,7 +109,8 @@ public class UsbCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
 
     UvcCameraDataCallBack firstDataCallBack = new UvcCameraDataCallBack() {
         public final void getData(byte[] bArr) {
-             VideoFrame videoFrame = new VideoFrame(new NV21Buffer(bArr, 1280, 720, (Runnable) null), 0, TimeUnit.MILLISECONDS.toNanos(SystemClock.elapsedRealtime()));
+             
+            VideoFrame videoFrame = new VideoFrame(new NV21Buffer(bArr, 1280, 720, (Runnable) null), 0, TimeUnit.MILLISECONDS.toNanos(SystemClock.elapsedRealtime()));
             capturerObserver.onFrameCaptured(videoFrame);
             videoFrame.release();
             
@@ -154,29 +156,41 @@ public class UsbCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
                             public void run() {                                 
                                  
                                  // this code is similar to UNIVET OFFICIAL APP
+                                 int myWidth = 1280; // width of camera output - default: 1280
+                                 int myHeight = 720 ; // height of camera output - default: 720
+                                 float myPerformance = 0.5f; // streaming ratio - default: 0.5f
+                                 int myZorder = 1; // zorder of the fake view - default: 0
+                                 int myID = 98765342; // fake id of the fake view
+                                 boolean hideSurfaceView = true; //hide the surface view because is replicated by the rtcview - default: true
+
+                                 // just to be sure...
+                                 if(hideSurfaceView)
+                                    myZorder = 0; // I want to hide the surfaceview
+
                                  // create a UVCCameraTextureView
                                  UVCCameraTextureView mUVCCameraViewFirst =  new UVCCameraTextureView(context);
                                  // set an arbitrary ID
-                                 mUVCCameraViewFirst.setId(98765342);
+                                 mUVCCameraViewFirst.setId(myID);
                                  // add to the groupview with z-order parameter so that the view is not visible
-                                 rootView.addView(mUVCCameraViewFirst, 0, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                                 rootView.addView(mUVCCameraViewFirst, myZorder, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
                                  // invalidate the view in order to make it real
                                  mUVCCameraViewFirst.invalidate();                                 
                                  // reduce view dimensions
-                                 ViewGroup.LayoutParams params = mUVCCameraViewFirst.getLayoutParams();
-                                 params.height = (int) (50);
-                                 params.width = (int) (50);
-                                 mUVCCameraViewFirst.setLayoutParams(params);
-
-
-
+                                 
+                                 if(hideSurfaceView)
+                                 {
+                                    ViewGroup.LayoutParams params = mUVCCameraViewFirst.getLayoutParams();
+                                    params.height = (int) (64);
+                                    params.width = (int) (48);
+                                    mUVCCameraViewFirst.setLayoutParams(params);
+                                 }
 
 
                                  CameraViewInterface uvcCameraInterface;
-                                 uvcCameraInterface = (CameraViewInterface) ((ReactApplicationContext)context).getCurrentActivity().findViewById(98765342);
+                                 uvcCameraInterface = (CameraViewInterface) ((ReactApplicationContext)context).getCurrentActivity().findViewById(myID);
                                  if(uvcCameraInterface != null){
-                                    uvcCameraInterface.setAspectRatio(1280, 720);
-                                    UVCCameraHandler createHandler = UVCCameraHandler.createHandler(((ReactApplicationContext)context).getCurrentActivity(), mUVCCameraViewFirst, 1280, 720, 0.5f, firstDataCallBack);
+                                    uvcCameraInterface.setAspectRatio(myWidth, myHeight);
+                                    UVCCameraHandler createHandler = UVCCameraHandler.createHandler(((ReactApplicationContext)context).getCurrentActivity(), mUVCCameraViewFirst, myWidth, myHeight, myPerformance, firstDataCallBack);
 
 
                                     final Handler handler = new Handler();
