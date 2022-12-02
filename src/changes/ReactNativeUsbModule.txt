@@ -84,7 +84,7 @@ public class ReactNativeUsbModule extends ReactContextBaseJavaModule {
         UsbDevice device = deviceIterator.next();
         
         Log.d(TAG, "device: " + device);
-        /*if (device.getVendorId() == vendorId && device.getProductId() == productId)*/{
+        if (device.getVendorId() == vendorId && device.getProductId() == productId){
           this.device = device;
         }
       }
@@ -128,6 +128,8 @@ public class ReactNativeUsbModule extends ReactContextBaseJavaModule {
   }
 
   private void setDevice(UsbDevice device) {
+     connectionPromise.resolve(null);
+      connectionPromise = null;
     /*
     Log.d(TAG, "setDevice " + device);
     if (device.getInterfaceCount() != 1) {

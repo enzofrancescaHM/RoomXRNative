@@ -74,6 +74,7 @@ DONE:
 - transform roomclient to functional component, please read the mediasoup example in order to understand.
 - Implement Screen Navigation System using: https://reactnative.dev/docs/navigation or reactnavigation.org
 - Implement Univet Glasses Stream
+- Implement Orientation lock to Landscape mode
 
 
 ChangeList:
@@ -87,12 +88,16 @@ USB CAMERA TEST
 - install ReactNativeUsbModule from: https://github.com/andy-shea/react-native-usb
 - follow the readme instruction in order to modify but not this one: "Add new ReactNativeUsbPackage() to the list returned by the getPackages() method"  
   otherwise an error will occur
-- change ReactNativeUsbModule.java accordingly with the file stored in the changes folder
+- change ReactNativeUsbModule.java and the others .java accordingly with the file stored in the changes folder (they are .txt files)
 - add UsbCapturer.java from changes directory
 - add to the build gradle of webrtcnative the folowing:  
 '''implementation("com.serenegiant:common:${commonLibVersion}") {
 	    exclude module: 'support-v4'
     }'''
+- it's better the following;
+''' implementation 'com.licheedev:usbcameracommon:1.0.1' '''
+
+- add the folder Encoder, UsbCameraCommon and Widget from external
 
 
 

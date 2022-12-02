@@ -81,11 +81,12 @@ function MainPage() {
 
     async function requireUSBPermissions(){
          //TEST, REQUEST USB PERMISSION        
-         await usb.connect(1155, 41734)
+
+         await usb.connect(0, 0)
          .then((data) => console.log(data))
          .catch((error) => console.error(error));
 
-         await usb.connect(0, 0)
+         await usb.connect(1155, 41734)
          .then((data) => console.log(data))
          .catch((error) => console.error(error));
 
