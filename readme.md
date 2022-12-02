@@ -90,12 +90,13 @@ USB CAMERA TEST
   otherwise an error will occur
 - change ReactNativeUsbModule.java and the others .java accordingly with the file stored in the changes folder (they are .txt files)
 - add UsbCapturer.java from changes directory
-- add to the build gradle of webrtcnative the folowing:  
+- add to the build gradle of reactnativeWebRTC the folowing:  
 '''implementation("com.serenegiant:common:${commonLibVersion}") {
 	    exclude module: 'support-v4'
     }'''
 - it's better the following;
 ''' implementation 'com.licheedev:usbcameracommon:1.0.1' '''
+- raise sdk in build.gradle of reactnativeWebRTC to 26 (please refer to the build.gradle put in the changes folder)
 
 
 
