@@ -320,24 +320,25 @@ function MainPage() {
             backgroundColor: '#00000000', 
             zIndex:1 
         },
-        screenStream: { 
+        guest1Stream: { 
             position: "absolute", 
             right: 0, 
             top: 0, 
-            width: "10%", 
-            height: "10%", 
+            width: "30%", 
+            height: "30%", 
             backgroundColor: '#FF000000', 
-            zIndex:0 
-        },
-        screenStreamOnAir: { 
-            position: "absolute", 
-            left: 0, 
-            top: 0, 
-            width: "100%", 
-            height: "100%", 
-            backgroundColor: '#000000FF', 
             zIndex:1 
         },
+        guest2Stream: { 
+            position: "absolute", 
+            right: 0, 
+            top: "33%", 
+            width: "30%", 
+            height: "30%", 
+            backgroundColor: '#FF000000', 
+            zIndex:1 
+        },
+       
       });
 
     return (
@@ -411,20 +412,34 @@ function MainPage() {
                     streamURL={state.localstream == "empty" ? "" : state.localstream.toURL()}
                     zOrder={0}>
                 </RTCView>
+                { (state.remotestream != "empty") && 
+                    <RTCView
+                        style={styles.remoteStream}
+                        mirror={false}
+                        objectFit={'contain'}
+                        streamURL={state.remotestream == "empty" ? "" : state.remotestream.toURL()}
+                        zOrder={1}>
+                    </RTCView>
+                }
+                { (state.guest1stream != "empty") &&  
+                    <RTCView
+                        style={styles.guest1Stream}
+                        mirror={false}
+                        objectFit={'contain'}
+                        streamURL={state.guest1stream == "empty" ? "" : state.guest1stream.toURL()}
+                        zOrder={1}>
+                    </RTCView>
+                }
+                { (state.guest2stream != "empty") && 
                 <RTCView
-                    style={styles.remoteStream}
+                    style={styles.guest2Stream}
                     mirror={false}
                     objectFit={'contain'}
-                    streamURL={state.remotestream == "empty" ? "" : state.remotestream.toURL()}
+                    streamURL={state.guest2stream == "empty" ? "" : state.guest2stream.toURL()}
                     zOrder={1}>
                 </RTCView>
-                <RTCView
-                    style={state.screenstream == "empty" ? styles.screenStream : styles.screenStream}
-                    mirror={false}
-                    objectFit={'contain'}
-                    streamURL={state.screenstream == "empty" ? "" : state.screenstream.toURL()}
-                    zOrder={1}>
-                </RTCView>
+
+                }
                 </View>
             
         </>

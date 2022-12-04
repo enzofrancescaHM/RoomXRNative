@@ -99,8 +99,13 @@ function RoomClient() {
         // coherence test
         this.videoConsumerId = "empty";
         this.screenConsumerId = "empty";
-
+        this.guest1ConsumerId = "empty";
+        this.guest2ConsumerId = "empty";
+        
         this.localVideoStream = null;
+        this.remoteVideoStrean = null;
+        this.guest1VideoStream = null;
+        this.guest2VideoStream = null;
         this.screenVideoStream = null;
 
 
@@ -1171,9 +1176,27 @@ function RoomClient() {
         switch (type) {
             case mediaType.video:
                 console.log("[RoomClientComp] remote stream cambiata!");
-                dispatch({ type: 'SET_REMOTE_STREAM', payload: stream });
-                dispatch({ type: 'SET_REMOTE_STREAM_ID', payload: id });
-                this.videoConsumerId = id;
+
+                // We have to understand if this is our main remote caller or one of the
+                // guests that partecipate in the call
+                if(this.videoConsumerId == "empty"){ // ok, this is the first remote stream we have
+                    dispatch({ type: 'SET_REMOTE_STREAM', payload: stream });
+                    dispatch({ type: 'SET_REMOTE_STREAM_ID', payload: id });
+                    this.localVideoStream = stream;
+                    this.videoConsumerId = id;
+                }
+                else if(this.guest1ConsumerId == "empty"){ // ok, this the first guest
+                    dispatch({ type: 'SET_GUEST1_STREAM', payload: stream });
+                    dispatch({ type: 'SET_GUEST1_STREAM_ID', payload: id });
+                    this.guest1VideoStream = stream;
+                    this.guest1ConsumerId = id;
+                }
+                else{ // otherwise it is the second guest
+                    dispatch({ type: 'SET_GUEST2_STREAM', payload: stream });
+                    dispatch({ type: 'SET_GUEST2_STREAM_ID', payload: id });
+                    this.guest2VideoStream = stream;
+                    this.guest2ConsumerId = id;
+                }
                 break;
             case mediaType.screen:
                 //let remotePeerAudio = peer_info.peer_audio;
@@ -1229,6 +1252,24 @@ function RoomClient() {
                 dispatch({ type: 'SET_REMOTE_STREAM', payload: "empty" });
                 dispatch({ type: 'SET_REMOTE_STREAM_ID', payload: "empty" });
                 this.videoConsumerId = "empty";
+            }
+
+            if(consumer_id == this.guest1ConsumerId)
+            {
+                // set stream to null in order to reset the view
+                console.log("[RoomClientComp] remote stream NULLIFIED!");
+                dispatch({ type: 'SET_GUEST1_STREAM', payload: "empty" });
+                dispatch({ type: 'SET_GUEST1_STREAM_ID', payload: "empty" });
+                this.guest1ConsumerId = "empty";
+            }
+
+            if(consumer_id == this.guest2ConsumerId)
+            {
+                // set stream to null in order to reset the view
+                console.log("[RoomClientComp] remote stream NULLIFIED!");
+                dispatch({ type: 'SET_GUEST2_STREAM', payload: "empty" });
+                dispatch({ type: 'SET_GUEST2_STREAM_ID', payload: "empty" });
+                this.guest2ConsumerId = "empty";
             }
 
             if(consumer_id == this.screenConsumerId)
