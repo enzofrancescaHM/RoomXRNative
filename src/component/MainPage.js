@@ -305,19 +305,37 @@ function MainPage() {
             padding: 2,
             backgroundColor: '#000000' 
         },
-        remoteStream: {
+        localStream: {
             width: "100%", 
             height: "100%", 
             backgroundColor: '#000000', 
             zIndex:0
         },
-        localStream: { 
+        remoteStream: { 
             position: "absolute", 
             right: 0, 
             bottom: 0, 
             width: "30%", 
             height: "30%", 
             backgroundColor: '#00000000', 
+            zIndex:1 
+        },
+        screenStream: { 
+            position: "absolute", 
+            right: 0, 
+            top: 0, 
+            width: "10%", 
+            height: "10%", 
+            backgroundColor: '#FF000000', 
+            zIndex:0 
+        },
+        screenStreamOnAir: { 
+            position: "absolute", 
+            left: 0, 
+            top: 0, 
+            width: "100%", 
+            height: "100%", 
+            backgroundColor: '#000000FF', 
             zIndex:1 
         },
       });
@@ -346,8 +364,11 @@ function MainPage() {
                         {debugTest}
                     </Text>
                     <Text style={ debugIsEnabled ? styles.textDebugOn : styles.textDebugOff }>
-                            {state.localstream == "empty" ? "Local Stream ID: empty" : "Local Stream ID: " + state.localstream.toURL()} {"\n"}
-                            {state.remotestream == "empty" ? "Remote Stream ID: empty" : "Remote Stream ID: " + state.remotestream.toURL()}
+                            {state.localstream == "empty" ? "Local Stream: empty" : "Local Stream: " + state.localstream.toURL()} {"\n"}
+                            {state.remotestream == "empty" ? "Remote Stream: empty" : "Remote Stream: " + state.remotestream.toURL()} {"\n"}
+                            {state.screenstream == "empty" ? "Screen Stream: empty" : "Screen Stream: " + state.screenstream.toURL()} {"\n"}
+                            {state.remotestreamid == "empty" ? "Remote Stream ID: empty" : "Remote Stream ID: " + state.remotestreamid} {"\n"}
+                            {state.screenstreamid == "empty" ? "Screen Stream ID: empty" : "Screen Stream ID: " + state.screenstreamid}
                     </Text>
                     { state.connected ? <RoomClient></RoomClient> : <Text style={styles.textDebugOn}>Room disconnected...</Text> }
                     <ScrollView 
@@ -384,17 +405,24 @@ function MainPage() {
                 </View>
                 <View style={styles.mainArea}>
                 <RTCView
-                    style={styles.remoteStream}
-                    mirror={true}
+                    style={styles.localStream}
+                    mirror={state.screenstream == "empty" ? true : false}
                     objectFit={'contain'}
                     streamURL={state.localstream == "empty" ? "" : state.localstream.toURL()}
                     zOrder={0}>
                 </RTCView>
                 <RTCView
-                    style={styles.localStream}
+                    style={styles.remoteStream}
                     mirror={false}
                     objectFit={'contain'}
                     streamURL={state.remotestream == "empty" ? "" : state.remotestream.toURL()}
+                    zOrder={1}>
+                </RTCView>
+                <RTCView
+                    style={state.screenstream == "empty" ? styles.screenStream : styles.screenStream}
+                    mirror={false}
+                    objectFit={'contain'}
+                    streamURL={state.screenstream == "empty" ? "" : state.screenstream.toURL()}
                     zOrder={1}>
                 </RTCView>
                 </View>

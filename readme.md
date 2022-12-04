@@ -82,8 +82,8 @@ ChangeList:
 
 
 
-USB CAMERA TEST
-===============
+UNIVET CAMERA PROCEDURE
+=======================
 
 - install ReactNativeUsbModule from: https://github.com/andy-shea/react-native-usb
 - follow the readme instruction in order to modify but not this one: "Add new ReactNativeUsbPackage() to the list returned by the getPackages() method"  
@@ -97,6 +97,7 @@ USB CAMERA TEST
 - it's better the following;
 ''' implementation 'com.licheedev:usbcameracommon:1.0.1' '''
 - raise sdk in build.gradle of reactnativeWebRTC to 26 (please refer to the build.gradle put in the changes folder)
+- in general the whole project was raised to 26 minimum, the changes are in git, so nothing to change manually
 
 
 
@@ -105,6 +106,7 @@ USB CAMERA TEST
 NOTES
 =====
 A normal external USB Camera works as is with no usb external libraries, i.e. the one on the helmet is working properly
+So, to use a normal USB UVC Compatible camera it is enough to click change camera in order to switch to the external one
 
 
 

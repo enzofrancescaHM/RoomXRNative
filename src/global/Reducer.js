@@ -40,6 +40,42 @@ const Reducer = (state, action) => {
                     ...state,
                     remotestream: action.payload
                 };
+        case 'SET_SCREEN_STREAM':
+                return{
+                    ...state,
+                    screenstream: action.payload
+                };
+        case 'SET_GUEST1_STREAM':
+                return{
+                    ...state,
+                    guest1stream: action.payload
+            };
+        case 'SET_GUEST2_STREAM':
+                return{
+                    ...state,
+                    guest2stream: action.payload
+            };
+        case 'SET_GUEST1_STREAM_ID':
+                return{
+                    ...state,
+                    guest1streamid: action.payload
+            };
+        case 'SET_GUEST2_STREAM_ID':
+                return{
+                    ...state,
+                    guest2streamid: action.payload
+            };
+
+        case 'SET_REMOTE_STREAM_ID':
+                return{
+                    ...state,
+                    remotestreamid: action.payload
+                };
+        case 'SET_SCREEN_STREAM_ID':
+                return{
+                    ...state,
+                    screenstreamid: action.payload
+                };
         case 'SET_LOCAL_AUDIO_STREAM':
             return{
                 ...state,

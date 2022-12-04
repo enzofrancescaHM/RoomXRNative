@@ -96,6 +96,14 @@ function RoomClient() {
         this.producerTransport = null;
         this.consumerTransport = null;
 
+        // coherence test
+        this.videoConsumerId = "empty";
+        this.screenConsumerId = "empty";
+
+        this.localVideoStream = null;
+        this.screenVideoStream = null;
+
+
 
         Object.keys(_EVENTS).forEach(
             function (evt) {
@@ -644,6 +652,7 @@ function RoomClient() {
             if (!audio) {
                 console.log("[RoomClientComp] localvideostream changed!");
                 dispatch({ type: 'SET_LOCAL_STREAM', payload: stream });
+                this.localVideoStream = stream;
                 //state.localVideoStream = stream;
                 //this.setMyLocalStream(stream);
                 this.videoProducerId = myproducer.id;
@@ -1113,6 +1122,7 @@ function RoomClient() {
                 consumer.on(
                     'trackended',
                     function () {
+                        console.log('[RoomClientComp] trackended kind: ', kind);
                         removeConsumer(consumer.id, consumer.kind);
                     }.bind(this),
                 );
@@ -1120,6 +1130,7 @@ function RoomClient() {
                 consumer.on(
                     'transportclose',
                     function () {
+                        console.log('[RoomClientComp] transportclose kind: ', kind);
                         removeConsumer(consumer.id, consumer.kind);
                     }.bind(this),
                 );
@@ -1159,11 +1170,21 @@ function RoomClient() {
 
         switch (type) {
             case mediaType.video:
+                console.log("[RoomClientComp] remote stream cambiata!");
+                dispatch({ type: 'SET_REMOTE_STREAM', payload: stream });
+                dispatch({ type: 'SET_REMOTE_STREAM_ID', payload: id });
+                this.videoConsumerId = id;
+                break;
             case mediaType.screen:
                 //let remotePeerAudio = peer_info.peer_audio;
                 //this.removeVideoOff(remotePeerId);
-                console.log("[RoomClientComp] remote stream cambiata!");
-                dispatch({ type: 'SET_REMOTE_STREAM', payload: stream });
+                console.log("[RoomClientComp] remote screen cambiata!");
+                console.log("[RoomClientComp] id: " + id);
+                console.log("[RoomClientComp] screenstreamid: " + state.screenstreamid);
+                dispatch({ type: 'SET_LOCAL_STREAM', payload: stream });
+                dispatch({ type: 'SET_SCREEN_STREAM_ID', payload: id });
+                this.screenConsumerId = id;
+                this.screenVideoStream = stream;
                 //this.setMyRemoteStream(stream);
 
                 //handleAspectRatio();
@@ -1180,6 +1201,9 @@ function RoomClient() {
 
     function removeConsumer(consumer_id, consumer_kind) {
         console.log('[RoomClientComp] Remove consumer', { consumer_id: consumer_id, consumer_kind: consumer_kind });
+
+      
+
         /*
                 let elem = this.getId(consumer_id);
                 if (elem) {
@@ -1190,6 +1214,35 @@ function RoomClient() {
                 }
         */
         if (consumer_kind === 'video') {
+
+            console.log("consumer_id: " + consumer_id);
+            console.log("remotestreamid: " + state.remotestreamid);
+            console.log("screenstreamid: " + state.screenstreamid);
+
+
+            // we don't have the information of screen kind, 
+            // we have to understand which stream id has been removed
+            if(consumer_id == this.videoConsumerId)
+            {
+                // set stream to null in order to reset the view
+                console.log("[RoomClientComp] remote stream NULLIFIED!");
+                dispatch({ type: 'SET_REMOTE_STREAM', payload: "empty" });
+                dispatch({ type: 'SET_REMOTE_STREAM_ID', payload: "empty" });
+                this.videoConsumerId = "empty";
+            }
+
+            if(consumer_id == this.screenConsumerId)
+            {
+                // set stream to null in order to reset the view
+                console.log("[RoomClientComp] screen stream NULLIFIED!");
+                dispatch({ type: 'SET_SCREEN_STREAM', payload: "empty" });
+                dispatch({ type: 'SET_SCREEN_STREAM_ID', payload: "empty" });
+                dispatch({ type: 'SET_LOCAL_STREAM', payload: this.localVideoStream});
+                this.screenConsumerId = "empty";
+                this.screenVideoStream = null;
+            }
+
+            
             //let d = this.getId(consumer_id + '__video');
             //if (d) d.parentNode.removeChild(d);
             //handleAspectRatio();
@@ -1540,7 +1593,8 @@ function removeVideoOff(peer_id) {
     return (
         <>
             <Text style={{ width: "100%", color: "#00000000", backgroundColor: '#AAAAAA00' }}>
-               test
+                {state.remotestreamid == "empty" ? "Remote Stream ID: empty" : "Remote Stream ID: " + state.remotestreamid} {"\n"}
+                {state.screenstreamid == "empty" ? "Screen Stream ID: empty" : "Screen Stream ID: " + state.screenstreamid}
             </Text>
         </>
     )
