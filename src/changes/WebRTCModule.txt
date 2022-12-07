@@ -488,11 +488,10 @@ public class WebRTCModule extends ReactContextBaseJavaModule {
 
     @ReactMethod
     public void getUserMedia(ReadableMap constraints,
-                             boolean usbcamera,
                              Callback    successCallback,
                              Callback    errorCallback) {
         ThreadUtils.runOnExecutor(() ->
-            getUserMediaImpl.getUserMedia(constraints, usbcamera, successCallback, errorCallback));
+            getUserMediaImpl.getUserMedia(constraints, successCallback, errorCallback));
     }
 
     @ReactMethod
