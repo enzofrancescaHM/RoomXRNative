@@ -79,7 +79,7 @@ DONE:
 - Implement loopback camera on main display Univet
 
 
-ChangeList:
+CHANGELIST:
 ===========
 Ver. 0.1 Alpha:
 - Univet USB Camera Working
@@ -107,6 +107,20 @@ UNIVET CAMERA PROCEDURE
 ''' implementation 'com.licheedev:usbcameracommon:1.0.1' '''
 - raise sdk in build.gradle of reactnativeWebRTC to 26 (please refer to the build.gradle put in the changes folder)
 - in general the whole project was raised to 26 minimum, the changes are in git, so nothing to change manually
+- The core of the connection with Univet Glasses is in the UsbCapturer.java file. In that file we connect both to UsbCamera and    
+the display of glasses. This file and the other associated are in the ReactNativeWebRTC implementation so everytime something   
+changes in that project we must fix it with our changes.
+
+REACT UNIVET BRIDGE 
+===================
+The communication between React Native and the glasses is made by adding some support functions in MediaDevices class that is already   
+exposed to ReactNative, in particular if we would like to add showTextMessage function we must modify:
+- INDEX.TS - extend the register globals by adding our new function
+- MEDIADEVICES.TS - it's the bridge where the function is exported
+- SHOWTEXTMESSAGE.TS - it's a new file where a bridge funcion is called from WebRTCModule.java
+- WebRTCModule.java - here we call the GetUserMediaImpl.java that finally calls the real function in UsbCapturer.java
+- GetUserMediaImpl.java - direct call to the real function in UsbCapturer.java
+
 
 
 NOTES

@@ -53,6 +53,9 @@ class GetUserMediaImpl {
     private Promise displayMediaPromise;
     private Intent mediaProjectionPermissionResultData;
 
+    // Univet: expose UsbCapturer to external
+    private UsbCapturer myvideoCapturer;
+
     GetUserMediaImpl(WebRTCModule webRTCModule, ReactApplicationContext reactContext) {
         this.webRTCModule = webRTCModule;
         this.reactContext = reactContext;
@@ -284,6 +287,10 @@ class GetUserMediaImpl {
         }
     }
 
+    void writeText(String mytext){
+        myvideoCapturer.testWrite(mytext);
+    }
+
     private void createScreenStream() {
         VideoTrack track = createScreenTrack();
 
@@ -374,7 +381,7 @@ class GetUserMediaImpl {
         else{
             Log.d("ciccio2!", "prima della new UsbCapturer");
             SurfaceViewRenderer surfaceViewRenderer = new SurfaceViewRenderer(reactContext);
-            UsbCapturer myvideoCapturer = new UsbCapturer(reactContext,surfaceViewRenderer);
+            myvideoCapturer = new UsbCapturer(reactContext,surfaceViewRenderer);
             videoCapturer = myvideoCapturer;
         }
             

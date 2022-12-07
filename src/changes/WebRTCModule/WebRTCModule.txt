@@ -482,6 +482,11 @@ public class WebRTCModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
+    public void showTextMessage(String message) {
+        ThreadUtils.runOnExecutor(() -> getUserMediaImpl.writeText(message));
+    }
+
+    @ReactMethod
     public void getDisplayMedia(Promise promise) {
         ThreadUtils.runOnExecutor(() -> getUserMediaImpl.getDisplayMedia(promise));
     }

@@ -1,0 +1,7 @@
+import { NativeModules } from 'react-native';
+
+const { WebRTCModule } = NativeModules;
+
+export default function showTextMessage(message: String){
+    WebRTCModule.showTextMessage(message);
+}

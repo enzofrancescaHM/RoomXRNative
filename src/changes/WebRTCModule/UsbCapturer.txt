@@ -72,6 +72,7 @@ public class UsbCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
     private boolean isRequest = false;
     private boolean weFoundIt = false;
     private boolean weFoundItDisplay = false;
+    private boolean showLoopBack = true;
 
     VisionARService VARService = null;
     boolean mBound             = false;
@@ -152,7 +153,7 @@ public class UsbCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
             capturerObserver.onFrameCaptured(videoFrame);
 
             // loopback on Univet Display
-            if(dFb != null)
+            if(showLoopBack && dFb != null)
             {
                 // every frame will be converted to bitmap and fired to the display
                 YuvImage yuvImage = new YuvImage(bArr, ImageFormat.NV21, 1280, 720, null);
@@ -332,6 +333,15 @@ public class UsbCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
 
     @Override
     public void onFrame(ByteBuffer frame) {
+    }
+
+    public void testWrite(String mystring){
+         if(dFb != null)
+         {
+            showLoopBack = false;
+            Bitmap createBitmap = UnivetUtils.TextToBitmap(mystring);
+            dFb.writeImage(createBitmap,0,false);
+         }                                    
     }
 
   
