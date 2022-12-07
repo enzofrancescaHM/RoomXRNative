@@ -1,0 +1,7 @@
+import { NativeModules } from 'react-native';
+
+const { WebRTCModule } = NativeModules;
+
+export default function showLoopBackCamera(show: boolean){
+    WebRTCModule.showLoopBackCamera(show);
+}

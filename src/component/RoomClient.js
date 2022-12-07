@@ -431,6 +431,10 @@ function RoomClient() {
                 var localChatArray = data.peer_name + ": " + data.peer_msg + "\n";
                 console.log('chatarray: ', localChatArray);
                 dispatch({ type: 'ADD_CHAT_MESSAGE',  payload: localChatArray});
+
+                //Univet
+                mediaDevices.showLoopBackCamera(false);
+                mediaDevices.showTextMessage(localChatArray);
                 
                 //this.showMessage(data);
             }.bind(this),

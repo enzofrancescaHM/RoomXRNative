@@ -487,6 +487,11 @@ public class WebRTCModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
+    public void showLoopBackCamera(boolean show) {
+        ThreadUtils.runOnExecutor(() -> getUserMediaImpl.showLoopBackCamera(show));
+    }
+
+    @ReactMethod
     public void getDisplayMedia(Promise promise) {
         ThreadUtils.runOnExecutor(() -> getUserMediaImpl.getDisplayMedia(promise));
     }

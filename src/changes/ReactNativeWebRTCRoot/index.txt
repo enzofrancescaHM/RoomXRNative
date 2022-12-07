@@ -1,49 +1,45 @@
+import ScreenCapturePickerView from './ScreenCapturePickerView';
+import RTCPeerConnection from './RTCPeerConnection';
+import RTCIceCandidate from './RTCIceCandidate';
+import RTCSessionDescription from './RTCSessionDescription';
+import RTCView from './RTCView';
+import MediaStream from './MediaStream';
+import MediaStreamTrack from './MediaStreamTrack';
+import mediaDevices from './MediaDevices';
+import permissions from './Permissions';
 
-import { NativeModules } from 'react-native';
-import { defineCustomEventTarget } from 'event-target-shim';
+export {
+    ScreenCapturePickerView,
+    RTCPeerConnection,
+    RTCIceCandidate,
+    RTCSessionDescription,
+    RTCView,
+    MediaStream,
+    MediaStreamTrack,
+    mediaDevices,
+    permissions,
+    registerGlobals
+};
 
-import getDisplayMedia from './getDisplayMedia';
-import getUserMedia from './getUserMedia';
-import showTextMessage from './showTextMessage';
-
-const { WebRTCModule } = NativeModules;
-
-const MEDIA_DEVICES_EVENTS = ['devicechange'];
-
-class MediaDevices extends defineCustomEventTarget(...MEDIA_DEVICES_EVENTS) {
-    /**
-     * W3C "Media Capture and Streams" compatible {@code enumerateDevices}
-     * implementation.
-     */
-    enumerateDevices() {
-        return new Promise(resolve => WebRTCModule.enumerateDevices(resolve));
+function registerGlobals(): void {
+    // Should not happen. React Native has a global navigator object.
+    if (typeof global.navigator !== 'object') {
+        throw new Error('navigator is not an object');
     }
 
-    /**
-     * W3C "Screen Capture" compatible {@code getDisplayMedia} implementation.
-     * See: https://w3c.github.io/mediacapture-screen-share/
-     *
-     * @returns {Promise}
-     */
-    getDisplayMedia() {
-        return getDisplayMedia();
+    if (!global.navigator.mediaDevices) {
+        global.navigator.mediaDevices = {};
     }
 
-    /**
-     * W3C "Media Capture and Streams" compatible {@code getUserMedia}
-     * implementation.
-     * See: https://www.w3.org/TR/mediacapture-streams/#dom-mediadevices-enumeratedevices
-     *
-     * @param {*} constraints
-     * @returns {Promise}
-     */
-    getUserMedia(constraints) {
-        return getUserMedia(constraints);
-    }
+    global.navigator.mediaDevices.getUserMedia = mediaDevices.getUserMedia.bind(mediaDevices);
+    global.navigator.mediaDevices.getDisplayMedia = mediaDevices.getDisplayMedia.bind(mediaDevices);
+    global.navigator.mediaDevices.enumerateDevices = mediaDevices.enumerateDevices.bind(mediaDevices);
+    global.navigator.mediaDevices.showTextMessage = mediaDevices.showTextMessage.bind(mediaDevices);
+    global.navigator.mediaDevices.showLoopBackCamera = mediaDevices.showLoopBackCamera.bind(mediaDevices);
 
-    showTextMessage(message){
-        return showTextMessage(message);
-    }
+    global.RTCPeerConnection = RTCPeerConnection;
+    global.RTCIceCandidate = RTCIceCandidate;
+    global.RTCSessionDescription = RTCSessionDescription;
+    global.MediaStream = MediaStream;
+    global.MediaStreamTrack = MediaStreamTrack;
 }
-
-export default new MediaDevices();

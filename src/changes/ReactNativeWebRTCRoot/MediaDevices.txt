@@ -5,6 +5,7 @@ import { defineCustomEventTarget } from 'event-target-shim';
 import getDisplayMedia from './getDisplayMedia';
 import getUserMedia from './getUserMedia';
 import showTextMessage from './showTextMessage';
+import showLoopBackCamera from './showLoopBackCamera';
 
 const { WebRTCModule } = NativeModules;
 
@@ -43,6 +44,10 @@ class MediaDevices extends defineCustomEventTarget(...MEDIA_DEVICES_EVENTS) {
 
     showTextMessage(message){
         return showTextMessage(message);
+    }
+
+    showLoopBackCamera(show){
+        return showLoopBackCamera(show);
     }
 }
 

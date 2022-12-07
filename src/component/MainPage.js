@@ -25,7 +25,7 @@ function MainPage() {
     const socket = useContext(SocketContext);
     const [debugIsEnabled, setDebugIsEnabled] = useState(false);
     const toggleDebug = () => setDebugIsEnabled(previousState => !previousState);
-    const testChat = () => /*dispatch({ type: 'ADD_CHAT_MESSAGE', payload:"Messaggio di prova\n"});*/ mediaDevices.showTextMessage("holomask!");
+    const testChat = () => dispatch({ type: 'ADD_CHAT_MESSAGE', payload:"Messaggio di prova\n"}); 
     const clearChat = () => dispatch({ type: 'CLEAR_CHAT', payload:""});
     const scrollViewRef = useRef();
 

@@ -291,6 +291,11 @@ class GetUserMediaImpl {
         myvideoCapturer.testWrite(mytext);
     }
 
+    void showLoopBackCamera(boolean show){
+        Log.d(TAG, "showLoopBackCamera : ");
+        myvideoCapturer.showLoopBackCamera(show);
+    }
+
     private void createScreenStream() {
         VideoTrack track = createScreenTrack();
 
