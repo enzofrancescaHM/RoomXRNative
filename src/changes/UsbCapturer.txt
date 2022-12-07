@@ -13,6 +13,9 @@ import android.app.Activity;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.SystemClock;
+import android.hardware.usb.UsbDevice;
+import android.hardware.usb.UsbDeviceConnection;
+import android.hardware.usb.UsbManager;
 import java.util.concurrent.TimeUnit;
 
 import com.serenegiant.usb.IFrameCallback;
@@ -38,6 +41,26 @@ import java.util.Arrays;
 
 import org.webrtc.*;
 
+import it.univet.visionar.visionarservice.VisionARService;
+import android.content.ServiceConnection;
+import android.content.ComponentName;
+import android.os.IBinder;
+import android.content.Intent;
+
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Matrix;
+import android.graphics.Paint;
+import android.graphics.RectF;
+import android.graphics.Color;
+import android.graphics.BitmapFactory;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import android.graphics.ImageFormat;
+import android.graphics.Rect;
+import android.graphics.YuvImage;
+
 
 public class UsbCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectListener, IFrameCallback {
     private Context context;
@@ -48,15 +71,30 @@ public class UsbCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
     private Executor executor = Executors.newSingleThreadExecutor();
     private boolean isRequest = false;
     private boolean weFoundIt = false;
+    private boolean weFoundItDisplay = false;
+
+    VisionARService VARService = null;
+    boolean mBound             = false;
+
+    // Test write
+    public UsbManager mUsbManager = null;
+    public UsbDeviceConnection connection;
+    public DeviceFb dFb;
+    public UsbDevice device = null;
+
 
     public UsbCapturer(Context context, SurfaceViewRenderer svVideoRender) {
+
         this.context = context;
         this.svVideoRender = svVideoRender;
         executor.execute(new Runnable() {
             @Override
-            public void run() {
+            public void run() {               
+                mUsbManager = (UsbManager) ((ReactApplicationContext)context).getCurrentActivity().getSystemService("usb");
+                
                 monitor = new USBMonitor(context, UsbCapturer.this);
                 monitor.register();
+
             }
         });
     }
@@ -112,6 +150,30 @@ public class UsbCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
              
             VideoFrame videoFrame = new VideoFrame(new NV21Buffer(bArr, 1280, 720, (Runnable) null), 0, TimeUnit.MILLISECONDS.toNanos(SystemClock.elapsedRealtime()));
             capturerObserver.onFrameCaptured(videoFrame);
+
+            // loopback on Univet Display
+            if(dFb != null)
+            {
+                // every frame will be converted to bitmap and fired to the display
+                YuvImage yuvImage = new YuvImage(bArr, ImageFormat.NV21, 1280, 720, null);
+                ByteArrayOutputStream os = new ByteArrayOutputStream();
+                yuvImage.compressToJpeg(new Rect(0, 0, 1280, 720), 100, os);
+                byte[] jpegByteArray = os.toByteArray();
+                try {
+                    os.flush();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } finally {
+                    try {
+                        os.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                
+                dFb.writeImage(BitmapFactory.decodeByteArray(jpegByteArray, 0, jpegByteArray.length),0,false);
+            }
+
             videoFrame.release();
             
         }
@@ -128,6 +190,46 @@ public class UsbCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
                     Log.d("USB-CAMERA", "vendorID= " + device.getVendorId());
                     Log.d("USB-CAMERA",String.format("DEV: %s - PID: %x - VID: %x", device.getProductName(), device.getProductId(), device.getVendorId()));
 
+                    if(weFoundItDisplay == false && /*device.getProductName() == "eRGlassFb"*/ device.getProductId() != 0 && device.getVendorId() != 0 )
+                    {
+                            Log.d("USB-CAMERA DISPLAY", "We are in!");
+                            
+                            weFoundItDisplay = true;
+
+                            if (connection == null) {
+                                connection = mUsbManager.openDevice(device);
+                            }
+                            if (connection != null) {
+                                Log.d("USB-CAMERA DISPLAY", "Connection done!");
+                                //this.connected = true;
+                                Log.e("name display: ", device.getDeviceName());
+                                if (dFb == null) {
+                                    dFb = new DeviceFb(connection, device);
+                                    //Bitmap bitmap = Bitmap.createBitmap(1280, 720, Bitmap.Config.ARGB_8888);
+                                    //bitmap.eraseColor(Color.WHITE);
+                                    //dFb.writeString("Holomask");
+                                    //dFb.writeImage(bitmap);
+
+                                    //Bitmap textAsBitmap = dFb.textAsBitmap("holomask", 12.0f, 255);
+
+
+                                    /*Paint paint = new Paint(1);
+                                    paint.setTextSize(120);
+                                    paint.setColor(Color.WHITE);
+                                    paint.setTextAlign(Paint.Align.LEFT);
+                                    float f2 = -paint.ascent();
+                                    Bitmap createBitmap = Bitmap.createBitmap(1280, 720, Bitmap.Config.ARGB_8888);
+                                    createBitmap.eraseColor(Color.BLACK);
+                                    new Canvas(createBitmap).drawText(" - holomask - ", 0.0f, f2, paint);*/
+
+                                    Bitmap createBitmap = UnivetUtils.TextToBitmap("ciao ciccio!");
+
+                                    dFb.writeImage(createBitmap,0,false);
+                                }
+                            }
+                    }
+
+                    if(true)
                     if(weFoundIt == false && device.getProductId() == 0 && device.getVendorId() == 0)
                     {
                         weFoundIt = true;
@@ -231,4 +333,6 @@ public class UsbCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
     @Override
     public void onFrame(ByteBuffer frame) {
     }
+
+  
 }

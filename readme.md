@@ -75,16 +75,25 @@ DONE:
 - Implement Screen Navigation System using: https://reactnative.dev/docs/navigation or reactnavigation.org
 - Implement Univet Glasses Stream
 - Implement Orientation lock to Landscape mode
+- Implement Guest1 & Guest2 capabilities
+- Implement loopback camera on main display Univet
 
 
 ChangeList:
 ===========
+Ver. 0.1 Alpha:
+- Univet USB Camera Working
+- Screen Share Receiver
+- Guest1, Guest2 Receiver
+- Proto Chat Management
+
+Ver. 0.2 Alpha:
+- Loopback Univet Camera on Univet Display
 
 
 
 UNIVET CAMERA PROCEDURE
 =======================
-
 - install ReactNativeUsbModule from: https://github.com/andy-shea/react-native-usb
 - follow the readme instruction in order to modify but not this one: "Add new ReactNativeUsbPackage() to the list returned by the getPackages() method"  
   otherwise an error will occur
@@ -98,9 +107,6 @@ UNIVET CAMERA PROCEDURE
 ''' implementation 'com.licheedev:usbcameracommon:1.0.1' '''
 - raise sdk in build.gradle of reactnativeWebRTC to 26 (please refer to the build.gradle put in the changes folder)
 - in general the whole project was raised to 26 minimum, the changes are in git, so nothing to change manually
-
-
-
 
 
 NOTES

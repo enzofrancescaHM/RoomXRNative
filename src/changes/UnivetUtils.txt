@@ -1,0 +1,41 @@
+package com.oney.WebRTCModule;
+
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Typeface;
+import android.text.Layout;
+import android.text.StaticLayout;
+import android.text.TextPaint;
+import android.util.Log;
+
+public class UnivetUtils
+{
+    public static Bitmap TextToBitmap(String gText) {
+        int w = 1152;
+        int h = 379;
+        Bitmap bitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        TextPaint paint = new TextPaint(1);
+        paint.setColor(Color.rgb(255, 255, 255));
+        paint.setTextSize(44.0F);
+        paint.setShadowLayer(1.0F, 0.0F, 1.0F, -1);
+        paint.setTypeface(Typeface.MONOSPACE);
+        int textWidth = canvas.getWidth() - 44;
+        StaticLayout.Builder sb = StaticLayout.Builder.obtain(gText, 0, gText.length(), paint, textWidth).setAlignment(Layout.Alignment.ALIGN_NORMAL).setLineSpacing(0.5F, 1.0F).setIncludePad(false);
+        StaticLayout textLayout = sb.build();
+        int textHeight = textLayout.getHeight();
+        float x = (bitmap.getWidth() - textWidth) / 2.0F;
+        float y = (bitmap.getHeight() - textHeight) / 2.0F;
+        if (y < 50.0F) {
+        y = 50.0F;
+        //Toast.makeText((Context)this, "Too long text", 0).show();
+        Log.d("TextToBitmap: ", "Text too long!");
+        } 
+        canvas.save();
+        canvas.translate(x, y);
+        textLayout.draw(canvas);
+        canvas.restore();
+        return bitmap;
+    }    
+}

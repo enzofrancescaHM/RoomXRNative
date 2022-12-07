@@ -431,14 +431,13 @@ function MainPage() {
                     </RTCView>
                 }
                 { (state.guest2stream != "empty") && 
-                <RTCView
-                    style={styles.guest2Stream}
-                    mirror={false}
-                    objectFit={'contain'}
-                    streamURL={state.guest2stream == "empty" ? "" : state.guest2stream.toURL()}
-                    zOrder={1}>
-                </RTCView>
-
+                    <RTCView
+                        style={styles.guest2Stream}
+                        mirror={false}
+                        objectFit={'contain'}
+                        streamURL={state.guest2stream == "empty" ? "" : state.guest2stream.toURL()}
+                        zOrder={1}>
+                    </RTCView>
                 }
                 </View>
             

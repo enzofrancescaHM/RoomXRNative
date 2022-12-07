@@ -1,0 +1,224 @@
+package com.oney.WebRTCModule;
+
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.hardware.usb.UsbDevice;
+import android.hardware.usb.UsbDeviceConnection;
+import android.hardware.usb.UsbEndpoint;
+import android.hardware.usb.UsbInterface;
+import java.io.IOException;
+
+import android.util.Log;
+
+public class DeviceFb {
+  private static UsbEndpoint writeEndpoint = null;
+  
+  private static final int REG_CONTRAST = 36;
+  
+  private static final int REG_BRIGHTNESS = 37;
+  
+  private static final int eRCMD_REGISTER = 17;
+  
+  private final UsbDeviceConnection mConnection;
+  
+  public DeviceFb(UsbDeviceConnection connection, UsbDevice device) {
+    this.mConnection = connection;
+    if (device != null)
+      assignEndPoint(device); 
+  }
+  
+  private void assignEndPoint(UsbDevice device) {
+    UsbInterface uInt = device.getInterface(3);
+    UsbEndpoint uep3 = uInt.getEndpoint(0);
+    assign(uep3, 1);
+  }
+  
+  private void assign(UsbEndpoint endpoint, int epDest) {
+    if (endpoint != null) {
+      int dir = endpoint.getDirection();
+      int type = endpoint.getType();
+      if (dir == 0 && type == 2 && epDest == 1)
+        writeEndpoint = endpoint; 
+    } 
+  }
+  
+  public int writeImage(Bitmap img, int batteryLevel, boolean invert) {
+    Bitmap scaledBmp = scalePreserveRatio(img, 419, 138);
+    byte[] convertedImage = convertToGray(scaledBmp, batteryLevel, invert);
+    byte[] dataToSend = buildRequest(convertedImage);
+    try {
+      return writeBulk(dataToSend, 5000);
+    } catch (IOException e) {
+      e.printStackTrace();
+      return 0;
+    } 
+  }
+
+
+  
+  private byte[] buildRequest(byte[] dataImg) {
+    int index = 0;
+    int length = dataImg.length + 2;
+    int size = 5 + length;
+    byte[] serializeData = new byte[size];
+    serializeData[index++] = 1;
+    serializeData[index++] = 1;
+    serializeData[index++] = -32;
+    serializeData[index++] = -31;
+    serializeData[index++] = 1;
+    serializeData[index++] = 1;
+    System.arraycopy(dataImg, 0, serializeData, index, dataImg.length);
+    int chk2 = calculateCheckSum(serializeData, dataImg.length, index - 1);
+    serializeData[57828] = (byte)chk2;
+    return serializeData;
+  }
+  
+  private byte[] convertToGray(Bitmap bmp, int batteryLevel, boolean invert) {
+    int w = 419;
+    int h = 138;
+    byte[] grayscale = new byte[57822];
+    int[] pixels = new int[57822];
+    bmp.getPixels(pixels, 0, bmp.getWidth(), 0, 0, bmp.getWidth(), bmp.getHeight());
+    int i;
+    for (i = 0; i < 138; i++) {
+      for (int j = 0; j < 419; j++) {
+        int val = pixels[i * 419 + j];
+        int A = val >>> 24;
+        int R = val >> 16 & 0xFF;
+        int G = val >> 8 & 0xFF;
+        int B = val & 0xFF;
+        int grayscalev = 0;
+        if (!invert) {
+          grayscalev = (R * 299 + G * 587 + B * 114) / 1000;
+        } else {
+          grayscalev = ((255 - R) * 299 + (255 - G) * 587 + (255 - B) * 114) / 1000;
+        } 
+        int grayscaleValue = grayscalev * A / 255;
+        grayscale[i * 419 + j] = (byte)grayscaleValue;
+      } 
+    } 
+    if (BatteryLevelArray(batteryLevel) != null)
+      for (i = 0; i < 24; i++) {
+        for (int j = 0; j < 38; j++)
+          grayscale[i * 419 + j + 419 - 38] = BatteryLevelArray(batteryLevel)[i * 38 + j]; 
+      }  
+    return grayscale;
+  }
+  
+  public static Bitmap scalePreserveRatio(Bitmap imageToScale, int destinationWidth, int destinationHeight) {
+    if (destinationHeight > 0 && destinationWidth > 0 && imageToScale != null) {
+      if (imageToScale.getWidth() == destinationWidth && imageToScale.getHeight() == destinationHeight)
+        return imageToScale; 
+      int width = imageToScale.getWidth();
+      int height = imageToScale.getHeight();
+      float widthRatio = (float)destinationWidth / (float)width;
+      float heightRatio = (float)destinationHeight / (float)height;
+      //Log.d("FB Internal: ",String.format("destW: %d - destH: %d", destinationWidth, destinationHeight));
+      //Log.d("FB Internal: ",String.format("WR: %f - HR: %f", widthRatio, heightRatio));
+      int finalWidth = (int)Math.floor((width * widthRatio));
+      int finalHeight = (int)Math.floor((height * widthRatio));
+      //Log.d("FB Internal: ",String.format("W: %d - H: %d", finalWidth, finalHeight));
+      if (finalWidth > destinationWidth || finalHeight > destinationHeight) {
+        finalWidth = (int)Math.floor((width * heightRatio));
+        finalHeight = (int)Math.floor((height * heightRatio));
+      } 
+      //Log.d("FB Internal: ",String.format("W0: %d - H0: %d", width, height));
+      //Log.d("FB Internal: ",String.format("W: %d - H: %d", finalWidth, finalHeight));
+
+      imageToScale = Bitmap.createScaledBitmap(imageToScale, finalWidth, finalHeight, true);
+      Bitmap scaledImage = Bitmap.createBitmap(destinationWidth, destinationHeight, Bitmap.Config.ARGB_8888);
+      Canvas canvas = new Canvas(scaledImage);
+      Paint paint = new Paint();
+      paint.setColor(-16777216);
+      paint.setStyle(Paint.Style.FILL);
+      canvas.drawRect(0.0F, 0.0F, canvas.getWidth(), canvas.getHeight(), paint);
+      float ratioBitmap = finalWidth / finalHeight;
+      float destinationRatio = destinationWidth / destinationHeight;
+      float left = (ratioBitmap >= destinationRatio) ? 0.0F : ((destinationWidth - finalWidth) / 2.0F);
+      float top = (ratioBitmap < destinationRatio) ? 0.0F : ((destinationHeight - finalHeight) / 2.0F);
+      canvas.drawBitmap(imageToScale, left, top, null);
+      return scaledImage;
+    } 
+    return imageToScale;
+  }
+  
+  private byte[] BatteryLevelArray(int batteryChargeStatus) {
+    if (batteryChargeStatus > 75)
+      return BatteryArrayValue.battery_100; 
+    if (batteryChargeStatus > 50)
+      return BatteryArrayValue.battery_75; 
+    if (batteryChargeStatus > 25)
+      return BatteryArrayValue.battery_50; 
+    if (batteryChargeStatus > 5)
+      return BatteryArrayValue.battery_25; 
+    if (batteryChargeStatus == -1)
+      return null; 
+    return BatteryArrayValue.battery_alert;
+  }
+  
+  private int writeBulk(byte[] src, int timeoutMillis) throws IOException {
+    int written = 0;
+    int maxLength = 1024;
+    while (written < src.length) {
+      int writeLength = Math.min(maxLength, src.length - written);
+      int amtWritten = this.mConnection.bulkTransfer(writeEndpoint, src, written, writeLength, timeoutMillis);
+      if (amtWritten < 0)
+        throw new IOException("Error writing " + writeLength + " bytes at offset " + written + " length=" + src.length); 
+      written += amtWritten;
+    } 
+    return written;
+  }
+  
+  public static int calculateCheckSum(byte[] bytes, int len, int pos) {
+    int chk = 0;
+    for (int ii = pos; ii < len - 1; ii++)
+      chk ^= bytes[ii]; 
+    return chk;
+  }
+  
+  public int contrast(int value) {
+    byte[] buffer = new byte[2];
+    buffer[0] = 36;
+    buffer[1] = (byte)value;
+    byte[] dataToSend = buildCommand(buffer, 3);
+    try {
+      return writeBulk(dataToSend, 5000);
+    } catch (IOException e) {
+      e.printStackTrace();
+      return 0;
+    } 
+  }
+  
+  public int brightness(int value) {
+    byte[] buffer = new byte[2];
+    buffer[0] = 37;
+    buffer[1] = (byte)value;
+    byte[] dataToSend = buildCommand(buffer, 3);
+    try {
+      return writeBulk(dataToSend, 5000);
+    } catch (IOException e) {
+      e.printStackTrace();
+      return 0;
+    } 
+  }
+  
+  private byte[] buildCommand(byte[] value, int len) {
+    int length = len + 2;
+    int size = 5 + length;
+    byte[] serializeData = new byte[size];
+    int index = 0;
+    serializeData[index++] = 1;
+    serializeData[index++] = 1;
+    serializeData[index++] = 5;
+    serializeData[index++] = 0;
+    serializeData[index++] = 5;
+    serializeData[index++] = 17;
+    System.arraycopy(value, 0, serializeData, index, value.length);
+    int chk2 = 0;
+    for (int ii = index - 1; ii < size - 1; ii++)
+      chk2 ^= serializeData[ii]; 
+    serializeData[9] = (byte)chk2;
+    return serializeData;
+  }
+}
