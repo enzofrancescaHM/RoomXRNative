@@ -1,0 +1,143 @@
+package com.oney.WebRTCModule;
+
+public final class Parameters
+{
+  public static final String ERGLASS_VENDOR_NAME = "EyeTechLab";
+  public static final int ERGLASS_PID = 41734;
+  public static final int ERGLASS_VID = 1155;
+  public static final int BYTE_MASK = 255;
+  public static final int SHORT_MASK = 65535;
+  public static final int USB_INT_CDC = 1;
+  public static final int USB_INT_FB = 3;
+  public static final int USB_ENDP_CDC_IN = 1;
+  public static final int USB_ENDP_CDC_OUT = 0;
+  public static final int USB_ENDP_FB_OUT = 0;
+  private static final int REQUEST_TYPE = 128;
+  private static final int REQUEST = 6;
+  private static final int REQ_VALUE = 512;
+  private static final int REQ_INDEX = 0;
+  private static final int LENGTH = 9;
+  private static final int TIMEOUT = 2000;
+  public static final byte RESPONSE = 2;
+  public static final byte eRCMD_BITMAP = 1;
+  public static final byte eRCMD_REGISTER = 17;
+  public static final byte REG_CONTRAST = 36;
+  public static final byte REG_BRIGHTNESS = 37;
+  public static final byte _CDC_VERSION = -127;
+  public static final byte _CDC_STATUS = -112;
+  public static final byte _CDC_GENERAL = -92;
+  public static final byte _CDC_RGB = -95;
+  public static final byte _CDC_HAPTIC = -94;
+  public static final boolean USE_UART6 = true;
+  public static final int SET_RTS_HIGH = 514;
+  public static final int FLOW_RTS_CTS = 256;
+  public static final int UART7_BAUD_RATE = 460800;
+  public static final int UART6_BAUD_RATE = 1000000;
+  public static final StopBit STOP_BIT = StopBit.ONE;
+  
+  public static final Parity PARITY = Parity.NONE;
+  
+  public static final int DATA_BITS = 8;
+  
+  public static final int HEADER_LEN = 5;
+  
+  public static final int BITMAP_COLOR = 32;
+  
+  public static final int WIDTH = 419;
+  
+  public static final int HEIGHT = 138;
+  
+  public static final int FILE_HEADER_SIZE = 14;
+  
+  public static final int INFO_HEADER_SIZE = 124;
+  
+  public static final int HEADER_SIZE = 138;
+  
+  public static final byte SOH = 1;
+  
+  public static final byte FLC = 1;
+  
+  public static final int MAX_BITMAP_WIDTH = 419;
+  
+  public static final int MAX_BITMAP_HEIGHT = 138;
+  
+  public static final int MAX_BITMAP_SIZE = 57960;
+  public static final int FB_IN_EP = 129;
+  public static final int FB_OUT_EP = 1;
+  public static final int FB_CMD_EP = 130;
+  public static final int CDC_IN_EP3 = 131;
+  public static final int CDC_OUT_EP3 = 3;
+  public static final int CDC_CMD_EP3 = 132;
+  public static final int BITMAP_HEADER_WIDTH_POS = 18;
+  public static final int BITMAP_HEADER_HEIGHT_POS = 22;
+  public static final int BITMAP_HEADER_COLOR_POS = 28;
+  public static final int SMARTEYEGLASS_ERR_OK = 0;
+  public static final int SMARTEYEGLASS_ERR_SYSTEM = -1;
+  public static final int SMARTEYEGLASS_ERR_MEM_SHORT = -2;
+  public static final int SMARTEYEGLASS_ERR_RCV_MEM_SHORT = -3;
+  public static final int SMARTEYEGLASS_ERR_REQ_DUPE = -4;
+  public static final int SMARTEYEGLASS_ERR_SENDING = -5;
+  public static final int SMARTEYEGLASS_ERR_SDP_STG_ERR = -6;
+  public static final int SMARTEYEGLASS_ERR_INIT_ERR = -7;
+  public static final int SMARTEYEGLASS_ERR_NOT_RCV_REQ = -8;
+  public static final int SMARTEYEGLASS_ERR_PARAM_LONG = -9;
+  public static final int SMARTEYEGLASS_ERR_RCV_BUF_ERR = -10;
+  public static final int SMARTEYEGLASS_ERR_QUEUE_FULL = -11;
+  public static final int SINGLE_TAP_1 = 1;
+  public static final int SINGLE_TAP_2 = 2;
+  public static final int SINGLE_TAP_3 = 3;
+  public static final int SINGLE_TAP_4 = 4;
+  public static final int DOUBLE_TAP_1 = 5;
+  public static final int DOUBLE_TAP_2 = 6;
+  public static final int DOUBLE_TAP_3 = 7;
+  public static final int DOUBLE_TAP_4 = 8;
+  public static final int SWIPE_DOWN = 9;
+  public static final int SWIPE_UP = 10;
+  public static final int[] tb_eRGlassKeys = new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+
+
+
+  
+  public enum StopBit
+  {
+    ONE(0),
+    OPF(1),
+    TWO(2);
+    
+    private final int value;
+    
+    StopBit(int value) {
+      this.value = value;
+    }
+     
+    public int valueOf() {
+        return this.value;
+    }
+  }
+
+
+
+  
+  public enum Parity
+  {
+    NONE(0),
+    ODD(1),
+    EVEN(2),
+    MARK(3),
+    SPACE(4);
+    
+    private final int value;
+    
+    Parity(int value) {
+      this.value = value;
+    }
+    
+    public int valueOf() {
+        return this.value;
+    }
+
+  }
+}
+
+
+

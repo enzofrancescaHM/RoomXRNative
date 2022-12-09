@@ -1,0 +1,663 @@
+package com.oney.WebRTCModule;
+
+import android.hardware.usb.UsbDevice;
+import android.hardware.usb.UsbDeviceConnection;
+import android.hardware.usb.UsbEndpoint;
+import android.hardware.usb.UsbInterface;
+import android.hardware.usb.UsbRequest;
+import android.util.Log;
+import androidx.annotation.RequiresApi;
+import java.nio.ByteBuffer;
+import java.util.concurrent.TimeoutException;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+import java.io.IOException;
+
+public class DeviceCdc
+{
+  private static final String TAG = "VARServ";
+  private static final int READ_BUFF_SIZE = 512;
+  private static final int DIVIDE_SIZE = 4096;
+  private static UsbEndpoint writeEndpoint = null;
+  private static UsbEndpoint readEndpoint = null;
+  
+  private static final int TIMEOUT = 1000;
+  
+  private static final int REQ_TYPE = 33;
+  
+  private static final int SET_LINE_CODING_REQ = 32;
+  
+  private static final int BUF_SIZE = 7;
+  private final UsbDeviceConnection mConnection;
+  private static final byte[] mReadBuffer = new byte[1000];
+  
+  private static final byte[] led = new byte[3];
+  
+  static String[] st_fb = new String[] { "Init", "Start", "Idle", "Header", "Checksum", "Payload", "Error" };
+  static String[] st_cdc = new String[] { "Init", "Start", "Idle", "Header", "Checksum", "Payload", "Reply", "Send", "Error" };
+  
+  private UsbInterface dataInterface = null;
+  private UsbInterface controlInterface = null;
+  
+  private final Object portLock = new Object();
+  
+  private static final String LINE_SEP = System.getProperty("line.separator");
+  
+  private static final float GI = 9.80665F;
+  
+  private static final float MAX_ACC = 19.6133F;
+  
+  private static final float MAX_GYR = 245.0F;
+  
+  private static final float MAX_MAG = 50.0F;
+  public static final float CONV_ACC = 5.985687E-4F;
+  public static final float CONV_GYR = 1.3049888E-4F;
+  public static final float CONV_MAG = 0.0015259255F;
+  private static final int STATUS_READ_TIME = 50;
+  private long statusReadTime = 0L;
+  private ErData statusRegister = null;
+  
+  private Lock lock = new ReentrantLock();
+
+  
+  public static class ErData
+  {
+    DeviceCdc.ErStatus erStatus;
+    
+    DeviceCdc.ErImu erImu;
+    DeviceCdc.ErKey keyb;
+    
+    public String toString() {
+      return "Status Fb: " + DeviceCdc.st_fb[this.erStatus.status_fb] + DeviceCdc.LINE_SEP + "Status Cdc: " + DeviceCdc.st_cdc[this.erStatus.status_cdc] + DeviceCdc
+        .LINE_SEP + "Imu on calibration: " + this.erStatus.imu_calibration + DeviceCdc
+        .LINE_SEP + "Imu calibrated: " + this.erStatus.imu_calibrated + DeviceCdc
+        .LINE_SEP + "Imu Acc. X: " + this.erImu.imu_accX + DeviceCdc
+        .LINE_SEP + "Imu Acc. Y: " + this.erImu.imu_accY + DeviceCdc
+        .LINE_SEP + "Imu Acc. Z: " + this.erImu.imu_accZ + DeviceCdc
+        .LINE_SEP + "Imu Gyro. X: " + this.erImu.imu_gyroX + DeviceCdc
+        .LINE_SEP + "Imu Gyro. Y: " + this.erImu.imu_gyroY + DeviceCdc
+        .LINE_SEP + "Imu Gyro. Z: " + this.erImu.imu_gyroZ + DeviceCdc
+        .LINE_SEP + "Imu Mag. X: " + this.erImu.imu_magX + DeviceCdc
+        .LINE_SEP + "Imu Mag. Y: " + this.erImu.imu_magZ + DeviceCdc
+        .LINE_SEP + "Imu Mag. Z: " + this.erImu.imu_magZ + DeviceCdc
+        .LINE_SEP + "Compass: " + this.erImu.compass + DeviceCdc
+        .LINE_SEP + "Imu Als: " + this.erImu.als + DeviceCdc
+        .LINE_SEP + "Error: " + this.erImu.error + DeviceCdc
+        .LINE_SEP;
+    }
+    
+    public DeviceCdc.ErKey getKey() {
+      return this.keyb;
+    }
+    
+    public DeviceCdc.ErImu getImu() {
+      return this.erImu;
+    }
+  }
+  
+  public static class ErStatus
+  {
+    char status_fb;
+    char status_cdc;
+    char error_active;
+    char imu_calibrated;
+    char imu_calibration;
+  }
+  
+  public static class ErVersion {
+    byte protocol_major;
+    byte protocol_minor;
+    byte boot_major;
+    byte boot_minor;
+    byte appl_major;
+    byte appl_minor;
+    byte appl_patch;
+    byte appl_day;
+    byte appl_month;
+    byte appl_year;
+    boolean error;
+    
+    public String toString() {
+      return "Protocol: " + this.protocol_major + "." + this.protocol_minor + DeviceCdc.LINE_SEP + "Boot: " + this.boot_major + "." + this.boot_minor + DeviceCdc
+        .LINE_SEP + "Appl. : " + this.appl_major + "." + this.appl_minor + "." + this.appl_patch + " - " + this.appl_day + "-" + this.appl_month + "-" + this.appl_year + DeviceCdc
+        
+        .LINE_SEP + "Error : " + this.error;
+    }
+
+    
+    public byte[] getProtocolVersion() {
+      return new byte[] { this.protocol_major, this.protocol_minor };
+    }
+    
+    public byte[] getBootVersion() {
+      return new byte[] { this.boot_major, this.boot_minor };
+    }
+    
+    public byte[] getApplicationVersion() {
+      return new byte[] { this.appl_major, this.appl_minor, this.appl_patch, this.appl_day, this.appl_month, this.appl_year };
+    }
+  }
+  
+  public static class ErImu
+  {
+    public int imu_accX;
+    public int imu_accY;
+    public int imu_accZ;
+    public int imu_gyroX;
+    public int imu_gyroY;
+    public int imu_gyroZ;
+    public int imu_magX;
+    public int imu_magY;
+    public int imu_magZ;
+    int als;
+    int compass;
+    boolean error;
+  }
+  
+  public static class ErKey
+  {
+    int key_pressed;
+    boolean error;
+    
+    public String toString() {
+      return String.valueOf(this.key_pressed);
+    }
+    
+    public int getKeyPressed() {
+      int key_pres = this.key_pressed;
+      this.key_pressed = 0;
+      return key_pres;
+    }
+  }
+
+  
+  public DeviceCdc(UsbDeviceConnection connection, UsbDevice device_p) {
+    this.mConnection = connection;
+    
+    int interfaceCount = device_p.getInterfaceCount();
+    
+    for (int index = 0; index < interfaceCount; index++) {
+      UsbInterface i = device_p.getInterface(index);
+      
+      if (i.getInterfaceClass() == 10) {
+        this.dataInterface = i;
+      } else if (i.getInterfaceClass() == 2) {
+        this.controlInterface = i;
+      } 
+    } 
+    
+    if (this.dataInterface != null && this.controlInterface != null) {
+      if (!open()) {
+        Log.d("VARServ", "DeviceCdc opening: FAILED");
+      }
+      else{
+        Log.d("VARServ", "DeviceCdc opening: SUCCESS");
+      }
+    } else if (device_p != null) {
+      assignEndPoint(device_p);
+    } 
+    
+    if (!setLineCoding2()) {
+      Log.d("VARServ", "SetLineCoding: FAILED");
+    }
+    else{
+      Log.d("VARServ", "SetLineCoding: SUCCESS");
+    }
+  }
+
+
+  
+  private void assignEndPoint(UsbDevice device) {
+    UsbInterface iCdc = device.getInterface(1);
+    UsbEndpoint uep2 = iCdc.getEndpoint(1);
+    
+    assign(uep2, 2);
+    
+    UsbEndpoint uep3 = iCdc.getEndpoint(0);
+    assign(uep3, 3);
+  }
+
+  
+  private void assign(UsbEndpoint endpoint, int epDest) {
+    if (endpoint != null) {
+      int dir = endpoint.getDirection();
+      int type = endpoint.getType();
+      
+      if (dir == 128 && type == 3 && epDest == 2) {
+        readEndpoint = endpoint;
+      }
+      
+      if (dir == 0 && type == 3 && epDest == 3) {
+        writeEndpoint = endpoint;
+      }
+    } 
+  }
+  
+  public boolean open() {
+    synchronized (this.portLock) {
+      if (!this.mConnection.claimInterface(this.dataInterface, true)) {
+        return false;
+      }
+      
+      if (!this.mConnection.claimInterface(this.controlInterface, true)) {
+        return false;
+      }
+      
+      int count = this.dataInterface.getEndpointCount();
+      for (int index = 0; index < count; index++) {
+        UsbEndpoint p = this.dataInterface.getEndpoint(index);
+        int dir = p.getDirection();
+        
+        if (dir == 0) {
+          writeEndpoint = p;
+        } else if (dir == 128) {
+          readEndpoint = p;
+        } 
+      } 
+      
+      boolean result = (writeEndpoint != null && readEndpoint != null);
+      if (!result) {
+        StringBuilder builder = new StringBuilder();
+        
+        if (writeEndpoint == null) {
+          builder.append("Write Endpoint");
+        }
+        
+        if (readEndpoint == null) {
+          if (builder.length() > 0) {
+            builder.append(" and ");
+          }
+          
+          builder.append("Read Endpoint");
+        } 
+      } 
+      
+      return result;
+    } 
+  }
+
+  
+  public void close() {
+    synchronized (this.portLock) {
+      
+      if (this.dataInterface != null) this.mConnection.releaseInterface(this.dataInterface); 
+      if (this.controlInterface != null) this.mConnection.releaseInterface(this.controlInterface);
+    
+    } 
+  }
+  
+  public boolean setLineCoding() {
+    ByteBuffer buffer = ByteBuffer.allocate(7);
+
+    
+    buffer.putInt(1000000);
+
+
+
+    
+    buffer.put((byte)Parameters.STOP_BIT.valueOf());
+    buffer.put((byte)Parameters.PARITY.valueOf());
+    buffer.put((byte)8);
+    
+    return (this.mConnection.controlTransfer(33, 32, 0, 0, buffer.array(), 0, buffer.capacity(), 1000) == 7);
+  }
+
+  public boolean setLineCoding2() {
+    ByteBuffer allocate = ByteBuffer.allocate(7);
+    allocate.putInt(Parameters.UART6_BAUD_RATE);
+    allocate.put((byte) Parameters.STOP_BIT.valueOf());
+    allocate.put((byte) Parameters.PARITY.valueOf());
+    allocate.put((byte) 8);
+    return this.mConnection.controlTransfer(33, 32, 0, 0, allocate.array(), 0, allocate.capacity(), 1000) == 7;
+}
+
+  
+  public int write(byte[] data, int length) throws UsbException {
+    if (this.mConnection == null) throw new UsbException("no connection available");
+    
+    int sentSize = 0;
+    
+    while (sentSize < length) {
+      int size = Math.min(length - sentSize, 4096);
+      int ret = this.mConnection.bulkTransfer(writeEndpoint, data, sentSize, size, 1000);
+      
+      if (ret < 0) {
+        sentSize = ret;
+        
+        break;
+      } 
+      sentSize += ret;
+    } 
+    
+    return sentSize;
+  }
+
+  
+  public int read(byte[] data) throws UsbException {
+    if (this.mConnection == null) throw new UsbException("no connection available");
+    
+    if (data == null) return -1;
+    
+    return this.mConnection.bulkTransfer(readEndpoint, data, data.length, 1000);
+  }
+
+  
+  @RequiresApi(api = 26)
+  private byte[] writeInt(byte[] src, int timeoutMillis) throws UsbException {
+    UsbRequest request = write(src);
+    return read(request);
+  }
+
+  
+  @RequiresApi(api = 26)
+  public byte[] read(UsbRequest outRequest) throws UsbException {
+    if (this.mConnection == null) throw new UsbException("no connection available");
+    
+    ByteBuffer buffer = ByteBuffer.allocate(512);
+    
+    if (outRequest.equals(this.mConnection.requestWait())) {
+      UsbRequest inRequest = new UsbRequest();
+      inRequest.initialize(this.mConnection, readEndpoint);
+      
+      if (inRequest.queue(buffer)) {
+        try {
+          this.mConnection.requestWait(1000L);
+        } catch (TimeoutException e) {
+          e.printStackTrace();
+        } 
+        
+        return buffer.array();
+      } 
+    } 
+    
+    return null;
+  }
+
+  
+  @RequiresApi(api = 26)
+  public UsbRequest write(byte[] command) throws UsbException {
+    if (this.mConnection == null) throw new UsbException("no connection available");
+    
+    ByteBuffer buffer = ByteBuffer.allocate(command.length);
+    
+    UsbRequest outRequest = new UsbRequest();
+    outRequest.initialize(this.mConnection, writeEndpoint);
+    
+    buffer.put(command);
+    outRequest.queue(buffer);
+    
+    return outRequest;
+  }
+  
+  public boolean readStatus() throws UsbException {
+    long time_since_epoch = System.currentTimeMillis();
+    
+    int key = 0;
+    if (time_since_epoch - this.statusReadTime > 50L) {
+      
+      if (readRegister((byte)-112)) {
+        this.statusReadTime = time_since_epoch;
+        if (this.statusRegister != null) {
+          key = this.statusRegister.keyb.key_pressed;
+        }
+        this.statusRegister = decodeImu();
+        
+        if (key != 0 && this.statusRegister.keyb.key_pressed == 0) {
+          this.statusRegister.keyb.key_pressed = key;
+        }
+        return true;
+      } 
+      return false;
+    } 
+    
+    return true;
+  }
+  
+  /*public ErKey readKey() throws UsbException {
+    if (readStatus()) return this.statusRegister.getKey();
+    
+    throw new UsbException("Status Register reading failure");
+  }
+  */
+
+  public ErKey readKey() throws UsbException {
+    if (write2(new byte[]{1, 1, 2, 0, 2, -112, -112, 0, 0}, 0, 9) > 0) {
+        read2(mReadBuffer);
+    }
+    return decodeImu(/*mReadBuffer*/).getKey();
+}
+
+public int write2(byte[] bArr, int i, int i2) {
+  int i3 = 0;
+  while (i3 < i2) {
+      int i4 = i2 - i3;
+      int bulkTransfer = this.mConnection.bulkTransfer(writeEndpoint, bArr, i3, i4 < 4096 ? i4 : 4096, 1000);
+      if (bulkTransfer < 0) {
+          return bulkTransfer;
+      }
+      i3 += bulkTransfer;
+  }
+  return i3;
+}
+
+public int read2(byte[] bArr) {
+  if (bArr == null) {
+      return -1;
+  }
+  return this.mConnection.bulkTransfer(readEndpoint, bArr, bArr.length, 0);
+}
+
+
+
+
+  public boolean readRegister(byte addrReg) throws UsbException {
+    byte[] dataToWrite;
+    switch (addrReg) {
+      case -112:
+        dataToWrite = new byte[] { 1, 1, 2, 0, 2, -112, -112, 0, 0 };
+        
+        this.lock.lock();
+        
+        if (this.mConnection != null && 
+          write(dataToWrite, dataToWrite.length) > 0) {
+          if (read(mReadBuffer) < 0) {
+            Log.d("VARServ", "readRegister: FAILED");
+            this.lock.unlock();
+            return false;
+          } 
+          this.lock.unlock();
+          return true;
+        } 
+        
+        this.lock.unlock();
+        return false;
+    } 
+    return false;
+  }
+
+
+  
+  public ErImu readImu() throws UsbException {
+    if (readStatus()) return this.statusRegister.getImu();
+    
+    throw new UsbException("Status Register reading failure");
+  }
+
+  
+  public ErVersion readVersion() throws UsbException {
+    byte[] dataToWrite = { 1, 1, 2, 0, 2, -127, -127, 0, 0 };
+    
+    if (write(dataToWrite, dataToWrite.length) > 0 && 
+      read(mReadBuffer) < 0) {
+      Log.d("VARServ", "readVersion: FAILED");
+    }
+
+    
+    return decodeVersion();
+  }
+
+  public String readVersion2() throws UsbException {
+    if (write2(new byte[]{1, 1, 2, 0, 2, -127, -127, 0, 0}, 0, 9) > 0) {
+        read2(mReadBuffer);
+    }
+    return decodeVersion().toString();
+}
+
+
+  
+  public void setVibration(int duration) throws UsbException {
+    byte[] data = new byte[4];
+
+    
+    data[0] = 1;
+    data[1] = 0;
+    int value = (char)duration;
+    data[2] = (byte)value;
+    data[3] = (byte)(value >> 8);
+    
+    byte[] dataToWrite = { 1, 1, 6, 0, 6, -94, data[0], data[1], data[2], data[3], 72, 0, 0 };
+
+    
+    int chk2 = calculateCheckSum(dataToWrite, 11, 5);
+    dataToWrite[10] = (byte)chk2;
+    
+    if (write(dataToWrite, dataToWrite.length) > 0 && 
+      read(mReadBuffer) < 0) {
+      Log.d("VARServ", "setVibration: FAILED");
+    }
+  }
+
+
+  
+  public static int calculateCheckSum(byte[] bytes, int len, int pos) {
+    int chk = 0;
+    
+    for (int ii = pos; ii < len - 1; ii++) {
+      chk ^= bytes[ii];
+    }
+    
+    return chk;
+  }
+
+  
+  private ErStatus decodeStatus(int status) {
+    int st = status;
+    ErStatus ers = new ErStatus();
+    ers.status_fb = (char)(st & 0xF);
+    st >>= 4;
+    ers.status_cdc = (char)(st & 0xF);
+    st >>= 4;
+    ers.error_active = (char)(st & 0xF);
+    st >>= 1;
+    ers.imu_calibrated = (char)(st & 0xF);
+    st >>= 1;
+    ers.imu_calibration = (char)(st & 0xF);
+    
+    return ers;
+  }
+
+  
+  private ErVersion decodeVersion() {
+    byte[] data = new byte[mReadBuffer.length];
+    System.arraycopy(mReadBuffer, 6, data, 0, data.length - 6);
+    
+    ErVersion erVersion = new ErVersion();
+    erVersion.protocol_major = data[0];
+    erVersion.protocol_minor = data[1];
+    erVersion.boot_major = data[2];
+    erVersion.boot_minor = data[3];
+    erVersion.appl_major = data[4];
+    erVersion.appl_minor = data[5];
+    erVersion.appl_patch = data[6];
+    erVersion.appl_day = data[7];
+    erVersion.appl_month = data[8];
+    erVersion.appl_year = data[9];
+    
+    return erVersion;
+  }
+
+  
+  public ErData decodeImu() {
+    byte[] data = new byte[mReadBuffer.length];
+    System.arraycopy(mReadBuffer, 6, data, 0, data.length - 6);
+    
+    int[] key = new int[4];
+    int value = data[0] + (data[1] << 8) + (data[2] << 16) + (data[3] << 24);
+    int status = value;
+    
+    ErKey keyb = new ErKey();
+    ErImu imu = new ErImu();
+    ErData erd = new ErData();
+    
+    keyb.key_pressed = 0;
+    keyb.error = false;
+    erd.erStatus = decodeStatus(status);
+    
+    value = data[4] + (data[5] << 8);
+    imu.imu_accX = value;
+    value = data[6] + (data[7] << 8);
+    imu.imu_accY = value;
+    value = data[8] + (data[9] << 8);
+    imu.imu_accZ = value;
+    value = data[10] + (data[11] << 8);
+    imu.imu_gyroX = value;
+    value = data[12] + (data[13] << 8);
+    imu.imu_gyroY = value;
+    value = data[14] + (data[15] << 8);
+    imu.imu_gyroZ = value;
+    value = data[16] + (data[17] << 8);
+    imu.imu_magX = value;
+    value = data[18] + (data[19] << 8);
+    imu.imu_magY = value;
+    value = data[20] + (data[21] << 8);
+    imu.imu_magZ = value;
+    value = data[22] + (data[23] << 8);
+    imu.als = value;
+    
+    value = data[24];
+    key[0] = (char)value;
+    value = data[25];
+    key[1] = (char)value;
+    value = data[26];
+    key[2] = (char)value;
+    value = data[27];
+    key[3] = (char)value;
+    value = data[28] + (data[29] << 8);
+    
+    imu.compass = value;
+    keyb.key_pressed = 0;
+    
+    for (int ii = 0; ii < 4; ii++) {
+      if (key[ii] > 0) {
+        keyb.key_pressed = Parameters.tb_eRGlassKeys[ii];
+      }
+      
+      if ((key[ii] & 0x10) > 0) {
+        keyb.key_pressed = Parameters.tb_eRGlassKeys[ii + 4];
+      }
+      
+      if ((key[ii] & 0x20) > 0)
+      {
+        keyb.key_pressed = Parameters.tb_eRGlassKeys[8];
+      }
+      
+      if ((key[ii] & 0x40) > 0)
+      {
+        keyb.key_pressed = Parameters.tb_eRGlassKeys[9];
+      }
+      
+      key[ii] = key[ii] & 0x1F;
+    } 
+    
+    erd.erImu = imu;
+    erd.keyb = keyb;
+    
+    return erd;
+  }
+}
+
+
+
+
+
+

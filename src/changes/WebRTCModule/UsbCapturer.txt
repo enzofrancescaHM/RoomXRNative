@@ -31,6 +31,11 @@ import java.util.concurrent.Executors;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import com.serenegiant.usb.IFrameCallback;
 import com.serenegiant.usb.USBMonitor;
@@ -65,12 +70,20 @@ public class UsbCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
 
     boolean mBound             = false;
 
-    // Test write
     public UsbManager mUsbManager = null;
     public UsbDeviceConnection connection;
-    public DeviceFb dFb;
+    public DeviceFb dFb = null;
+    public DeviceCdc dCdc = null;
     public UsbDevice device = null;
 
+    private Timer timer = null;
+    private Lock lock = new ReentrantLock();
+    boolean isLocked = false;
+
+    public enum writeStatus {
+        SUCCESS,
+        FAIL;
+    }
 
     public UsbCapturer(Context context, SurfaceViewRenderer svVideoRender) {
 
@@ -192,28 +205,33 @@ public class UsbCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
                                 Log.d("USB-CAMERA DISPLAY", "Connection done!");
                                 //this.connected = true;
                                 Log.e("name display: ", device.getDeviceName());
+
+                                // initialize Univet Display Peripheral
                                 if (dFb == null) {
                                     dFb = new DeviceFb(connection, device);
-                                    //Bitmap bitmap = Bitmap.createBitmap(1280, 720, Bitmap.Config.ARGB_8888);
-                                    //bitmap.eraseColor(Color.WHITE);
-                                    //dFb.writeString("Holomask");
-                                    //dFb.writeImage(bitmap);
-
-                                    //Bitmap textAsBitmap = dFb.textAsBitmap("holomask", 12.0f, 255);
-
-
-                                    /*Paint paint = new Paint(1);
-                                    paint.setTextSize(120);
-                                    paint.setColor(Color.WHITE);
-                                    paint.setTextAlign(Paint.Align.LEFT);
-                                    float f2 = -paint.ascent();
-                                    Bitmap createBitmap = Bitmap.createBitmap(1280, 720, Bitmap.Config.ARGB_8888);
-                                    createBitmap.eraseColor(Color.BLACK);
-                                    new Canvas(createBitmap).drawText(" - holomask - ", 0.0f, f2, paint);*/
 
                                     Bitmap createBitmap = UnivetUtils.TextToBitmap("Univet - Holomask");
 
                                     dFb.writeImage(createBitmap,0,false);
+                                }
+
+                                // Initialize Univet IMU and Touch Peripherals
+                                if(dCdc == null){
+                                    Log.d("VARServ", "dCdc created!");
+                                    dCdc = new DeviceCdc(connection, device);
+
+                                    
+                                    try{
+                                        String version = dCdc.readVersion2();
+                                        Log.d("VARServ", version);    
+                                    }
+                                    catch(UsbException e){
+                                        Log.d("VARServ", "readVersion: Reading Version FAILED");
+                                        e.printStackTrace();
+                                    }
+
+
+                                    //EnableTouchpad(device); // this take too much memory, must be invetigated...
                                 }
                             }
                     }
@@ -323,6 +341,109 @@ public class UsbCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
     public void onFrame(ByteBuffer frame) {
     }
 
+
+
+    private writeStatus getProtocolVersion(/*byte[] values*/) {
+        //if (values.length != 2)
+        //  return writeStatus.FAIL;
+    
+        if (/*this.connection != null && this.device != null*/true) {
+          try {
+            lock.lock();
+            byte[] protocolVersion = this.dCdc.readVersion().getProtocolVersion();
+    
+            //values[0] = protocolVersion[0];
+            //values[1] = protocolVersion[1];
+            Log.d("VARServ", "getProtocolVersion: Reading ProtocolVersion SUCCESS");
+            return writeStatus.SUCCESS;
+          } catch (UsbException e) {
+            Log.d("VARServ", "getProtocolVersion: Reading ProtocolVersion FAILED");
+            e.printStackTrace();
+          } finally {
+            lock.unlock();
+          }
+        }
+        Log.d("VARServ", "getProtocolVersion: Reading ProtocolVersion FAILED");
+        return writeStatus.FAIL;
+      }
+
+    private void EnableTouchpad(UsbDevice device) {
+        if (true) {
+          if (timer == null) {
+    
+            int counterTouchpadEvent = 20;
+            boolean isTouchpadAvailable = false;
+    
+            while (counterTouchpadEvent-- > 0) {
+              try {
+                lock.lock();
+                isLocked = true;
+                if (dCdc.readRegister((byte) -112) && dCdc.decodeImu().getKey().getKeyPressed() == 0) {
+                    Log.d("VARServ", "TouchPad Available!");
+                    isTouchpadAvailable = true;
+                  lock.unlock();
+                  isLocked = false;
+                  break;
+                }
+              } catch (UsbException e) {
+                e.printStackTrace();
+                break;
+              } finally {
+                if(isLocked){
+                    lock.unlock();
+                    isLocked = false;
+                }
+                
+              }
+    
+            }
+    
+            if (isTouchpadAvailable) {
+
+              timer = new Timer();
+              timer.schedule(new TimerTask() {
+                public void run() {
+                  try {
+                    lock.lock();
+                    isLocked = true;
+                    if (dCdc != null) {
+                      int key_pressed = dCdc.readKey().getKeyPressed();
+    
+                      if (key_pressed > 0) {
+                        if (key_pressed <= 4) {
+                            Log.d("KEYPRESSED","SINGLETAP");
+                          //VisionARService.this.touchpadListener.onKeyChanged(VisionARService.touchpadEvent.SINGLE_TAP);
+                        } else if (key_pressed <= 8) {
+                            Log.d("KEYPRESSED","DOUBLETAP");
+                          //VisionARService.this.touchpadListener.onKeyChanged(VisionARService.touchpadEvent.DOUBLE_TAP);
+                        } else if (key_pressed == 9) {
+                            Log.d("KEYPRESSED","SWIPEDOWN");
+                          //VisionARService.this.touchpadListener.onKeyChanged(VisionARService.touchpadEvent.SWIPE_DOWN);
+                        } else if (key_pressed == 10) {
+                            Log.d("KEYPRESSED","SWIPEUP");
+                          //VisionARService.this.touchpadListener.onKeyChanged(VisionARService.touchpadEvent.SWIPE_UP);
+                        }
+                      }
+                    }
+                  } catch (UsbException e) {
+                    e.printStackTrace();
+                  } finally {
+                    if(isLocked){
+                        lock.unlock();
+                        isLocked = false;
+                    }
+                    
+                  }
+                }
+              }, 0L, 250L);
+              Log.d("VARServ", "StartTouchpad: SUCCESS");
+            } else {
+              Log.d("VARServ", "StartTouchpad: FAILED");
+            }
+          }
+        }
+      }
+
     
     ///////////////////////////////////////////////
     //        External Functions                 //
@@ -330,6 +451,7 @@ public class UsbCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
 
     // this function writes a string on the display
     public void testWrite(String mystring){
+        //Log.d("testWrite start...","hey!");
          if(dFb != null)
          {
             Bitmap createBitmap = UnivetUtils.TextToBitmap(mystring);
@@ -341,5 +463,14 @@ public class UsbCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
     public void showLoopBackCamera(boolean showLoop) {
         //Log.d("showLoopBackCamera start...","hey!");
         showLoopBack = showLoop;
+    }  
+
+    // show a bitmap on the display
+    public void showBitmap(Bitmap bitmapToShow) {
+        //Log.d("showBitmap start...","hey!");
+        if(dFb != null)
+        {
+            dFb.writeImage(bitmapToShow,0,false);
+        }
     }  
 }

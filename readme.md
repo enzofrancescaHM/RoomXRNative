@@ -129,4 +129,7 @@ A normal external USB Camera works as is with no usb external libraries, i.e. th
 So, to use a normal USB UVC Compatible camera it is enough to click change camera in order to switch to the external one
 
 
-
+WHITEBOARD CONSIDERATIONS
+=========================
+In order to reduce bandwidth passing between the peers we would like to sync the freeze frame on Remote Expert with the freeze frame   
+on Glasses so to send only what is drow on the whiteboard (vector data, very lightwheigth).
