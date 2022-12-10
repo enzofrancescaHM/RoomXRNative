@@ -1,0 +1,11 @@
+package com.oney.WebRTCModule;
+
+public class UsbException extends Exception {
+  private static final long serialVersionUID = 1435934647925346539L;
+  
+  public UsbException(String msg) {
+    super(msg);
+  }
+}
+
+
