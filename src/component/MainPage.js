@@ -13,6 +13,9 @@ import {SocketContext} from '../global/socket';
 import RoomClient from "./RoomClient";
 import Orientation from 'react-native-orientation-locker';
 
+// SKIA import
+import {Canvas, Circle, Group, Drawing, Skia} from "@shopify/react-native-skia";
+
 
 
 function MainPage() {
@@ -338,6 +341,15 @@ function MainPage() {
             backgroundColor: '#FF000000', 
             zIndex:1 
         },
+        whiteBoard: { 
+            position: "absolute", 
+            left: 0, 
+            top: 0, 
+            width: "100%", 
+            height: "100%", 
+            backgroundColor: '#FF000099', 
+            zIndex:1 
+        },
        
       });
 
@@ -412,6 +424,13 @@ function MainPage() {
                     streamURL={state.localstream == "empty" ? "" : state.localstream.toURL()}
                     zOrder={0}>
                 </RTCView>
+                <Canvas style={styles.whiteBoard}>
+                    <Group blendMode="multiply">
+                        <Circle cx={84} cy={84} r={84} color="cyan" />
+                        <Circle cx={256 - 84} cy={84} r={84} color="magenta" />
+                        <Circle cx={256/2} cy={256 - 84} r={84} color="yellow" />
+                    </Group>
+                </Canvas>
                 { (state.remotestream != "empty") && 
                     <RTCView
                         style={styles.remoteStream}

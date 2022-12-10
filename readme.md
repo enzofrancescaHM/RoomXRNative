@@ -53,7 +53,6 @@ the apk is now in: yourProject/android/app/build/outputs/apk/debug/app-debug.apk
 - Implement Device Chooser (camera and audio)...
 - Implement QRCode Reader
 - test on iOS
-- implement whiteboard using: https://github.com/wobsoriano/rn-perfect-sketch-canvas
 - implement login
 - implement room choice
 - explore expo compilation
@@ -63,6 +62,7 @@ the apk is now in: yourProject/android/app/build/outputs/apk/debug/app-debug.apk
 ## In Progress:
 
 - implement chat with: https://github.com/FaridSafi/react-native-gifted-chat
+- implement whiteboard using: https://github.com/wobsoriano/rn-perfect-sketch-canvas
 
 
 ## Done:
@@ -90,6 +90,9 @@ the apk is now in: yourProject/android/app/build/outputs/apk/debug/app-debug.apk
 
 ### Ver. 0.2 Alpha:
 - Loopback Univet Camera on Univet Display
+- IMU Univet Glasses implemented with touchpad
+- SKIA Canvas implemented
+
 
 
 

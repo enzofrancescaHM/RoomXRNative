@@ -10,7 +10,8 @@
     "test": "jest",
     "lint": "eslint .",
     "build-android-debug-prep": "react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res",
-    "build-android-debug-real": "cd android && ./gradlew assembleDebug"
+    "build-android-debug-real": "cd android && ./gradlew assembleDebug",
+    "copy-changes-after-update": "applychanges.bat"
   },
   "dependencies": {
     "@react-navigation/native": "^6.0.12",
@@ -24,7 +25,8 @@
     "react-native-static-safe-area-insets": "^2.2.0",
     "react-native-usb": "^0.1.1",
     "react-native-vector-icons": "^9.2.0",
-    "react-native-vision-camera": "^2.14.1"
+    "react-native-vision-camera": "^2.14.1",
+    "rn-perfect-sketch-canvas": "^0.3.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
