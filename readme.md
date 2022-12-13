@@ -57,12 +57,11 @@ the apk is now in: yourProject/android/app/build/outputs/apk/debug/app-debug.apk
 - implement room choice
 - explore expo compilation
 - implement voice recognition with: pocketsphynx
+- implement chat with: https://github.com/FaridSafi/react-native-gifted-chat
 
 
 ## In Progress:
-
-- implement chat with: https://github.com/FaridSafi/react-native-gifted-chat
-- implement whiteboard using: https://github.com/wobsoriano/rn-perfect-sketch-canvas
+- implement resolution independent whiteboard
 
 
 ## Done:
@@ -78,6 +77,7 @@ the apk is now in: yourProject/android/app/build/outputs/apk/debug/app-debug.apk
 - Implement Guest1 & Guest2 capabilities
 - Implement loopback camera on main display Univet
 - [FIX] investigate why closeproducer is not called
+- implement whiteboard using: https://github.com/wobsoriano/rn-perfect-sketch-canvas
 
 
 ## Changelist:
@@ -92,6 +92,10 @@ the apk is now in: yourProject/android/app/build/outputs/apk/debug/app-debug.apk
 - Loopback Univet Camera on Univet Display
 - IMU Univet Glasses implemented with touchpad
 - SKIA Canvas implemented
+- Basic WhiteBoard implementation (draw and clear)
+
+### Ver 0.3 Alpha:
+
 
 
 
@@ -140,3 +144,48 @@ So, to use a normal USB UVC Compatible camera it is enough to click change camer
 
 In order to reduce bandwidth passing between the peers we would like to sync the freeze frame on Remote Expert with the freeze frame   
 on Glasses so to send only what is drow on the whiteboard (vector data, very lightwheigth).
+
+### Strokes definition
+```
+{
+  "version":"5.2.4",
+  "objects":[
+    {
+      "type":"path",
+      "version":"5.2.4",
+      "originX":"left",
+      "originY":"top",
+      "left":273.5,
+      "top":138.25,
+      "width":47.01,
+      "height":24.01,
+      "fill":null,
+      "stroke":"#FFFFFFFF",
+      "strokeWidth":3,
+      "strokeDashArray":null,
+      "strokeLineCap":"round",
+      "strokeDashOffset":0,
+      "strokeLineJoin":"round",
+      "strokeUniform":false,
+      "strokeMiterLimit":10,
+      "scaleX":1,
+      "scaleY":1,
+      "angle":0,
+      "flipX":false,
+      "flipY":false,
+      "opacity":1,
+      "shadow":null,
+      "visible":true,
+      "backgroundColor":"",
+      "fillRule":"nonzero",
+      "paintFirst":"fill",
+      "globalCompositeOperation":"source-over",
+      "skewX":0,
+      "skewY":0,
+      "path":[["M",322.003,139.747],["Q",322,139.75,321.5,140.25],["Q",321,140.75,319,141.75],["Q",317,142.75,315,143.75],["Q",313,144.75,309.5,146.75],["Q",306,148.75,302.5,150.25],["Q",299,151.75,296,153.75],["Q",293,155.75,288,157.75],["Q",283,159.75,280.5,160.75],["Q",278,161.75,276.5,162.75],["L",274.997,163.753]]
+    },
+    {"type":"path","version":"5.2.4","originX":"left","originY":"top","left":344.5,"top":229.25,"width":18.01,"height":14.01,"fill":null,"stroke":"#FFFFFFFF","strokeWidth":3,"strokeDashArray":null,"strokeLineCap":"round","strokeDashOffset":0,"strokeLineJoin":"round","strokeUniform":false,"strokeMiterLimit":10,"scaleX":1,"scaleY":1,"angle":0,"flipX":false,"flipY":false,"opacity":1,"shadow":null,"visible":true,"backgroundColor":"","fillRule":"nonzero","paintFirst":"fill","globalCompositeOperation":"source-over","skewX":0,"skewY":0,"path":[["M",364.003,230.747],["Q",364,230.75,363,231.75],["Q",362,232.75,360.5,233.75],["Q",359,234.75,357.5,236.25],["Q",356,237.75,354.5,239.25],["Q",353,240.75,351,241.75],["Q",349,242.75,347.5,243.75],["L",345.997,244.753]]},
+    {"type":"path","version":"5.2.4","originX":"left","originY":"top","left":395.5,"top":302.25,"width":27,"height":23,"fill":null,"stroke":"#FFFFFFFF","strokeWidth":3,"strokeDashArray":null,"strokeLineCap":"round","strokeDashOffset":0,"strokeLineJoin":"round","strokeUniform":false,"strokeMiterLimit":10,"scaleX":1,"scaleY":1,"angle":0,"flipX":false,"flipY":false,"opacity":1,"shadow":null,"visible":true,"backgroundColor":"","fillRule":"nonzero","paintFirst":"fill","globalCompositeOperation":"source-over","skewX":0,"skewY":0,"path":[["M",424.003,303.747],["Q",424,303.75,423.5,303.75],["Q",423,303.75,422,304.25],["Q",421,304.75,420.5,306.25],["Q",420,307.75,419.5,308.25],["Q",419,308.75,418,309.25],["Q",417,309.75,415.5,311.25],["Q",414,312.75,412.5,314.75],["Q",411,316.75,409,318.25],["Q",407,319.75,405.5,320.75],["Q",404,321.75,402.5,322.75],["Q",401,323.75,399.5,325.25],["Q",398,326.75,397.5,326.75],["L",397,326.75]]}
+  ]
+}
+```

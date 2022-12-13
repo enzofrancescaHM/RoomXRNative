@@ -511,6 +511,14 @@ function RoomClient() {
             'wbCanvasToJson',
             function (data) {
                 console.log('[RoomClientComp] Received whiteboard canvas JSON');
+                //console.log(data);
+
+              JsonToSkia(data);
+
+
+
+
+
                 //JsonToWbCanvas(data);
             }.bind(this),
         );
@@ -519,7 +527,7 @@ function RoomClient() {
             'whiteboardAction',
             function (data) {
                 console.log('[RoomClientComp] Whiteboard action', data);
-                //whiteboardAction(data, false);
+                whiteboardAction(data, false);
             }.bind(this),
         );
 
@@ -538,6 +546,81 @@ function RoomClient() {
             }.bind(this),
         );
     }
+
+
+    function whiteboardAction(data, emit){
+        if(emit == true)
+        {
+            console.log("not implemented yet...");
+        }
+        else
+        {
+            switch (data.action) {
+                case 'bgcolor':
+                    //wbCanvasBackgroundColor(data.color);
+                    console.log("not implemented yet...");
+                    break;
+                case 'undo':
+                    //wbCanvasUndo();
+                    console.log("not implemented yet...");
+                    break;
+                case 'redo':
+                    //wbCanvasRedo();
+                    console.log("not implemented yet...");
+                    break;
+                case 'clear':
+                    dispatch({type: 'CLEAR_PATHS', payload:""});
+                    break;
+                case 'close':
+                    //if (wbIsOpen) toggleWhiteboard();
+                    console.log("not implemented yet...");
+                    break;
+                //...
+            }
+        }
+    }
+
+    function JsonToSkia(data){
+        // the data parameter is a complex json describing a path
+        // we can decode it and extract only the values we are
+        // interested on
+        var serialized = JSON.parse(data);
+        // print version so we are sure the object is serialized as json
+        console.log(serialized.version);
+        // parse the objects
+        serialized.objects.map((object) => (
+            dispatch({type: 'ADD_PATH', payload:{
+                path:FabricPathToSkiaPath(object.path),
+                id:Date.now() + Math.floor(Math.random() * 100) + 1,
+                color:object.stroke,
+                width:object.strokeWidth,
+            }})
+        ));      
+    }
+
+    
+    
+    /**
+     * we receive an object with this format:
+     * [["M",322.003,139.747],["Q",322,139.75,321.5,140.25],["Q",321,140.75,319,141.75],["L",274.997,163.753]]
+     * we must convert to this format:
+     * M 322.003 139.747 Q 322 139.75 321.5 140.25 Q 321 140.75 319 141.75 L 274.997 163.753
+     * @param {JSON} data 
+     * @returns the converted string
+     */
+    function FabricPathToSkiaPath(data){
+
+        var newdata = JSON.stringify(data);     // convert to string        
+        newdata = newdata.replace(/,/g , ' ');  // substitute comma with spaces
+        newdata = newdata.replace(/\[/g , '');  // get rid of open parenthesis        
+        newdata = newdata.replace(/\]/g , '');  // get rid of close parenthesis              
+        newdata = newdata.replace(/\"/g , '');  // get rid of extra characters
+        
+        return newdata;
+    }
+
+
+
     // ####################################################
     // START LOCAL AUDIO VIDEO MEDIA
     // ####################################################

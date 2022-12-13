@@ -12,11 +12,7 @@ import Store, {Context} from '../global/Store';
 import {SocketContext} from '../global/socket';
 import RoomClient from "./RoomClient";
 import Orientation from 'react-native-orientation-locker';
-
-// SKIA import
-import {Canvas, Circle, Group, Drawing, Skia} from "@shopify/react-native-skia";
-
-
+import { RoomBoard } from "./RoomBoard";
 
 function MainPage() {
     const mounted = useRef()
@@ -31,6 +27,40 @@ function MainPage() {
     const testChat = () => dispatch({ type: 'ADD_CHAT_MESSAGE', payload:"Messaggio di prova\n"}); 
     const clearChat = () => dispatch({ type: 'CLEAR_CHAT', payload:""});
     const scrollViewRef = useRef();
+    
+    const sayHello = () => {
+        
+        dispatch({type: 'CLEAR_PATHS',payload:""});
+
+    }
+
+    const addPath = () => {
+        
+        // draw a star (5 tips)
+        dispatch({type: 'ADD_PATH', payload:{
+            path:"M 128 0 L 168 80 L 256 93 L 192 155 L 207 244 L 128 202 L 49 244 L 64 155 L 0 93 L 88 80 L 128 0 Z",
+            id:Date.now() + Math.floor(Math.random() * 100) + 1,
+            color:"red",
+            width:3,
+        }});
+
+        // draw a triangle
+        dispatch({type: 'ADD_PATH', payload:{
+            path:"M 128 0 L 168 80 L 266 93 Z",
+            id:Date.now() + Math.floor(Math.random() * 100) + 1,
+            color:"white",
+            width:5
+        }});
+
+        // draw a path with two lines not closed
+        dispatch({type: 'ADD_PATH', payload:{
+            path:"M 528 0 L 168 80 L 266 93",
+            id:Date.now() + Math.floor(Math.random() * 100) + 1,
+            color:"blue",
+            width:5
+        }});
+    }
+
 
     // ####################################################
     // DYNAMIC SETTINGS
@@ -80,6 +110,24 @@ function MainPage() {
     function isComponetMounted() {
         if (!mounted.current) return false;
         return true;
+    }
+
+   
+
+    function testWhiteBoard(){
+        console.log("test whiteBoard");
+        if (canvasRef.current)
+        {
+            console.log("canvasref current is defined");
+            canvasRef.current.reset;
+        }
+        else
+        {
+            console.log("canvasref current not defined");
+        }
+        
+        //canvasRef.current?.addPoints([[250, 250]]);
+
     }
 
     async function requireUSBPermissions(){
@@ -347,7 +395,8 @@ function MainPage() {
             top: 0, 
             width: "100%", 
             height: "100%", 
-            backgroundColor: '#FF000099', 
+            backgroundColor: '#FF000099',
+            border: '#FF0000', 
             zIndex:1 
         },
        
@@ -415,6 +464,11 @@ function MainPage() {
                         enabled
                         onPress={clearChat}
                     />
+                    
+                    <Button onPress={() => sayHello()} title="Clean Draw" />
+      
+                    <Button onPress={() => addPath()} title="Test Path" />
+                    
                 </View>
                 <View style={styles.mainArea}>
                 <RTCView
@@ -424,13 +478,9 @@ function MainPage() {
                     streamURL={state.localstream == "empty" ? "" : state.localstream.toURL()}
                     zOrder={0}>
                 </RTCView>
-                <Canvas style={styles.whiteBoard}>
-                    <Group blendMode="multiply">
-                        <Circle cx={84} cy={84} r={84} color="cyan" />
-                        <Circle cx={256 - 84} cy={84} r={84} color="magenta" />
-                        <Circle cx={256/2} cy={256 - 84} r={84} color="yellow" />
-                    </Group>
-                </Canvas>
+                <RoomBoard
+                    containerStyle = {styles.whiteBoard}>
+                </RoomBoard>
                 { (state.remotestream != "empty") && 
                     <RTCView
                         style={styles.remoteStream}

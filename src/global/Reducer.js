@@ -101,6 +101,16 @@ const Reducer = (state, action) => {
                 ...state,
                 chat_array: []
             };
+        case 'ADD_PATH':
+            return{
+                ...state,
+                path_array: [...state.path_array, action.payload]
+            };
+        case 'CLEAR_PATHS':
+            return{
+                ...state,
+                path_array: []
+            };
     
         default:
             return state;

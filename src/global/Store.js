@@ -37,6 +37,7 @@ const initialState = {
     connected: false,
     usbcamera:false,
     chat_array: [],
+    path_array: [],
 
 };
 
