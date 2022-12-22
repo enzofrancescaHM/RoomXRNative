@@ -70,23 +70,23 @@ function MainPage() {
     //let isMobileDevice = true;
 
     useEffect(function componentDidMount() {
-        console.log("%c MainPage componetDidMount", "color:green;");
+        //console.log("%c MainPage componetDidMount", "color:green;");
         
         StatusBar.setHidden(true, 'none');
         Orientation.lockToLandscapeLeft();
 
         dispatch({type: 'SET_MEDIASOUPCLIENT', payload: mediasoupClient});
         return function componentWillUnmount() {
-            console.log("%c MainPage componetWillUnmount", "color:red")
+            //console.log("%c MainPage componetWillUnmount", "color:red")
         }
     }, [])
 
     useEffect(function componentDidMountAndCompontDidUpdate() {
-        console.log("%c MainPage componentDidMountAndCompontDidUpdate", "color:teal;")
+        //console.log("%c MainPage componentDidMountAndCompontDidUpdate", "color:teal;")
     })
 
     useEffect(function ComponentDidUpdateForCount() {
-        console.log("%c MainPage CompontDidUpdateForCount", "color:blue;")
+        //console.log("%c MainPage CompontDidUpdateForCount", "color:blue;")
     }, [count])
 
     useEffect(function runComponentDidUpdate() {
@@ -95,7 +95,7 @@ function MainPage() {
         }
         (function componentDidUpdate() {
             StatusBar.setHidden(true, 'none');
-            console.log("%c MainPage CompontDidUpdateForAnyVariable", "color:orange;")
+            //console.log("%c MainPage CompontDidUpdateForAnyVariable", "color:orange;")
         })()
     });
 
@@ -158,12 +158,8 @@ function MainPage() {
     async function createRoomClient(usbcameracase) {
 
         if (usbcameracase){
-            dispatch({ type: 'SET_USBCAMERA', payload:true});
-
-           
+            dispatch({ type: 'SET_USBCAMERA', payload:true});           
         }
-
-
 
         console.log('00 ----> init Socket.IO');
         console.log("[main page] first connect...socket id: " + socket.id);

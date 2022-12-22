@@ -58,6 +58,7 @@ the apk is now in: yourProject/android/app/build/outputs/apk/debug/app-debug.apk
 - explore expo compilation
 - implement voice recognition with: pocketsphynx
 - implement chat with: https://github.com/FaridSafi/react-native-gifted-chat
+- Evaluate disconnect and riconnect the Univet glasses cases, it should gracely manage those states
 
 
 ## In Progress:
@@ -78,6 +79,7 @@ the apk is now in: yourProject/android/app/build/outputs/apk/debug/app-debug.apk
 - Implement loopback camera on main display Univet
 - [FIX] investigate why closeproducer is not called
 - implement whiteboard using: https://github.com/wobsoriano/rn-perfect-sketch-canvas
+- Laser pointer
 
 
 ## Changelist:
@@ -94,8 +96,9 @@ the apk is now in: yourProject/android/app/build/outputs/apk/debug/app-debug.apk
 - SKIA Canvas implemented
 - Basic WhiteBoard implementation (draw and clear)
 
-### Ver 0.3 Alpha:
-
+### Ver. 0.3 Alpha:
+- Laser Pointer integrated
+- Basic image exchange on whiteboard
 
 
 
@@ -188,4 +191,107 @@ on Glasses so to send only what is drow on the whiteboard (vector data, very lig
     {"type":"path","version":"5.2.4","originX":"left","originY":"top","left":395.5,"top":302.25,"width":27,"height":23,"fill":null,"stroke":"#FFFFFFFF","strokeWidth":3,"strokeDashArray":null,"strokeLineCap":"round","strokeDashOffset":0,"strokeLineJoin":"round","strokeUniform":false,"strokeMiterLimit":10,"scaleX":1,"scaleY":1,"angle":0,"flipX":false,"flipY":false,"opacity":1,"shadow":null,"visible":true,"backgroundColor":"","fillRule":"nonzero","paintFirst":"fill","globalCompositeOperation":"source-over","skewX":0,"skewY":0,"path":[["M",424.003,303.747],["Q",424,303.75,423.5,303.75],["Q",423,303.75,422,304.25],["Q",421,304.75,420.5,306.25],["Q",420,307.75,419.5,308.25],["Q",419,308.75,418,309.25],["Q",417,309.75,415.5,311.25],["Q",414,312.75,412.5,314.75],["Q",411,316.75,409,318.25],["Q",407,319.75,405.5,320.75],["Q",404,321.75,402.5,322.75],["Q",401,323.75,399.5,325.25],["Q",398,326.75,397.5,326.75],["L",397,326.75]]}
   ]
 }
+```
+
+### Image definition
+```
+{
+  "angle": 0, 
+  "backgroundColor": "", 
+  "cropX": 0, "cropY": 0, 
+  "crossOrigin": null, 
+  "fill": "rgb(0,0,0)", 
+  "fillRule": "nonzero", 
+  "filters": [], 
+  "flipX": false, "flipY": false, 
+  "globalCompositeOperation": "source-over", 
+  "height": 30, 
+  "left": 131, 
+  "opacity": 1, 
+  "originX": "left", "originY": "top", 
+  "paintFirst": "fill", 
+  "scaleX": 2.62, "scaleY": 2.62, 
+  "shadow": null, 
+  "skewX": 0, "skewY": 0, 
+  "src": "data:image/png;base64,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", 
+  "stroke": null, "strokeDashArray": null, "strokeDashOffset": 0, "strokeLineCap": "butt", "strokeLineJoin": "miter", "strokeMiterLimit": 4, "strokeUniform": false, "strokeWidth": 0, 
+  "top": 78, 
+  "type": "image", 
+  "version": "5.2.4", 
+  "visible": true, 
+  "width": 30}
+```
+
+### Rect definition
+```
+{
+  "type":"rect",
+  "version":"5.2.4",
+  "originX":"left","originY":"top",
+  "left":145,"top":58.5,
+  "width":290,"height":194,
+  "fill":"#FFFFFF77",
+  "stroke":"#FFFFFFFF","strokeWidth":3,"strokeDashArray":null,"strokeLineCap":"butt","strokeDashOffset":0,"strokeLineJoin":"miter","strokeUniform":false,"strokeMiterLimit":4,
+  "scaleX":1,"scaleY":1,
+  "angle":0,
+  "flipX":false,"flipY":false,
+  "opacity":1,
+  "shadow":null,
+  "visible":true,
+  "backgroundColor":"",
+  "fillRule":"nonzero",
+  "paintFirst":"fill",
+  "globalCompositeOperation":"source-over",
+  "skewX":0,"skewY":0,
+  "rx":0,"ry":0}
+```
+
+### Ellipse defintion
+```
+ {
+  "type":"ellipse",
+  "version":"5.2.4",
+  "originX":"left","originY":"top",
+  "left":541,"top":221.5,
+  "width":226,"height":205,
+  "fill":"#FFFFFF77",
+  "stroke":"#FFFFFFFF","strokeWidth":3,"strokeDashArray":null,"strokeLineCap":"butt","strokeDashOffset":0,"strokeLineJoin":"miter","strokeUniform":false,"strokeMiterLimit":4,
+  "scaleX":1,"scaleY":1,
+  "angle":0,
+  "flipX":false,"flipY":false,
+  "opacity":1,
+  "shadow":null,
+  "visible":true,
+  "backgroundColor":"",
+  "fillRule":"nonzero",
+  "paintFirst":"fill",
+  "globalCompositeOperation":"source-over",
+  "skewX":0,"skewY":0,
+  "rx":113,"ry":102.5}
+```
+
+
+### Line definition
+```
+{
+  "type":"line",
+  "version":"5.2.4",
+  "originX":"left","originY":"top",
+  "left":65,"top":54.5,
+  "width":285,"height":204,
+  "fill":"#FFFFFFFF",
+  "stroke":"#FFFFFFFF","strokeWidth":3,"strokeDashArray":null,"strokeLineCap":"round","strokeDashOffset":0,"strokeLineJoin":"miter","strokeUniform":false,"strokeMiterLimit":4,
+  "scaleX":1,"scaleY":1,
+  "angle":0,
+  "flipX":false,"flipY":false,
+  "opacity":1,
+  "shadow":null,
+  "visible":true,
+  "backgroundColor":"",
+  "fillRule":"nonzero",
+  "paintFirst":"fill",
+  "globalCompositeOperation":"source-over",
+  "skewX":0,"skewY":0,
+  "x1":142.5,"x2":-142.5,"y1":-102,"y2":102
+  }
 ```

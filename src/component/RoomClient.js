@@ -6,6 +6,7 @@ import Store, { Context } from '../global/Store';
 import { SocketContext } from '../global/socket';
 import {setIsAudio, setIsVideo, setIsScreen, getAudioConstraints, getVideoConstraints} from "../global/constraints"
 import {getScreenConstraints, getEncoding, getMapKeyByValue, getVideoConstraintsUSB} from "../global/constraints"
+import { Skia, useImage } from "@shopify/react-native-skia";
 let chatMessage = "chatMessage";
 let receiveFileInfo = "receiveFileInfo";
 let receiveFileDiv = "receiveFileDiv";
@@ -19,16 +20,16 @@ let receiveFilePercentage = "receiveFilePercentage";
 function RoomClient() {
 
     useEffect(function componentDidMount() {
-        console.log("%c [RoomClientComp] componetDidMount", "color:green;");
+        //console.log("%c [RoomClientComp] componetDidMount", "color:green;");
         StatusBar.setHidden(true, 'none');
         initComp();
         return function componentWillUnmount() {
-            console.log("%c [RoomClientComp] componetWillUnmount", "color:red")
+            //console.log("%c [RoomClientComp] componetWillUnmount", "color:red")
         }
     }, [])
 
     useEffect(function componentDidMountAndCompontDidUpdate() {
-        console.log("%c [RoomClientComp] componentDidMountAndCompontDidUpdate", "color:teal;")
+        //console.log("%c [RoomClientComp] componentDidMountAndCompontDidUpdate", "color:teal;")
     })
 
     useEffect(function runComponentDidUpdate() {
@@ -37,7 +38,7 @@ function RoomClient() {
         }
         (function componentDidUpdate() {
             StatusBar.setHidden(true, 'none');
-            console.log("%c [RoomClientComp] CompontDidUpdateForAnyVariable", "color:orange;")
+            //console.log("%c [RoomClientComp] CompontDidUpdateForAnyVariable", "color:orange;")
         })()
     });
 
@@ -433,8 +434,10 @@ function RoomClient() {
                 dispatch({ type: 'ADD_CHAT_MESSAGE',  payload: localChatArray});
 
                 //Univet
-                mediaDevices.showLoopBackCamera(false);
-                mediaDevices.showTextMessage(localChatArray);
+                if(state.usbcamera){
+                    mediaDevices.showLoopBackCamera(false);
+                    mediaDevices.showTextMessage(localChatArray);
+                }
                 
                 //this.showMessage(data);
             }.bind(this),
@@ -512,14 +515,31 @@ function RoomClient() {
             function (data) {
                 console.log('[RoomClientComp] Received whiteboard canvas JSON');
                 //console.log(data);
+                
+                // first clear all paths because we receive the entire drawing
+                dispatch({type: 'CLEAR_PATHS', payload:""});
+                dispatch({type: 'CLEAR_IMAGES', payload:""});
+                dispatch({type: 'CLEAR_LINES', payload:""});
+                dispatch({type: 'CLEAR_ELLIPSES', payload:""});
+                dispatch({type: 'CLEAR_RECTS', payload:""});
 
-              JsonToSkia(data);
-
-
-
-
+                // decode the strokes
+                JsonToSkia(data);
 
                 //JsonToWbCanvas(data);
+            }.bind(this),
+        );
+
+        socket.on(
+            'wbPointer',
+            function (data) {
+                //console.log('[RoomClientComp] Received whiteboard pointer JSON');
+                //console.log(data);
+                var serialized = JSON.parse(data);
+                // send to the store the x and y values of the pointer position
+                dispatch({type: 'POINTER_DATA', payload:serialized});
+
+                
             }.bind(this),
         );
 
@@ -570,6 +590,10 @@ function RoomClient() {
                     break;
                 case 'clear':
                     dispatch({type: 'CLEAR_PATHS', payload:""});
+                    dispatch({type: 'CLEAR_IMAGES', payload:""});
+                    dispatch({type: 'CLEAR_LINES', payload:""});
+                    dispatch({type: 'CLEAR_ELLIPSES', payload:""});
+                    dispatch({type: 'CLEAR_RECTS', payload:""});
                     break;
                 case 'close':
                     //if (wbIsOpen) toggleWhiteboard();
@@ -580,6 +604,10 @@ function RoomClient() {
         }
     }
 
+    /**
+     * Convert JSON drawing to object compatible with SKIA
+     * @param {JSON} data 
+     */
     function JsonToSkia(data){
         // the data parameter is a complex json describing a path
         // we can decode it and extract only the values we are
@@ -589,16 +617,99 @@ function RoomClient() {
         console.log(serialized.version);
         // parse the objects
         serialized.objects.map((object) => (
-            dispatch({type: 'ADD_PATH', payload:{
-                path:FabricPathToSkiaPath(object.path),
-                id:Date.now() + Math.floor(Math.random() * 100) + 1,
-                color:object.stroke,
-                width:object.strokeWidth,
-            }})
+            DecodeSingleObject(object)
         ));      
     }
 
-    
+    async function DecodeSingleObject(object){
+        if(object.type == "path")
+        {            
+            dispatch({type: 'ADD_PATH', payload:{
+                path:FabricPathToSkiaPath(object.path),
+                id:"path:" + Date.now() + Math.floor(Math.random() * 100) + 1,
+                color:object.stroke,
+                width:object.strokeWidth,
+            }});    
+        }
+        else if(object.type == "image"){
+            // ensure the object is a string
+            var myimage = JSON.stringify(object.src);            
+
+            // check first 30 char in order to log the string but
+            // not whole, otherwise is too long
+            controlobj = myimage.substring(0,30);
+            console.log("control string 0:" + controlobj);
+            var count = (controlobj.match(/jpeg/g) || []).length; // this is the only format with 4 letters instead of 3
+            var charstoremove = 23;
+            if(count > 0)
+                charstoremove = 24;
+            
+            // take only the part useful, getting rid of descriptor and last "
+            myimage = myimage.substring(charstoremove,myimage.length-1);
+
+            // check first 30 char in order to log the string but
+            // not whole, otherwise is too long
+            controlobj = myimage.substring(0,30);
+            console.log("control string 1:" + controlobj);
+
+            // decode image and transform to a skia image
+            myimage2 = Skia.Image.MakeImageFromEncoded(Skia.Data.fromBase64( myimage ));
+            
+            dispatch({type: 'ADD_IMAGE', payload:{
+                image:myimage2,
+                id:"image:" + Date.now() + Math.floor(Math.random() * 100) + 1,
+                fit:"contain",
+                x:object.left,
+                y:object.top,
+                width:object.width,
+                height:object.height,
+            }});    
+        }
+        else if(object.type == "rect")
+        {            
+            dispatch({type: 'ADD_RECT', payload:{
+                x:object.left,
+                y:object.top,
+                width:object.width,
+                height:object.height,
+                id:"rect:" + Date.now() + Math.floor(Math.random() * 100) + 1,
+                strokeColor:object.stroke,
+                strokeWidth:object.strokeWidth,
+                fillColor:object.fill,
+            }});    
+        }
+        else if(object.type == "ellipse")
+        {            
+            dispatch({type: 'ADD_ELLIPSE', payload:{
+                x:object.left,
+                y:object.top,
+                width:object.width,
+                height:object.height,
+                id:"ellipse:" + Date.now() + Math.floor(Math.random() * 100) + 1,
+                strokeColor:object.stroke,
+                strokeWidth:object.strokeWidth,
+                fillColor:object.fill,
+            }});    
+        }
+        else if(object.type == "line")
+        {            
+            console.log("Line: " + JSON.stringify(object));
+            dispatch({type: 'ADD_LINE', payload:{
+                x1:object.left + object.x1*2,
+                y1:object.top + object.y1*2,
+                x2:object.left + object.x2*2,
+                y2:object.top + object.y2*2,
+                id:"line:" + Date.now() + Math.floor(Math.random() * 100) + 1,
+                strokeColor:object.stroke,
+                strokeWidth:object.strokeWidth,                
+            }});    
+        }
+
+        else{
+            console.log("object type: " + object.type + " not implemented yet!");
+            console.log("object unknown: "+JSON.stringify(object));
+        }
+    }
     
     /**
      * we receive an object with this format:
@@ -618,6 +729,42 @@ function RoomClient() {
         
         return newdata;
     }
+
+    /**
+     * Export paths to an SVG string file
+     * @param {*} paths Array of paths
+     * @param {*} options option parameter made of width, height, backgroundcolor
+     */
+    function exportSvgFromPaths(paths,options)
+    {    
+        /*
+        paths: {
+          id: number
+          color: Color (SKIA definition)
+          style: 'stroke' | 'fill'
+          path: string;
+        }[]
+
+        options: {
+          width: number;
+          height: number;
+          backgroundColor?: string;
+        }
+        */
+       
+        return `<svg width="${options.width}" height="${
+          options.height
+        }" viewBox="0 0 ${options.width} ${
+          options.height
+        }" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="${options.width}" height="${options.height}" fill="${
+          options.backgroundColor || 'white'
+        }"/>
+        <g>
+          ${paths.map((path) => `<path d="${path.path}" stroke="${path.color}" />`)}
+          </g>
+          </svg>`;
+      }
 
 
 

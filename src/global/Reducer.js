@@ -111,6 +111,52 @@ const Reducer = (state, action) => {
                 ...state,
                 path_array: []
             };
+        case 'ADD_ELLIPSE':
+            return{
+                ...state,
+                ellipse_array: [...state.ellipse_array, action.payload]
+            };
+        case 'CLEAR_ELLIPSES':
+            return{
+                ...state,
+                ellipse_array: []
+            };
+        case 'ADD_RECT':
+            return{
+                ...state,
+                rect_array: [...state.rect_array, action.payload]
+            };
+        case 'CLEAR_RECTS':
+            return{
+                ...state,
+                rect_array: []
+            };
+        case 'ADD_LINE':
+            return{
+                ...state,
+                line_array: [...state.line_array, action.payload]
+            };
+        case 'CLEAR_LINES':
+            return{
+                ...state,
+                line_array: []
+            };
+        case 'ADD_IMAGE':
+            return{
+                ...state,
+                image_array: [...state.image_array, action.payload]
+            };
+        case 'CLEAR_IMAGES':
+            return{
+                ...state,
+                image_array: []
+            };            
+        case 'POINTER_DATA':
+            return{
+                ...state,
+                pointer_x: action.payload.x,
+                pointer_y: action.payload.y
+            };
     
         default:
             return state;

@@ -3,8 +3,8 @@ import Reducer from './Reducer'
 
 
 const initialState = {
-    room_id: "holomask-test",
-    peer_name: "enzo",
+    room_id: "holomask-test", // TODO change in production
+    peer_name: "enzo",          // TODO change in production
     localstream: "empty",
     remotestream: "empty",
     guest1stream: "empty",
@@ -38,6 +38,12 @@ const initialState = {
     usbcamera:false,
     chat_array: [],
     path_array: [],
+    rect_array: [],
+    ellipse_array: [],
+    line_array: [],
+    pointer_x: null,
+    pointer_y: null,
+    image_array: [],
 
 };
 
