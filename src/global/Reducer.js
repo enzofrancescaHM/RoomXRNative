@@ -141,6 +141,16 @@ const Reducer = (state, action) => {
                 ...state,
                 line_array: []
             };
+        case 'ADD_TEXT':
+            return{
+                ...state,
+                text_array: [...state.text_array, action.payload]
+            };
+        case 'CLEAR_TEXTS':
+            return{
+                ...state,
+                text_array: []
+            };
         case 'ADD_IMAGE':
             return{
                 ...state,

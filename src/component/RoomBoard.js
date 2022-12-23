@@ -1,11 +1,13 @@
 import React, { useEffect, useRef, useState, useContext } from "react";
-import {Canvas, Circle, Oval, Group, Image, Paint, Path, Rect, Line, vec} from "@shopify/react-native-skia";
+import {Canvas, Circle, Oval, Group, Image, Paint, Path, Rect, Line, vec,Text, useFont, Fill} from "@shopify/react-native-skia";
 import Store, {Context} from '../global/Store';
  
 export function RoomBoard(props){
     const [state, dispatch] = useContext(Context);
     const size = 60;
     const r = size * 0.33;
+    const fontSize = 42;
+    const font = useFont(require("../fonts/Comfortaa-Bold.ttf"), fontSize);
   
     return (
         <Canvas style={props.containerStyle} >
@@ -90,7 +92,22 @@ export function RoomBoard(props){
                       ))              
                 }
             </Group>
-
+            <Group blendMode="multiply">
+                {
+                    // cycle the path array and draw on the canvas
+                    state.text_array.map((text) => (                    
+                        <Text
+                            key={text.id}
+                            x={text.x}
+                            y={text.y + fontSize}
+                            text={text.text}
+                            font={font}
+                        >
+                            <Paint color={text.fillColor} />
+                        </Text>                                   
+                    ))
+                }
+            </Group>
             <Group blendMode="multiply">
                     {
                         // draw the pointer fill in red semi transparent

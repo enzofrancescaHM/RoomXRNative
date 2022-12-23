@@ -41,6 +41,7 @@ const initialState = {
     rect_array: [],
     ellipse_array: [],
     line_array: [],
+    text_array: [],
     pointer_x: null,
     pointer_y: null,
     image_array: [],

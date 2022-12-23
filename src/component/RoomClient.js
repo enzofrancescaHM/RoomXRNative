@@ -522,6 +522,7 @@ function RoomClient() {
                 dispatch({type: 'CLEAR_LINES', payload:""});
                 dispatch({type: 'CLEAR_ELLIPSES', payload:""});
                 dispatch({type: 'CLEAR_RECTS', payload:""});
+                dispatch({type: 'CLEAR_TEXTS', payload:""});
 
                 // decode the strokes
                 JsonToSkia(data);
@@ -594,6 +595,7 @@ function RoomClient() {
                     dispatch({type: 'CLEAR_LINES', payload:""});
                     dispatch({type: 'CLEAR_ELLIPSES', payload:""});
                     dispatch({type: 'CLEAR_RECTS', payload:""});
+                    dispatch({type: 'CLEAR_TEXTS', payload:""});
                     break;
                 case 'close':
                     //if (wbIsOpen) toggleWhiteboard();
@@ -693,18 +695,44 @@ function RoomClient() {
         }
         else if(object.type == "line")
         {            
-            console.log("Line: " + JSON.stringify(object));
+            // determine the slope of the line in order to decide 
+            // what vertex is what
+            var myx1, myx2, myy1, myy2
+            if(object.x1 < 0 && object.y1 < 0) // this case is the following slope: /
+            {
+                myx1 = object.left;
+                myy1 = object.top;
+                myx2 = object.left + object.width;
+                myy2 = object.top + object.height;
+            }
+            else // this case is the following slope: \
+            {
+                myx1 = object.left;
+                myy1 = object.top + object.height;
+                myx2 = object.left + object.width;
+                myy2 = object.top;
+            }
+
             dispatch({type: 'ADD_LINE', payload:{
-                x1:object.left + object.x1*2,
-                y1:object.top + object.y1*2,
-                x2:object.left + object.x2*2,
-                y2:object.top + object.y2*2,
+                x1:myx1, 
+                y1:myy1, 
+                x2:myx2,
+                y2:myy2,
                 id:"line:" + Date.now() + Math.floor(Math.random() * 100) + 1,
                 strokeColor:object.stroke,
                 strokeWidth:object.strokeWidth,                
             }});    
         }
-
+        else if(object.type == "text")
+        {            
+            dispatch({type: 'ADD_TEXT', payload:{
+                x:object.left,
+                y:object.top,
+                id:"text:" + Date.now() + Math.floor(Math.random() * 100) + 1,
+                fillColor:object.fill,
+                text:object.text,
+            }});    
+        }
         else{
             console.log("object type: " + object.type + " not implemented yet!");
             console.log("object unknown: "+JSON.stringify(object));

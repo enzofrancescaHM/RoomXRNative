@@ -295,3 +295,44 @@ on Glasses so to send only what is drow on the whiteboard (vector data, very lig
   "x1":142.5,"x2":-142.5,"y1":-102,"y2":102
   }
 ```
+
+# Text definition
+```
+{
+  "type":"text",
+  "version":"5.2.4",
+  "originX":"left","originY":"top",
+  "left":100,"top":100,
+  "width":89.52,"height":45.2,
+  "fill":"#FFFFFFFF",
+  "stroke":"#FFFFFFFF","strokeWidth":3,"strokeDashArray":null,"strokeLineCap":"butt","strokeDashOffset":0,"strokeLineJoin":"miter","strokeUniform":false,"strokeMiterLimit":4,
+  "scaleX":1,"scaleY":1,
+  "angle":0,
+  "flipX":false,"flipY":false,
+  "opacity":1,
+  "shadow":null,
+  "visible":true,
+  "backgroundColor":"",
+  "fillRule":"nonzero",
+  "paintFirst":"fill",
+  "globalCompositeOperation":"source-over",
+  "skewX":0,"skewY":0,
+  "fontFamily":"Comfortaa",
+  "fontWeight":"normal","fontSize":40,
+  "text":"ciao",
+  "underline":false,
+  "overline":false,
+  "linethrough":false,
+  "textAlign":"left",
+  "fontStyle":"normal",
+  "lineHeight":1.16,
+  "textBackgroundColor":"",
+  "charSpacing":0,
+  "styles":[],
+  "direction":"ltr",
+  "path":null,
+  "pathStartOffset":0,
+  "pathSide":"left",
+  "pathAlign":"baseline"
+}
+```
