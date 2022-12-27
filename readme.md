@@ -59,10 +59,13 @@ the apk is now in: yourProject/android/app/build/outputs/apk/debug/app-debug.apk
 - implement voice recognition with: pocketsphynx
 - implement chat with: https://github.com/FaridSafi/react-native-gifted-chat
 - Evaluate disconnect and riconnect the Univet glasses cases, it should gracely manage those states
+- implement Decals
 
 
 ## In Progress:
 - implement resolution independent whiteboard
+- make usb permissions generic for all phones
+- reach univet USB in every phone
 
 
 ## Done:
@@ -80,6 +83,10 @@ the apk is now in: yourProject/android/app/build/outputs/apk/debug/app-debug.apk
 - [FIX] investigate why closeproducer is not called
 - implement whiteboard using: https://github.com/wobsoriano/rn-perfect-sketch-canvas
 - Laser pointer
+- Rect tool
+- Oval tool
+- Text tool
+- Line tool
 
 
 ## Changelist:
@@ -99,6 +106,7 @@ the apk is now in: yourProject/android/app/build/outputs/apk/debug/app-debug.apk
 ### Ver. 0.3 Alpha:
 - Laser Pointer integrated
 - Basic image exchange on whiteboard
+- Rect, Oval, Line, Text tool integrated
 
 
 
@@ -135,6 +143,14 @@ exposed to ReactNative, in particular if we would like to add showTextMessage fu
 - to send notification to javascript from JAVA we can do the following:   
 https://reactnative.dev/docs/native-modules-android#sending-events-to-javascript
 
+## Phones compatible so far
+- Epson control unit
+  vendorID= 1155, DEV: eRGlassFb - PID: a306 - VID: 483
+  vendorID= 0, DEV: null - PID: 0 - VID: 0
+
+- Galaxy XCover 4s (in test...)
+  vendorID= 1155, DEV: eRGlassFb - PID: a306 - VID: 483
+  vendorID= 3141, DEV: USB 2.0 Camera - PID: 6366 - VID: c45
 
 
 ## Notes

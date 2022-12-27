@@ -616,7 +616,7 @@ function RoomClient() {
         // interested on
         var serialized = JSON.parse(data);
         // print version so we are sure the object is serialized as json
-        console.log(serialized.version);
+        // console.log(serialized.version);
         // parse the objects
         serialized.objects.map((object) => (
             DecodeSingleObject(object)
@@ -640,7 +640,7 @@ function RoomClient() {
             // check first 30 char in order to log the string but
             // not whole, otherwise is too long
             controlobj = myimage.substring(0,30);
-            console.log("control string 0:" + controlobj);
+            //console.log("control string 0:" + controlobj);
             var count = (controlobj.match(/jpeg/g) || []).length; // this is the only format with 4 letters instead of 3
             var charstoremove = 23;
             if(count > 0)
@@ -652,7 +652,7 @@ function RoomClient() {
             // check first 30 char in order to log the string but
             // not whole, otherwise is too long
             controlobj = myimage.substring(0,30);
-            console.log("control string 1:" + controlobj);
+            //console.log("control string 1:" + controlobj);
 
             // decode image and transform to a skia image
             myimage2 = Skia.Image.MakeImageFromEncoded(Skia.Data.fromBase64( myimage ));
@@ -733,7 +733,8 @@ function RoomClient() {
                 text:object.text,
             }});    
         }
-        else{
+        else // this is the xtreme case of unknown obejcts
+        {
             console.log("object type: " + object.type + " not implemented yet!");
             console.log("object unknown: "+JSON.stringify(object));
         }
