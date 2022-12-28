@@ -132,7 +132,6 @@ function MainPage() {
 
     async function requireUSBPermissions(){
 
-
         // Manage USB Permission on any device
         usb.getUsbDevices(async mydevices => {
             console.log("mydevices: " + mydevices);
@@ -143,26 +142,8 @@ function MainPage() {
                 .then((data) => console.log("data: " + data))
                 .catch((error) => console.error("error: " + error));
               }
-        });
-        
-/*
-         //TEST, REQUEST USB PERMISSION                 
-         await usb.connect(0, 0)
-         .then((data) => console.log(data))
-         .catch((error) => console.error(error));
+        });        
 
-         await usb.connect(1155, 41734)
-         .then((data) => console.log(data))
-         .catch((error) => console.error(error));
-
-         await usb.connect(13028, 1045)
-         .then((data) => console.log(data))
-         .catch((error) => console.error(error));
-
-        await usb.connect(3141, 25446)
-         .then((data) => console.log(data))
-         .catch((error) => console.error(error));
-         */
     }
 
     async function invokeCreateRoomClient(){

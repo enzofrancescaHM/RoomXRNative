@@ -568,6 +568,13 @@ function RoomClient() {
         );
     }
 
+    function convertWidth(oldx){
+        // the origin canvas is 1200x600
+
+        myx = oldx * state.board_W;
+        return myx;
+    }
+
 
     function whiteboardAction(data, emit){
         if(emit == true)
@@ -665,6 +672,8 @@ function RoomClient() {
                 y:object.top,
                 width:object.width,
                 height:object.height,
+                scalex:object.scaleX,
+                scaley:object.scaleY,
             }});    
         }
         else if(object.type == "rect")

@@ -1,16 +1,22 @@
 import React, { useEffect, useRef, useState, useContext } from "react";
-import {Canvas, Circle, Oval, Group, Image, Paint, Path, Rect, Line, vec,Text, useFont, Fill} from "@shopify/react-native-skia";
+import { Button } from "react-native";
+import {Canvas, Circle, Oval, Group, Image, Paint, Path} from "@shopify/react-native-skia"; 
+import {Rect, Line, vec,rect,Text, useFont, useValue,FitBox} from "@shopify/react-native-skia";
 import Store, {Context} from '../global/Store';
  
 export function RoomBoard(props){
     const [state, dispatch] = useContext(Context);
-    const size = 60;
-    const r = size * 0.33;
+    const mysize = 60;
+    const r = mysize * 0.33;
     const fontSize = 42;
     const font = useFont(require("../fonts/Comfortaa-Bold.ttf"), fontSize);
+    const size = useValue({ width: 0, height: 0 });
   
     return (
-        <Canvas style={props.containerStyle} >
+        
+        <Canvas style={props.containerStyle} onSize={size} onLayout={event => { console.log(JSON.stringify(size)) }}>
+             
+            <FitBox src={rect(0, 0, 1200, 600)} dst={rect(0, 0, size.current.width, size.current.height)}>
             <Group blendMode="multiply">
                 {
                     // cycle the image array and draw on the canvas
@@ -22,8 +28,8 @@ export function RoomBoard(props){
                             fit="contain"
                             x={image.x}
                             y={image.y}
-                            width={image.width}
-                            height={image.height}
+                            width={image.width * image.scalex}
+                            height={image.height * image.scaley}
                         />
                       ))          
                 }
@@ -93,7 +99,7 @@ export function RoomBoard(props){
                 }
             </Group>
             <Group blendMode="multiply">
-                {
+               {
                     // cycle the path array and draw on the canvas
                     state.text_array.map((text) => (                    
                         <Text
@@ -118,6 +124,7 @@ export function RoomBoard(props){
                         (state.pointer_x != null && state.pointer_y != null)?(<Circle cx={state.pointer_x} cy={state.pointer_y} r={r} color="#FF0000" style="stroke" strokeWidth={3}/>):null
                     } 
             </Group>
+            </FitBox>
         </Canvas>        
     );
 }

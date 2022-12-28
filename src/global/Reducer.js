@@ -167,7 +167,13 @@ const Reducer = (state, action) => {
                 pointer_x: action.payload.x,
                 pointer_y: action.payload.y
             };
-    
+        case 'BOARDSIZE':
+            return{
+                ...state,
+                board_W: action.payload.w,
+                board_H: action.payload.h
+            };
+        
         default:
             return state;
     }

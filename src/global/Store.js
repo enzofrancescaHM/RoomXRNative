@@ -45,6 +45,9 @@ const initialState = {
     pointer_x: null,
     pointer_y: null,
     image_array: [],
+    board_W: 0,
+    board_H: 0,
+
 
 };
 

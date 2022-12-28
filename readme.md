@@ -49,7 +49,6 @@ cd android
 the apk is now in: yourProject/android/app/build/outputs/apk/debug/app-debug.apk
 
 ## Todo:
-
 - Implement Device Chooser (camera and audio)...
 - Implement QRCode Reader
 - test on iOS
@@ -59,18 +58,15 @@ the apk is now in: yourProject/android/app/build/outputs/apk/debug/app-debug.apk
 - implement voice recognition with: pocketsphynx
 - implement chat with: https://github.com/FaridSafi/react-native-gifted-chat
 - Evaluate disconnect and riconnect the Univet glasses cases, it should gracely manage those states
-- implement Decals
+- (Whiteboard) implement Decals
 
 
 ## In Progress:
-- implement resolution independent whiteboard
-- make usb permissions generic for all phones
-- reach univet USB in every phone
+
+
 
 
 ## Done:
-
-
 - implement git (done with github)
 - [FIX] if room is empty crashes
 - [FIX] screen sharing Start/Stop
@@ -82,12 +78,14 @@ the apk is now in: yourProject/android/app/build/outputs/apk/debug/app-debug.apk
 - Implement loopback camera on main display Univet
 - [FIX] investigate why closeproducer is not called
 - implement whiteboard using: https://github.com/wobsoriano/rn-perfect-sketch-canvas
-- Laser pointer
-- Rect tool
-- Oval tool
-- Text tool
-- Line tool
-
+- (Whiteboard) Laser pointer
+- (Whiteboard) Rect tool
+- (Whiteboard) Oval tool
+- (Whiteboard) Text tool
+- (Whiteboard) Line tool
+- [FIX] make usb permissions generic for all phones
+- [FIX] reach univet USB in every phone
+- (Whiteboard) implement resolution independent whiteboard
 
 ## Changelist:
 
@@ -104,10 +102,14 @@ the apk is now in: yourProject/android/app/build/outputs/apk/debug/app-debug.apk
 - Basic WhiteBoard implementation (draw and clear)
 
 ### Ver. 0.3 Alpha:
-- Laser Pointer integrated
-- Basic image exchange on whiteboard
-- Rect, Oval, Line, Text tool integrated
+- (Whiteboard) Laser Pointer integrated
+- (Whiteboard) Basic image exchange on whiteboard
+- (Whiteboard) Rect, Oval, Line, Text tool integrated
 
+### Ver. 0.4 Beta:
+- [FIX] make usb permissions generic for all phones
+- [FIX] reach univet USB in every phone
+- (Whiteboard) implement resolution independent whiteboard
 
 
 
