@@ -144,11 +144,11 @@ exposed to ReactNative, in particular if we would like to add showTextMessage fu
 https://reactnative.dev/docs/native-modules-android#sending-events-to-javascript
 
 ## Phones compatible so far
-- Epson control unit
+- Epson control unit, it is compatible, but the USB camera of Univet Glasses is badly recognized and is null.
   vendorID= 1155, DEV: eRGlassFb - PID: a306 - VID: 483
   vendorID= 0, DEV: null - PID: 0 - VID: 0
 
-- Galaxy XCover 4s (in test...)
+- Galaxy XCover 4s, it is fully compatible
   vendorID= 1155, DEV: eRGlassFb - PID: a306 - VID: 483
   vendorID= 3141, DEV: USB 2.0 Camera - PID: 6366 - VID: c45
 

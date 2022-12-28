@@ -1,5 +1,6 @@
 REM andyshea folder
 copy .\src\changes\andyshea\ReactNativeUsbModule.txt .\node_modules\react-native-usb\android\src\main\java\me\andyshea\ReactNativeUsbModule.java 
+copy .\src\changes\andyshea\index.txt .\node_modules\react-native-usb\index.js 
 REM react-native-webrtc-root
 copy .\src\changes\ReactNativeWebRTCRoot\index.txt .\node_modules\react-native-webrtc\src\index.ts
 copy .\src\changes\ReactNativeWebRTCRoot\MediaDevices.txt .\node_modules\react-native-webrtc\src\MediaDevices.ts

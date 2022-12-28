@@ -188,13 +188,13 @@ public class UsbCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
             public void run() {
                 if (monitor.hasPermission(device)) 
                 {
-                    Log.d("USB-CAMERA", "permission OK!");
-                    Log.d("USB-CAMERA", "vendorID= " + device.getVendorId());
-                    Log.d("USB-CAMERA",String.format("DEV: %s - PID: %x - VID: %x", device.getProductName(), device.getProductId(), device.getVendorId()));
+                    Log.d("USB-UNIVET", "permission OK!");
+                    Log.d("USB-UNIVET", "vendorID= " + device.getVendorId());
+                    Log.d("USB-UNIVET",String.format("DEV: %s - PID: %x - VID: %x", device.getProductName(), device.getProductId(), device.getVendorId()));
 
-                    if(weFoundItDisplay == false && /*device.getProductName() == "eRGlassFb"*/ device.getProductId() != 0 && device.getVendorId() != 0 )
+                    if(weFoundItDisplay == false && /*device.getProductName() == "eRGlassFb" */device.getProductId() == 0xa306 /*&& device.getVendorId() != 0*/ )
                     {
-                            Log.d("USB-CAMERA DISPLAY", "We are in!");
+                            Log.d("USB-UNIVET DISPLAY", "We are in!");
                             
                             weFoundItDisplay = true;
 
@@ -231,13 +231,17 @@ public class UsbCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
                                     }
 
 
-                                    //EnableTouchpad(device); // this take too much memory, must be invetigated...
+                                    //EnableTouchpad(device); // this take too much memory, must be investigated...
                                 }
                             }
                     }
 
                     if(true)
-                    if(weFoundIt == false && device.getProductId() == 0 && device.getVendorId() == 0)
+                    if(weFoundIt == false && 
+                        (device.getProductId() == 0x6366 || // this is the normal case
+                          (device.getVendorId() == 0 && device.getProductId() == 0) // this is the special case in which camera is not recognized properly as in Epson BOC40
+                        ) /*  && device.getVendorId() == 0  && device.getProductName() == "USB 2.0 Camera"*/
+                      )
                     {
                         weFoundIt = true;
 
@@ -250,7 +254,7 @@ public class UsbCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
                             for (int i=0; i<childViewCount;i++){
                                 View workWithMe = rootView.getChildAt(i);
                                 myView = workWithMe;
-                                Log.d("USB-CAMERA view: ", "id: " + workWithMe.getId());
+                                Log.d("USB-UNIVET CAMERA view: ", "id: " + workWithMe.getId());
                             }
                         } catch (ClassCastException e){
                             //Not a viewGroup here
@@ -323,7 +327,7 @@ public class UsbCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
                     }
                 }
                 else{
-                    Log.d("USB-CAMERA", "permission problem...");
+                    Log.d("USB-UNIVET", "permission problem...");
                 }
             }
         });

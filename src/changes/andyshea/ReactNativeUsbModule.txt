@@ -19,6 +19,7 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
+import com.facebook.react.bridge.Callback;
 
 import java.nio.ByteBuffer;
 import java.util.HashMap;
@@ -72,6 +73,34 @@ public class ReactNativeUsbModule extends ReactContextBaseJavaModule {
     return "ReactNativeUsb";
   }
 
+
+  @ReactMethod
+  public void getUsbDevices(Callback callBack){
+    manager = (UsbManager)this.reactContext.getSystemService(Context.USB_SERVICE);
+    String mydevices = "{\"objects\":[";
+    try {
+      HashMap<String, UsbDevice> deviceList = manager.getDeviceList();
+      Iterator<UsbDevice> deviceIterator = deviceList.values().iterator();
+      Log.d(TAG, "devicelist: " + deviceList);
+      while (deviceIterator.hasNext()) {
+        UsbDevice device = deviceIterator.next();
+        mydevices += "{\"vid\":" + device.getVendorId() + "," + "\"pid\":"+device.getProductId() + "}";
+
+        if(deviceIterator.hasNext()) {
+          mydevices += ",";  
+        }
+        
+        Log.d(TAG, "device: " + device);
+      }
+      
+    }
+    catch (NullPointerException npe) {
+      rejectConnectionPromise("E110", "No USB devices found");
+    }
+    mydevices+="]}";
+    callBack.invoke(mydevices);
+  }
+
   @ReactMethod
   public void connect(int vendorId, int productId, Promise promise) {
     connectionPromise = promise;
@@ -96,7 +125,7 @@ public class ReactNativeUsbModule extends ReactContextBaseJavaModule {
         );
       }
       else {
-        Log.d(TAG, "Checking USB permission...");
+        Log.d(TAG, "Checking USB permission of VID: " + vendorId + " PID: " + productId);
         PendingIntent usbPermissionIntent = PendingIntent.getBroadcast(this.reactContext, 0, new Intent(ACTION_USB_PERMISSION), 0);
         IntentFilter filter = new IntentFilter(ACTION_USB_PERMISSION);
         this.reactContext.registerReceiver(usbReceiver, filter);
@@ -128,8 +157,14 @@ public class ReactNativeUsbModule extends ReactContextBaseJavaModule {
   }
 
   private void setDevice(UsbDevice device) {
-     connectionPromise.resolve(null);
-      connectionPromise = null;
+    //if(connectionPromise == null)
+    //return;
+    
+    Log.d(TAG, "we are in setDevice of VID: " + device.getVendorId() + " PID: " + device.getProductId());
+
+
+    connectionPromise.resolve("Succesfully granted: " + device.getVendorId());
+    connectionPromise = null;
     /*
     Log.d(TAG, "setDevice " + device);
     if (device.getInterfaceCount() != 1) {
