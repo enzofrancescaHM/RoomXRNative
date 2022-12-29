@@ -62,7 +62,7 @@ the apk is now in: yourProject/android/app/build/outputs/apk/debug/app-debug.apk
 
 
 ## In Progress:
-
+- GUI redesign in glassmorphism or similar
 
 
 

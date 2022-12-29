@@ -23,7 +23,8 @@ import { Camera} from 'react-native-vision-camera';
 import { PermissionsPage } from './component/PermissionPage';
 import { TestPage } from './component/TestPage';
 import { HomePage } from './component/HomePage';
-
+import { StartPage } from './component/StartPage';
+import MainPage from './component/MainPage';
 const Stack = createNativeStackNavigator();
 
 const App: () => Node = () => {
@@ -65,10 +66,10 @@ return (
             //statusBarStyle: 'dark',
             animationTypeForReplace: 'push',
           }}
-          initialRouteName={showPermissionsPage ? 'PermissionsPage' : 'HomePage'}>
+          initialRouteName={showPermissionsPage ? 'PermissionsPage' : 'StartPage'}>
           <Stack.Screen name="PermissionsPage" component={PermissionsPage} />
-          <Stack.Screen name="TestPage" component={TestPage} />
-          <Stack.Screen name="HomePage" component={HomePage} />
+          <Stack.Screen name="StartPage" component={StartPage} />
+          <Stack.Screen name="MainPage" component={MainPage} />
         </Stack.Navigator>    
   </Store>
   </SocketContext.Provider>

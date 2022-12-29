@@ -1,6 +1,6 @@
 // react realated imports
 import React, { useEffect, useRef, useState, useContext } from "react";
-import { StyleSheet, Button, Switch,Text, useWindowDimensions, View, StatusBar, ScrollView } from "react-native";
+import { StyleSheet, Button, Image, Text, TouchableOpacity, View, StatusBar, ScrollView } from "react-native";
 import { RTCView, mediaDevices, registerGlobals } from "react-native-webrtc";
 import usb from 'react-native-usb';
 
@@ -70,12 +70,17 @@ function MainPage() {
     //let isMobileDevice = true;
 
     useEffect(function componentDidMount() {
-        //console.log("%c MainPage componetDidMount", "color:green;");
+        console.log("%c MainPage componetDidMount", "color:green;");
         
         StatusBar.setHidden(true, 'none');
         Orientation.lockToLandscapeLeft();
 
         dispatch({type: 'SET_MEDIASOUPCLIENT', payload: mediasoupClient});
+
+        // do this at the start of the app
+        requireUSBPermissions();
+
+
         return function componentWillUnmount() {
             //console.log("%c MainPage componetWillUnmount", "color:red")
         }
@@ -142,7 +147,7 @@ function MainPage() {
                 .then((data) => console.log("data: " + data))
                 .catch((error) => console.error("error: " + error));
               }
-        });        
+        });  
 
     }
 
@@ -151,7 +156,6 @@ function MainPage() {
     }
 
     async function invokeCreateRoomClientUSB(){
-        //requireUSBPermissions();
         createRoomClient(true);
     }
 
@@ -396,6 +400,43 @@ function MainPage() {
             border: '#FF0000', 
             zIndex:1 
         },
+        buttonGPlusStyle: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            backgroundColor: '#dc4e41',
+            borderWidth: 0.5,
+            borderColor: '#fff',
+            height: 40,
+            borderRadius: 5,
+            margin: 5,
+          },
+          buttonFacebookStyle: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            backgroundColor: '#485a96',
+            borderWidth: 0.5,
+            borderColor: '#fff',
+            height: 40,
+            borderRadius: 5,
+            margin: 5,
+          },
+          buttonImageIconStyle: {
+            padding: 10,
+            margin: 5,
+            height: 25,
+            width: 25,
+            resizeMode: 'stretch',
+          },
+          buttonTextStyle: {
+            color: '#fff',
+            marginBottom: 4,
+            marginLeft: 10,
+          },
+          buttonIconSeparatorStyle: {
+            backgroundColor: '#fff',
+            width: 1,
+            height: 40,
+          },
        
       });
 
@@ -407,11 +448,11 @@ function MainPage() {
                         enabled
                         onPress={invokeCreateRoomClient}
                     /> 
-                      <Button
+                    {/*   <Button
                         title="USB Perms"
                         enabled
                         onPress={requireUSBPermissions}
-                    />             
+                    />       */}       
                      <Button
                         title="Connect USB"
                         enabled
@@ -444,7 +485,7 @@ function MainPage() {
                         enabled
                         onPress={switchCamera}
                     />
-                    <Switch
+                   {/*  <Switch
                         trackColor={{ false: "#767577", true: "#81b0ff" }}
                         thumbColor={debugIsEnabled ? "#f5dd4b" : "#f4f3f4"}
                         ios_backgroundColor="#3e3e3e"
@@ -455,16 +496,29 @@ function MainPage() {
                         title="Test Chat"
                         enabled
                         onPress={testChat}
-                    />
+                    /> */}
                     <Button 
                         title="Clear Chat"
                         enabled
                         onPress={clearChat}
                     />
+                    <TouchableOpacity
+                        style={styles.buttonFacebookStyle}
+                        activeOpacity={0.5}>
+                        <Image
+                            source={{
+                            uri:
+                                'https://raw.githubusercontent.com/AboutReact/sampleresource/master/facebook.png',
+                            }}
+                            style={styles.buttonImageIconStyle}
+                        />
+                        <View style={styles.buttonIconSeparatorStyle} />
+                        <Text style={styles.buttonTextStyle}>Login Using Facebook</Text>
+                    </TouchableOpacity>
                     
-                    <Button onPress={() => sayHello()} title="Clean Draw" />
+                  {/*   <Button onPress={() => sayHello()} title="Clean Draw" />
       
-                    <Button onPress={() => addPath()} title="Test Path" />
+                    <Button onPress={() => addPath()} title="Test Path" /> */}
                     
                 </View>
                 <View style={styles.mainArea}>
