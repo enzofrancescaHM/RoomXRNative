@@ -17,7 +17,7 @@ import {
 } from 'react-native';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 import Store from './global/Store';
-import {SocketContext, socket} from './global/socket';
+//import {SocketContext, socket} from './global/socket';
 import { Camera} from 'react-native-vision-camera';
 //import { CameraPage } from './component/CameraPage';
 import { PermissionsPage } from './component/PermissionPage';
@@ -58,12 +58,11 @@ return (
         animated={true}
         backgroundColor="transparent"
       />
-    <SocketContext.Provider value={socket}>
+    {/* <SocketContext.Provider value={socket}> */}
       <Store>
         <Stack.Navigator
           screenOptions={{
             headerShown: false,
-            //statusBarStyle: 'dark',
             animationTypeForReplace: 'push',
           }}
           initialRouteName={showPermissionsPage ? 'PermissionsPage' : 'StartPage'}>
@@ -71,8 +70,8 @@ return (
           <Stack.Screen name="StartPage" component={StartPage} />
           <Stack.Screen name="MainPage" component={MainPage} />
         </Stack.Navigator>    
-  </Store>
-  </SocketContext.Provider>
+      </Store>
+    {/* </SocketContext.Provider> */}
   </NavigationContainer>
   
 );

@@ -52,7 +52,7 @@ export function StartPage({navigation}){
     const font = useFont(require("../fonts/Comfortaa-Bold.ttf"), 17);
 
     const [usbIsEnabled, setUsbIsEnabled] = useState(false);
-    const imageConnect = require("../images/facebook.png");
+    const imageConnect = require("../images/connect.png");
     if (!imageConnect) {
       //return null;
     }
@@ -73,8 +73,8 @@ export function StartPage({navigation}){
     }
 
     function toggleUsb(){
-        setUsbIsEnabled(previousState => !previousState);
-
+        setUsbIsEnabled(previousState => !previousState);        
+        dispatch({ type: 'SET_USBCAMERA', payload:usbIsEnabled});
     }
 
 
@@ -131,11 +131,16 @@ export function StartPage({navigation}){
             zIndex:2, 
         },
         buttonFacebookStyle: {
-            flexDirection: 'row',
-            alignItems: 'center',
+            //flexDirection: 'row',
+            position: "absolute",
+            bottom:10,
+            left: window.width - 220,
+            right:"auto",
+            //alignItems: 'center',
             backgroundColor: '#485a96',
             borderWidth: 0.5,
             borderColor: '#fff',
+            width:190,
             height: 40,
             borderRadius: 5,
             margin: -5,
@@ -149,13 +154,21 @@ export function StartPage({navigation}){
           },
           buttonTextStyle: {
             color: '#fff',
-            marginBottom: 4,
-            marginLeft: 10,
+            marginTop: -32,
+            marginLeft: 42,
           },
           buttonIconSeparatorStyle: {
             backgroundColor: '#fff',
+            marginLeft:36,
+            marginTop:-35,
             width: 1,
             height: 40,
+          },
+          labelUsbTextStyle: {
+            color: '#fff',
+            marginTop: 7,
+            marginLeft: 20,
+            marginRight:5,
           },
        
       });
@@ -216,6 +229,9 @@ export function StartPage({navigation}){
             enabled
             onPress={}
         />*/}
+        <Text style={styles.labelUsbTextStyle}>
+          USB Glasses
+        </Text>
          <Switch
             trackColor={{ false: "#767577", true: "#81b0ff" }}
             thumbColor={usbIsEnabled ? "#f5dd4b" : "#f4f3f4"}
@@ -232,7 +248,7 @@ export function StartPage({navigation}){
                 style={styles.buttonImageIconStyle}
             />
             <View style={styles.buttonIconSeparatorStyle} />
-            <Text style={styles.buttonTextStyle}>Connect to Platform  </Text>
+            <Text style={styles.buttonTextStyle}>Connect to Platform</Text>
         </TouchableOpacity>
         
       {/*   <Button onPress={() => sayHello()} title="Clean Draw" />

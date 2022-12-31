@@ -4,7 +4,7 @@ import Reducer from './Reducer'
 
 const initialState = {
     room_id: "holomask-test", // TODO change in production
-    peer_name: "enzo",          // TODO change in production
+    peer_name: "Glasses01",          // TODO change in production
     localstream: "empty",
     remotestream: "empty",
     guest1stream: "empty",
@@ -47,6 +47,7 @@ const initialState = {
     image_array: [],
     board_W: 0,
     board_H: 0,
+    socket: null,
 
 
 };

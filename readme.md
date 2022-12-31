@@ -86,6 +86,7 @@ the apk is now in: yourProject/android/app/build/outputs/apk/debug/app-debug.apk
 - [FIX] make usb permissions generic for all phones
 - [FIX] reach univet USB in every phone
 - (Whiteboard) implement resolution independent whiteboard
+- Manage socket.io disconnection gracely
 
 ## Changelist:
 
@@ -110,6 +111,9 @@ the apk is now in: yourProject/android/app/build/outputs/apk/debug/app-debug.apk
 - [FIX] make usb permissions generic for all phones
 - [FIX] reach univet USB in every phone
 - (Whiteboard) implement resolution independent whiteboard
+
+### Ver. 0.5 Beta:
+- Manage socket.io disconnection gracely
 
 
 

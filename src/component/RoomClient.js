@@ -3,10 +3,11 @@ import { mediaType, _EVENTS, DEVICES_COUNT } from "../global/constants";
 import React, { useEffect, useRef, useState, useContext } from "react";
 import { Text, StatusBar } from "react-native";
 import Store, { Context } from '../global/Store';
-import { SocketContext } from '../global/socket';
+//import { SocketContext } from '../global/socket';
 import {setIsAudio, setIsVideo, setIsScreen, getAudioConstraints, getVideoConstraints} from "../global/constraints"
 import {getScreenConstraints, getEncoding, getMapKeyByValue, getVideoConstraintsUSB} from "../global/constraints"
 import { Skia, useImage } from "@shopify/react-native-skia";
+import socketio from "socket.io-client";
 let chatMessage = "chatMessage";
 let receiveFileInfo = "receiveFileInfo";
 let receiveFileDiv = "receiveFileDiv";
@@ -24,7 +25,9 @@ function RoomClient() {
         StatusBar.setHidden(true, 'none');
         initComp();
         return function componentWillUnmount() {
-            //console.log("%c [RoomClientComp] componetWillUnmount", "color:red")
+            console.log("%c [RoomClientComp] componetWillUnmount", "color:red");
+            exit(true);
+
         }
     }, [])
 
@@ -58,11 +61,15 @@ function RoomClient() {
 
     const mounted = useRef();
     const [state, dispatch] = useContext(Context);
-    const socket = useContext(SocketContext);
+    //const socket = useContext(SocketContext);
+    const socket = socketio.connect("https://roomxr.eu:5001", { transports: ['websocket'] });
 
 
     function initComp() {
 
+        //socket.connect("https://roomxr.eu:5001", { transports: ['websocket'] });
+        //socket = socketio.connect("https://roomxr.eu:5001", { transports: ['websocket'] });
+        
         this.eventListeners = new Map();
         this.peer_info = {
             user_agent: state.user_agent,
@@ -1388,7 +1395,7 @@ function RoomClient() {
         console.log("[RoomClientComp] we are in Consume...")
         getConsumeStream(producer_id).then(
             function ({ consumer, stream, kind }) {
-                //console.log('[RoomClientComp] CONSUMER', consumer);
+                console.log('[RoomClientComp] CONSUMER', consumer);
 
                 this.consumers.set(consumer.id, consumer);
 
@@ -1492,6 +1499,41 @@ function RoomClient() {
                 break;
         }
         return null;
+    }
+
+    function cleanConsumers() {
+        
+        console.log("we are in clean consumers");
+        this.consumers.forEach(function(key, val){
+            console.log(key + " " + val);
+          });
+        
+        // set stream to null in order to reset the view
+        console.log("[RoomClientComp] remote stream NULLIFIED!");
+        dispatch({ type: 'SET_REMOTE_STREAM', payload: "empty" });
+        dispatch({ type: 'SET_REMOTE_STREAM_ID', payload: "empty" });
+        this.videoConsumerId = "empty";
+
+        // set stream to null in order to reset the view
+        console.log("[RoomClientComp] remote stream NULLIFIED!");
+        dispatch({ type: 'SET_GUEST1_STREAM', payload: "empty" });
+        dispatch({ type: 'SET_GUEST1_STREAM_ID', payload: "empty" });
+        this.guest1ConsumerId = "empty";
+
+        // set stream to null in order to reset the view
+        console.log("[RoomClientComp] remote stream NULLIFIED!");
+        dispatch({ type: 'SET_GUEST2_STREAM', payload: "empty" });
+        dispatch({ type: 'SET_GUEST2_STREAM_ID', payload: "empty" });
+        this.guest2ConsumerId = "empty";
+
+        // set stream to null in order to reset the view
+        console.log("[RoomClientComp] screen stream NULLIFIED!");
+        dispatch({ type: 'SET_SCREEN_STREAM', payload: "empty" });
+        dispatch({ type: 'SET_SCREEN_STREAM_ID', payload: "empty" });
+        dispatch({ type: 'SET_LOCAL_STREAM', payload: this.localVideoStream});
+        this.screenConsumerId = "empty";
+        this.screenVideoStream = null;
+        
     }
 
     function removeConsumer(consumer_id, consumer_kind) {
@@ -1728,7 +1770,23 @@ function removeVideoOff(peer_id) {
     // EXIT ROOM
     // ####################################################
 
-    function exit(offline = false) {
+    async function exit(offline = false) {
+
+        const data = await socket.request('exitRoom');
+        this._isConnected = false;
+        this.consumerTransport.close();
+        this.producerTransport.close();
+        cleanConsumers();
+        //this.socket.offAny();
+        socket.disconnect();
+        //socket = null;
+        //this.socket.off('disconnect');
+        //this.socket.off('newProducers');
+        //this.socket.off('consumerClosed');
+
+
+
+        /*
         let clean = function () {
             this._isConnected = false;
             this.consumerTransport.close();
@@ -1751,7 +1809,7 @@ function removeVideoOff(peer_id) {
         } else {
             clean();
         }
-        this.event(_EVENTS.exitRoom);
+        this.event(_EVENTS.exitRoom);*/
     }
 
     function exitRoom() {

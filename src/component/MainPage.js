@@ -9,19 +9,19 @@ import * as mediasoupClient from "mediasoup-client";
 
 // local project imports
 import Store, {Context} from '../global/Store';
-import {SocketContext} from '../global/socket';
+//import {SocketContext} from '../global/socket';
 import RoomClient from "./RoomClient";
 import Orientation from 'react-native-orientation-locker';
 import { RoomBoard } from "./RoomBoard";
 
-function MainPage() {
+function MainPage({navigation}) {
     const mounted = useRef()
     const [count, setCount] = useState(0)
     const [debugTest, setDebugTest] = useState("---");
     const [rc, setRc] = useState(null);
     const [debugLine, setDebugLine] = useState("this is the debug line... ;)")
     const [state, dispatch] = useContext(Context);
-    const socket = useContext(SocketContext);
+    //const socket = useContext(SocketContext);
     const [debugIsEnabled, setDebugIsEnabled] = useState(false);
     const toggleDebug = () => setDebugIsEnabled(previousState => !previousState);
     const testChat = () => dispatch({ type: 'ADD_CHAT_MESSAGE', payload:"Messaggio di prova\n"}); 
@@ -78,7 +78,7 @@ function MainPage() {
         dispatch({type: 'SET_MEDIASOUPCLIENT', payload: mediasoupClient});
 
         // do this at the start of the app
-        requireUSBPermissions();
+        // requireUSBPermissions();
 
 
         return function componentWillUnmount() {
@@ -135,19 +135,12 @@ function MainPage() {
 
     }
 
-    async function requireUSBPermissions(){
+    async function invokeDisconnect(){
+        dispatch({type: 'SET_CONNECTED', payload: false});
 
-        // Manage USB Permission on any device
-        usb.getUsbDevices(async mydevices => {
-            console.log("mydevices: " + mydevices);
-            var empObj = JSON.parse(mydevices);
-            for (const item of empObj.objects) { // we use a for instead of a for each because the latter does not support await
-                console.log("myvid: " + item.vid + " mypid: " + item.pid);
-                await usb.connect(item.vid, item.pid)
-                .then((data) => console.log("data: " + data))
-                .catch((error) => console.error("error: " + error));
-              }
-        });  
+        //setTimeout(()=>{ this.props.navigation.navigate("Home") }, 3000);
+        
+        navigation.replace('StartPage');
 
     }
 
@@ -162,12 +155,14 @@ function MainPage() {
 
     async function createRoomClient(usbcameracase) {
 
+        /*
         if (usbcameracase){
             dispatch({ type: 'SET_USBCAMERA', payload:true});           
         }
+        */
 
-        console.log('00 ----> init Socket.IO');
-        console.log("[main page] first connect...socket id: " + socket.id);
+        //console.log('00 ----> init Socket.IO');
+        //console.log("[main page] first connect...socket id: " + socket.id);
         console.log('00.1 ----> registerGlobals');
         registerGlobals();
         console.log('01 ----> init Enumerate Devices');
@@ -448,16 +443,16 @@ function MainPage() {
                         enabled
                         onPress={invokeCreateRoomClient}
                     /> 
-                    {/*   <Button
-                        title="USB Perms"
+                       <Button
+                        title="Disconnect"
                         enabled
-                        onPress={requireUSBPermissions}
-                    />       */}       
-                     <Button
+                        onPress={invokeDisconnect}
+                    />              
+                    {/* <Button
                         title="Connect USB"
                         enabled
                         onPress={invokeCreateRoomClientUSB}
-                    />           
+                    />       */}    
                 </View>
                 <View style={styles.debugContainer}>                   
                     <Text style={ debugIsEnabled ? styles.textDebugOn : styles.textDebugOff }>
@@ -502,23 +497,6 @@ function MainPage() {
                         enabled
                         onPress={clearChat}
                     />
-                    <TouchableOpacity
-                        style={styles.buttonFacebookStyle}
-                        activeOpacity={0.5}>
-                        <Image
-                            source={{
-                            uri:
-                                'https://raw.githubusercontent.com/AboutReact/sampleresource/master/facebook.png',
-                            }}
-                            style={styles.buttonImageIconStyle}
-                        />
-                        <View style={styles.buttonIconSeparatorStyle} />
-                        <Text style={styles.buttonTextStyle}>Login Using Facebook</Text>
-                    </TouchableOpacity>
-                    
-                  {/*   <Button onPress={() => sayHello()} title="Clean Draw" />
-      
-                    <Button onPress={() => addPath()} title="Test Path" /> */}
                     
                 </View>
                 <View style={styles.mainArea}>
