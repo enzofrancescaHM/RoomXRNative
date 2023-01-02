@@ -9,6 +9,7 @@ import * as mediasoupClient from "mediasoup-client";
 
 // local project imports
 import Store, {Context} from '../global/Store';
+
 //import {SocketContext} from '../global/socket';
 import RoomClient from "./RoomClient";
 import Orientation from 'react-native-orientation-locker';
@@ -21,7 +22,6 @@ function MainPage({navigation}) {
     const [rc, setRc] = useState(null);
     const [debugLine, setDebugLine] = useState("this is the debug line... ;)")
     const [state, dispatch] = useContext(Context);
-    //const socket = useContext(SocketContext);
     const [debugIsEnabled, setDebugIsEnabled] = useState(false);
     const toggleDebug = () => setDebugIsEnabled(previousState => !previousState);
     const testChat = () => dispatch({ type: 'ADD_CHAT_MESSAGE', payload:"Messaggio di prova\n"}); 
@@ -154,12 +154,6 @@ function MainPage({navigation}) {
 
 
     async function createRoomClient(usbcameracase) {
-
-        /*
-        if (usbcameracase){
-            dispatch({ type: 'SET_USBCAMERA', payload:true});           
-        }
-        */
 
         //console.log('00 ----> init Socket.IO');
         //console.log("[main page] first connect...socket id: " + socket.id);
@@ -391,7 +385,7 @@ function MainPage({navigation}) {
             top: 0, 
             width: "100%", 
             height: "100%", 
-            backgroundColor: '#FF000099',
+            backgroundColor: '#FF000000',
             border: '#FF0000', 
             zIndex:1 
         },

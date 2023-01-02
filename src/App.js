@@ -25,6 +25,8 @@ import { TestPage } from './component/TestPage';
 import { HomePage } from './component/HomePage';
 import { StartPage } from './component/StartPage';
 import MainPage from './component/MainPage';
+import { ScannerPage } from './component/ScannerPage';
+
 const Stack = createNativeStackNavigator();
 
 const App: () => Node = () => {
@@ -69,6 +71,8 @@ return (
           <Stack.Screen name="PermissionsPage" component={PermissionsPage} />
           <Stack.Screen name="StartPage" component={StartPage} />
           <Stack.Screen name="MainPage" component={MainPage} />
+          <Stack.Screen name="ScannerPage" component={ScannerPage} />
+
         </Stack.Navigator>    
       </Store>
     {/* </SocketContext.Provider> */}

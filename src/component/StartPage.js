@@ -72,6 +72,10 @@ export function StartPage({navigation}){
         navigation.replace('MainPage');
     }
 
+    function scannergo(){
+      navigation.replace('ScannerPage');
+    }
+
     function toggleUsb(){
         setUsbIsEnabled(previousState => !previousState);        
         dispatch({ type: 'SET_USBCAMERA', payload:usbIsEnabled});
@@ -190,12 +194,12 @@ export function StartPage({navigation}){
                 <Circle
                     color="#56CCF2"
                     opacity={0.2}
-                    cx={width}
-                    cy={height}
+                    cx={window.width}
+                    cy={window.height}
                     r={150}
                 />
                 </Group>
-                 <Title title="RoomXR PRO" user="enzofrancesca"/>
+                 <Title title="RoomXR PRO" user={state.peer_name}/>
                  {/* <Button x={50} y={100} width={50} height={50} pressed={0}>
                  </Button>   */} 
                 {/*<ProgressBar progress={progress} />*/}
@@ -213,12 +217,12 @@ export function StartPage({navigation}){
             </Group>
         </Canvas>
         <View style={styles.bottomContainer}>
-        {/*<Button 
-            title="User"
+        <Button 
+            title="Scanner"
             enabled
-            onPress={console.log("ciccio")}
+            onPress={scannergo}
         />
-        
+        {/*
         <Button 
             title="Test Chat"
             enabled
@@ -229,6 +233,9 @@ export function StartPage({navigation}){
             enabled
             onPress={}
         />*/}
+        <Text style={styles.labelUsbTextStyle}>
+           {"Version: " + state.app_ver}
+        </Text>
         <Text style={styles.labelUsbTextStyle}>
           USB Glasses
         </Text>

@@ -3,6 +3,8 @@ import Reducer from './Reducer'
 
 
 const initialState = {
+    app_ver: "0.5.0 beta",
+    root_address:"https://roomxr.eu:5001",
     room_id: "holomask-test", // TODO change in production
     peer_name: "Glasses01",          // TODO change in production
     localstream: "empty",

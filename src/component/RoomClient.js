@@ -61,15 +61,10 @@ function RoomClient() {
 
     const mounted = useRef();
     const [state, dispatch] = useContext(Context);
-    //const socket = useContext(SocketContext);
-    const socket = socketio.connect("https://roomxr.eu:5001", { transports: ['websocket'] });
+    const socket = socketio.connect(state.root_address, { transports: ['websocket'] });
 
 
-    function initComp() {
-
-        //socket.connect("https://roomxr.eu:5001", { transports: ['websocket'] });
-        //socket = socketio.connect("https://roomxr.eu:5001", { transports: ['websocket'] });
-        
+    function initComp() {        
         this.eventListeners = new Map();
         this.peer_info = {
             user_agent: state.user_agent,
@@ -1769,7 +1764,6 @@ function removeVideoOff(peer_id) {
     // ####################################################
     // EXIT ROOM
     // ####################################################
-
     async function exit(offline = false) {
 
         const data = await socket.request('exitRoom');
@@ -1777,49 +1771,19 @@ function removeVideoOff(peer_id) {
         this.consumerTransport.close();
         this.producerTransport.close();
         cleanConsumers();
-        //this.socket.offAny();
         socket.disconnect();
-        //socket = null;
-        //this.socket.off('disconnect');
-        //this.socket.off('newProducers');
-        //this.socket.off('consumerClosed');
 
-
-
-        /*
-        let clean = function () {
-            this._isConnected = false;
-            this.consumerTransport.close();
-            this.producerTransport.close();
-            this.socket.off('disconnect');
-            this.socket.off('newProducers');
-            this.socket.off('consumerClosed');
-        }.bind(this);
-
-        if (!offline) {
-            this.socket
-                .request('exitRoom')
-                .then((e) => console.log('Exit Room', e))
-                .catch((e) => console.warn('Exit Room ', e))
-                .finally(
-                    function () {
-                        clean();
-                    }.bind(this),
-                );
-        } else {
-            clean();
-        }
-        this.event(_EVENTS.exitRoom);*/
     }
 
     function exitRoom() {
         this.sound('eject');
         this.exit();
     }
+
+
     // ####################################################
     // HELPERS
     // ####################################################
-
     function attachMediaStream(elem, stream, type, who) {
         let track;
         switch (type) {
