@@ -7,29 +7,21 @@
  */
 
 import React from 'react';
-import { Node, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import {
-  StyleSheet,
-  useColorScheme,
-  StatusBar,
-} from 'react-native';
-import {Colors} from 'react-native/Libraries/NewAppScreen';
+import { useColorScheme, StatusBar } from 'react-native';
+import { Colors } from 'react-native/Libraries/NewAppScreen';
 import Store from './global/Store';
-//import {SocketContext, socket} from './global/socket';
 import { Camera} from 'react-native-vision-camera';
-//import { CameraPage } from './component/CameraPage';
 import { PermissionsPage } from './component/PermissionPage';
-import { TestPage } from './component/TestPage';
-import { HomePage } from './component/HomePage';
 import { StartPage } from './component/StartPage';
 import MainPage from './component/MainPage';
 import { ScannerPage } from './component/ScannerPage';
 
 const Stack = createNativeStackNavigator();
-
-const App: () => Node = () => {
+const App = () => {
+  
   const isDarkMode = useColorScheme() === 'dark';
 
   const backgroundStyle = {

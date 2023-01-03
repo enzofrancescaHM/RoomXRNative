@@ -50,7 +50,6 @@ the apk is now in: yourProject/android/app/build/outputs/apk/debug/app-debug.apk
 
 ## Todo:
 - Implement Device Chooser (camera and audio)...
-- Implement QRCode Reader
 - test on iOS
 - implement login
 - implement room choice
@@ -63,6 +62,7 @@ the apk is now in: yourProject/android/app/build/outputs/apk/debug/app-debug.apk
 
 ## In Progress:
 - GUI redesign in glassmorphism or similar
+- save config to internal storage
 
 
 
@@ -86,7 +86,8 @@ the apk is now in: yourProject/android/app/build/outputs/apk/debug/app-debug.apk
 - [FIX] make usb permissions generic for all phones
 - [FIX] reach univet USB in every phone
 - (Whiteboard) implement resolution independent whiteboard
-- Manage socket.io disconnection gracely
+- [FIX] Manage socket.io disconnection gracely
+- Implement QRCode Reader
 
 ## Changelist:
 
@@ -113,7 +114,8 @@ the apk is now in: yourProject/android/app/build/outputs/apk/debug/app-debug.apk
 - (Whiteboard) implement resolution independent whiteboard
 
 ### Ver. 0.5 Beta:
-- Manage socket.io disconnection gracely
+- [FIX] Manage socket.io disconnection gracely
+- Implement QRCode Reader
 
 
 

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState, useContext } from "react";
-import { StyleSheet, Button,Image, Text, TouchableOpacity, View, StatusBar, ScrollView, Switch } from "react-native";
+import { StyleSheet, Button,Image, Text, TouchableOpacity, View, StatusBar, Alert, Switch } from "react-native";
 import { Skia,useImage, } from "@shopify/react-native-skia";
 import { Context } from '../global/Store';
 import usb from 'react-native-usb';
@@ -69,7 +69,24 @@ export function StartPage({navigation}){
       });
     
     function connectgo(){
-        navigation.replace('MainPage');
+        // check if all the needed parameters are set
+        if( state.root_address == "empty" ||
+            state.room_id == "empty" ||
+            state.peer_name == "empty"){
+              console.log("uh-oh, something missing!");
+              Alert.alert(
+                "Warning",
+                "App not properly configured, please read the QRCODE provided",
+                [
+                  { text: "OK", onPress: () => console.log("OK Pressed") }
+                ]
+              );
+
+        }
+        else{
+          navigation.replace('MainPage');
+        }
+        
     }
 
     function scannergo(){
@@ -256,12 +273,7 @@ export function StartPage({navigation}){
             />
             <View style={styles.buttonIconSeparatorStyle} />
             <Text style={styles.buttonTextStyle}>Connect to Platform</Text>
-        </TouchableOpacity>
-        
-      {/*   <Button onPress={() => sayHello()} title="Clean Draw" />
-
-        <Button onPress={() => addPath()} title="Test Path" /> */}
-        
+        </TouchableOpacity>                
     </View>
     </>
     )

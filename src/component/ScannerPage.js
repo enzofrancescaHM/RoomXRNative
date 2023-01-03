@@ -1,43 +1,70 @@
 import * as React from 'react';
-import { useState } from 'react'; 
-
-import { runOnJS } from 'react-native-reanimated';
+import { useContext, useEffect, useState } from 'react';
 import { StyleSheet, Text } from 'react-native';
 import { useCameraDevices } from 'react-native-vision-camera';
 import { Camera } from 'react-native-vision-camera';
 import { useScanBarcodes, BarcodeFormat, useFrameProcessor } from 'vision-camera-code-scanner';
+// local project imports
+import Store, {Context} from '../global/Store';
 
 export function ScannerPage({navigation}){
 
-  //const [hasPermission, setHasPermission] = React.useState(false);
   const devices = useCameraDevices();
   const device = devices.back;
-  //const [barcodes, setBarcodes] = useState([]);
-  //const [barcodes, setBc] = useState([]);
+  const [state, dispatch] = useContext(Context);
 
   const [frameProcessor, barcodes] = useScanBarcodes([BarcodeFormat.QR_CODE], {
     checkInverted: true,
   });
 
-  /*
-  function scanBarcodes(frame, types, options) {
-    'worklet';
-    // @ts-ignore
-    // eslint-disable-next-line no-undef
-    return __scanCodes(frame, types, options);
-  }
+  
+  const [deco, setDeco] = useState("");
+  const [isActive, setIsActive] = useState(true);
 
+  /*useEffect(() => {
+      console.log("useeffect");
+      if(deco != "")
+      {
+        console.log("ci siamo");
+        setIsActive(false);
+        dispatch({ type: 'SET_PEER_NAME', payload:deco.user});          
+        dispatch({ type: 'SET_ROOT', payload:deco.base});
+        dispatch({ type: 'SET_ROOM', payload:deco.room});  
+        navigation.replace('StartPage');
+      }
+  }, [deco]);*/
 
-   const frameProcessor = useFrameProcessor((frame) => {
-    'worklet';
-    const detectedBarcodes = scanBarcodes(frame, [BarcodeFormat.QR_CODE], { checkInverted: true });
-    runOnJS(setBc)(detectedBarcodes);
-  }, []);
+  React.useEffect(() => {
+    
+    console.log(barcodes);
+    barcodes.map((barcode, idx) => (
+      getBarcode(barcode.displayValue)
+    ));
+  }, [barcodes]);
 
-*/
-    function getBarcode(barcodevalue){
-        console.log(barcodevalue);
-    }  
+  
+  /**
+   * Evaluate barcode read by the camera in order to
+   * extrapolate config info such as room address and 
+   * username
+   * @param {*} barcodevalue 
+   */
+  function getBarcode(barcodevalue){
+        //console.log(barcodevalue);
+        
+        setIsActive(false);
+        // Sanity check, assure that this is a valid qrcode
+        if(barcodevalue.includes('user') && barcodevalue.includes('room') && barcodevalue.includes('base'))
+        {
+          console.log("siamo dentro");
+          var dec = (JSON.parse(barcodevalue)); 
+          dispatch({ type: 'SET_PEER_NAME', payload:dec.user});          
+          dispatch({ type: 'SET_ROOT', payload:dec.base});
+          dispatch({ type: 'SET_ROOM', payload:dec.room});  
+          navigation.replace('StartPage');        
+        }
+
+  }  
 
   return (
     device != null &&
@@ -46,17 +73,17 @@ export function ScannerPage({navigation}){
         <Camera
           style={StyleSheet.absoluteFill}
           device={device}
-          isActive={true}
+          isActive={isActive}
           frameProcessor={frameProcessor}
           frameProcessorFps={5}
         />
-         {barcodes.map((barcode, idx) => (
+        {/*  {barcodes.map((barcode, idx) => (
                 getBarcode(barcode.displayValue)
-/*           <Text key={idx} style={styles.barcodeTextURL}>
+           <Text key={idx} style={styles.barcodeTextURL}>
             {barcode.displayValue}
           </Text>
- */
-        ))}
+ 
+        ))} */}
        </>
     )
   );

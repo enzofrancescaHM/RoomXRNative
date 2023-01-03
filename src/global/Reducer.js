@@ -1,5 +1,21 @@
 const Reducer = (state, action) => {
     switch (action.type) {
+        case 'SET_PEER_NAME':
+            return{
+                ...state,
+                peer_name: action.payload
+            };
+        case 'SET_ROOT':
+            return{
+                ...state,
+                root_address: action.payload
+            };
+        case 'SET_ROOM':
+            return{
+                ...state,
+                room_id: action.payload
+            };
+    
         case 'SET_PEER_ID':
             return{
                 ...state,
