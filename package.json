@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@babel/plugin-transform-runtime": "^7.19.6",
+    "@react-native-async-storage/async-storage": "^1.17.11",
     "@react-navigation/native": "^6.0.12",
     "@react-navigation/native-stack": "^6.8.0",
     "@shopify/react-native-skia": "^0.1.165",

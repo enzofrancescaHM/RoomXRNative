@@ -26,6 +26,8 @@ import {
   useLoop,
 } from "@shopify/react-native-skia";
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 import { Title } from "./neumorph/Title";
 import { Control } from "./neumorph/Control";
 import { Mode } from "./neumorph/Mode";
@@ -56,6 +58,57 @@ export function StartPage({navigation}){
     if (!imageConnect) {
       //return null;
     }
+
+    const getData = async () => {
+      try {
+        const jsonValue = await AsyncStorage.getItem('@net_Config')
+        return jsonValue != null ? JSON.parse(jsonValue) : null;
+      } catch(e) {
+        // error reading value
+        console.log("error reading value!");
+      }
+    }
+
+    const getUserValue = async () => {
+      try {
+        var myuser = await AsyncStorage.getItem('user');
+        console.log("fresh user: " + myuser);
+        dispatch({ type: 'SET_PEER_NAME', payload:myuser});          
+        return myuser;
+      } catch(e) {
+        // read error
+        console.log("user read error!")
+      }
+    
+      console.log('user Done.')
+    }
+
+    const getRoomValue = async () => {
+      try {
+        var myRoom = await AsyncStorage.getItem('room');
+        console.log("fresh room: " + myRoom);
+        dispatch({ type: 'SET_ROOM', payload:myRoom});
+      } catch(e) {
+        // read error
+        console.log("room read error!")
+      }
+    
+      console.log('room Done.')
+    }
+    const getRootValue = async () => {
+      try {
+        var myRoot = await AsyncStorage.getItem('root');
+        console.log("fresh root: " + myRoot);
+        dispatch({ type: 'SET_ROOT', payload:myRoot});
+      } catch(e) {
+        // read error
+        console.log("root read error!")
+      }
+    
+      console.log('root Done.')
+    }
+
+
     const onTouch = useTouchHandler({
         onStart: (pt) => {
           offsetY.current = translateY.current - pt.y;
@@ -101,12 +154,35 @@ export function StartPage({navigation}){
 
     useEffect(function componentDidMount() {
         console.log("%c StartPage componetDidMount", "color:green;");
-        
+         // read config from persistent memory
+         //var dec = getData();
+        const user = getUserValue();
+        const room = getRoomValue();
+        const root = getRootValue();
+
         StatusBar.setHidden(true, 'none');
         Orientation.lockToLandscapeLeft();
 
         // do this at the start of the app
         requireUSBPermissions();
+
+       
+        /*console.log("user:" + JSON.stringify(user));
+        if (user != null && room != null && root != null &&
+            typeof user !== 'undefined' &&
+            typeof root !== 'undefined' &&
+            typeof room !== 'undefined')
+        {
+          // store in the volatile app memory
+          dispatch({ type: 'SET_PEER_NAME', payload:user});          
+          dispatch({ type: 'SET_ROOT', payload:root});
+          dispatch({ type: 'SET_ROOM', payload:room});  
+        }
+        else{
+          dispatch({ type: 'SET_PEER_NAME', payload:"empty"});          
+          dispatch({ type: 'SET_ROOT', payload:"empty"});
+          dispatch({ type: 'SET_ROOM', payload:"empty"});  
+        }*/
 
 
         return function componentWillUnmount() {

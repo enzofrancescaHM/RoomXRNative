@@ -48,11 +48,27 @@ cd android
 ```
 the apk is now in: yourProject/android/app/build/outputs/apk/debug/app-debug.apk
 
+## Reset and Clean project
+every time we add some package we have to reset ancd rebuild the   
+project, we can do by executing the following codes from project's root:   
+```
+watchman watch-del-all
+cd .\android\
+.\gradlew clean
+cd ..
+rm -r node_modules/
+rm yarn.loc
+yarn cache clean --force
+rm -r $TMPDIR/metro-* 
+rm -r $TMPDIR/haste-* 
+yarn install
+```
+
 ## Todo:
 - Implement Device Chooser (camera and audio)...
-- test on iOS
-- implement login
-- implement room choice
+- test on iOS (low priority)
+- implement login (evaluate if needed!)
+- implement room choice (evaluate if needed!)
 - explore expo compilation
 - implement voice recognition with: pocketsphynx
 - implement chat with: https://github.com/FaridSafi/react-native-gifted-chat

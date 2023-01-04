@@ -4,6 +4,7 @@ import { StyleSheet, Text } from 'react-native';
 import { useCameraDevices } from 'react-native-vision-camera';
 import { Camera } from 'react-native-vision-camera';
 import { useScanBarcodes, BarcodeFormat, useFrameProcessor } from 'vision-camera-code-scanner';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 // local project imports
 import Store, {Context} from '../global/Store';
 
@@ -17,28 +18,49 @@ export function ScannerPage({navigation}){
     checkInverted: true,
   });
 
-  
-  const [deco, setDeco] = useState("");
-  const [isActive, setIsActive] = useState(true);
 
-  /*useEffect(() => {
-      console.log("useeffect");
-      if(deco != "")
-      {
-        console.log("ci siamo");
-        setIsActive(false);
-        dispatch({ type: 'SET_PEER_NAME', payload:deco.user});          
-        dispatch({ type: 'SET_ROOT', payload:deco.base});
-        dispatch({ type: 'SET_ROOM', payload:deco.room});  
-        navigation.replace('StartPage');
-      }
-  }, [deco]);*/
+  const setUserValue = async (value) => {
+    try {
+      console.log("writing: " + value);
+
+      await AsyncStorage.setItem('user', value.replace(/\"/g , ''))
+    } catch(e) {
+      // save error
+      console.log("user write error!");
+    }
+  
+    console.log('user write done.');
+  }
+
+  const setRootValue = async (value) => {
+    try {
+      await AsyncStorage.setItem('root', value.replace(/\"/g , ''))
+    } catch(e) {
+      // save error
+      console.log("root write error!");
+    }
+  
+    console.log('root write done.');
+  }
+  const setRoomValue = async (value) => {
+    try {
+      await AsyncStorage.setItem('room', value.replace(/\"/g , ''))
+    } catch(e) {
+      // save error
+      console.log("room write error!");
+    }
+  
+    console.log('room write done.');
+  }
+
+  
+  const [isActive, setIsActive] = useState(true);
 
   React.useEffect(() => {
     
     console.log(barcodes);
     barcodes.map((barcode, idx) => (
-      getBarcode(barcode.displayValue)
+      getBarcode(barcode.displayValue, idx)
     ));
   }, [barcodes]);
 
@@ -49,21 +71,37 @@ export function ScannerPage({navigation}){
    * username
    * @param {*} barcodevalue 
    */
-  function getBarcode(barcodevalue){
-        //console.log(barcodevalue);
-        
-        setIsActive(false);
-        // Sanity check, assure that this is a valid qrcode
-        if(barcodevalue.includes('user') && barcodevalue.includes('room') && barcodevalue.includes('base'))
-        {
-          console.log("siamo dentro");
-          var dec = (JSON.parse(barcodevalue)); 
-          dispatch({ type: 'SET_PEER_NAME', payload:dec.user});          
-          dispatch({ type: 'SET_ROOT', payload:dec.base});
-          dispatch({ type: 'SET_ROOM', payload:dec.room});  
-          navigation.replace('StartPage');        
-        }
+  async function getBarcode(barcodevalue, idx){
 
+        console.log("idx: " + idx);
+        if(idx == 0)
+        {
+          // stop reading barcodes
+          setIsActive(false);
+          // Sanity check, assure that this is a valid qrcode
+          if(barcodevalue.includes('user') && barcodevalue.includes('room') && barcodevalue.includes('base'))
+          {          
+            console.log("barcode correct: " + barcodevalue );
+            // build json object
+            var dec = (JSON.parse(barcodevalue)); 
+
+            console.log("user: " + dec.user + " base: " + dec.base + " room: " + dec.room );
+            // store it in the persistent app memory
+            await setUserValue(JSON.stringify(dec.user));
+            await setRoomValue(JSON.stringify(dec.room));
+            await setRootValue(JSON.stringify(dec.base));
+
+            // store in the volatile app memory
+            await dispatch({ type: 'SET_PEER_NAME', payload:dec.user});          
+            await dispatch({ type: 'SET_ROOT', payload:dec.base});
+            await dispatch({ type: 'SET_ROOM', payload:dec.room});  
+            // come back to start page
+            navigation.replace('StartPage');        
+          }
+          else{
+            console.log("barcode incorrect!");
+          }
+      }
   }  
 
   return (
