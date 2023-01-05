@@ -133,7 +133,10 @@ yarn install
 - [FIX] Manage socket.io disconnection gracely
 - Implement QRCode Reader
 
-
+### Ver. 0.6 Beta:
+- [FIX] Get real screen dimensions for all devices
+- Implement Splash screen to collect relevant info
+- Implement back button in QRCode reader to return without read
 
 ## Univet Camera Procedure
 

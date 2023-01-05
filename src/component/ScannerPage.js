@@ -1,10 +1,11 @@
 import * as React from 'react';
 import { useContext, useEffect, useState } from 'react';
-import { StyleSheet, Text } from 'react-native';
+import { Button, StyleSheet, Text, Image, View } from 'react-native';
 import { useCameraDevices } from 'react-native-vision-camera';
 import { Camera } from 'react-native-vision-camera';
 import { useScanBarcodes, BarcodeFormat, useFrameProcessor } from 'vision-camera-code-scanner';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Pressable } from 'react-native';
 // local project imports
 import Store, {Context} from '../global/Store';
 
@@ -13,6 +14,8 @@ export function ScannerPage({navigation}){
   const devices = useCameraDevices();
   const device = devices.back;
   const [state, dispatch] = useContext(Context);
+
+  const imageConnect = require("../images/back.png");
 
   const [frameProcessor, barcodes] = useScanBarcodes([BarcodeFormat.QR_CODE], {
     checkInverted: true,
@@ -64,7 +67,10 @@ export function ScannerPage({navigation}){
     ));
   }, [barcodes]);
 
-  
+  function onPressFunction(){
+    // come back to start page
+    navigation.replace('StartPage');    
+  }
   /**
    * Evaluate barcode read by the camera in order to
    * extrapolate config info such as room address and 
@@ -104,6 +110,113 @@ export function ScannerPage({navigation}){
       }
   }  
 
+  const styles = StyleSheet.create({
+    mainContainer:{
+      flex:1,
+          flexDirection: "column",
+          height: "100%",
+          padding: 2,
+          backgroundColor: '#000000',
+          //alignContent:"center", 
+          //justifyContent: 'center',
+          alignItems: 'center'
+    },
+      headerContainer: {
+          height:40,
+          position: "absolute",
+          top:0,
+          left:0,
+          flexDirection: "row",
+          padding: 0,
+          backgroundColor: '#00FF0000',
+          zIndex:2, 
+      },
+      bottomContainer: {
+          height:40,
+          position: "absolute",
+          bottom:state.real_height / 15,
+          left:10,
+          flexDirection: "row",
+          padding: 2,
+          backgroundColor: '#00000000',
+          zIndex:2, 
+      },
+      buttonsContainer:{
+        flex:1,
+        flexDirection:"row",
+        height:50,
+      },
+      buttonFacebookStyle: {
+          position: "absolute",
+          //bottom:window.height/2 - 40,
+          //left: "auto",
+          //right:"auto",
+          
+          backgroundColor: '#ffffff33',
+          borderWidth: 0.5,
+          borderColor: '#fff',
+          width:state.real_width / 2.5,
+          height: state.real_height / 5,
+          borderRadius: 5,
+          margin: 5,
+          flex:1,
+          flexDirection:"row",
+        },
+        buttonImageIconStyle: {
+          //padding: 20,
+          //margin: 5,
+          height: state.real_height / 5,
+          width: state.real_height / 5,
+          resizeMode: 'stretch',
+        },
+        buttonTextStyle: {
+          color: '#fff',
+          fontSize: state.real_height / 10,
+          //marginTop: -32,
+          marginLeft: "auto",
+          marginRight:"auto",
+          marginTop:"auto",
+          marginBottom: "auto",
+          textAlign:"center",
+        },
+        buttonIconSeparatorStyle: {
+          backgroundColor: '#fff',
+          //marginLeft:36,
+          //marginTop:-35,
+          width: 1,
+          height: state.real_height / 5,
+        },
+        labelUsbTextStyle: {
+          fontSize:state.real_height / 16,
+          color: '#fff',
+          marginTop: 7,
+          marginLeft: 20,
+          marginRight:5,
+        },
+        labelTitle:{
+          color: '#fff',
+          marginTop: 0,
+          fontSize:state.real_height / 7,
+          textAlign:"center",
+        },
+        labelUser:{
+          color: '#aaa',
+          marginTop: 0,
+          fontSize:state.real_height / 14,
+          textAlign:"center",
+          marginBottom:state.real_height /10,
+        },
+        labelVersion: {
+          fontSize:state.real_height / 16,
+          color: '#aaa',
+          marginTop: 7,
+          marginLeft: 20,
+          marginRight:5,
+        },
+
+     
+    });
+
   return (
     device != null &&
      (
@@ -115,7 +228,18 @@ export function ScannerPage({navigation}){
           frameProcessor={frameProcessor}
           frameProcessorFps={5}
         />
-        {/*  {barcodes.map((barcode, idx) => (
+        {
+          <Pressable onPress={onPressFunction} style={styles.buttonFacebookStyle}>
+            <View style={styles.buttonsContainer}>
+            <Image
+               source={imageConnect}
+                style={styles.buttonImageIconStyle}
+            />
+            <View style={styles.buttonIconSeparatorStyle} />
+            <Text style={styles.buttonTextStyle}>Back</Text>
+            </View>
+          </Pressable>
+        /*  {barcodes.map((barcode, idx) => (
                 getBarcode(barcode.displayValue)
            <Text key={idx} style={styles.barcodeTextURL}>
             {barcode.displayValue}
