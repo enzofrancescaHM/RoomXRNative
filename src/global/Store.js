@@ -49,6 +49,8 @@ const initialState = {
     image_array: [],
     board_W: 0,
     board_H: 0,
+    real_width: 640,
+    real_height: 480,
     socket: null,
 
 

@@ -107,11 +107,21 @@ const Reducer = (state, action) => {
                 ...state,
                 usbcamera: action.payload
             };
-        case 'ADD_CHAT_MESSAGE':
+        case 'SET_REAL_WIDTH':
             return{
                 ...state,
-                chat_array: [...state.chat_array, action.payload]
+                real_width: action.payload
             };
+        case 'SET_REAL_HEIGHT':
+            return{
+                ...state,
+                real_height: action.payload
+            };            
+        case 'ADD_CHAT_MESSAGE':
+        return{
+            ...state,
+            chat_array: [...state.chat_array, action.payload]
+        };
         case 'CLEAR_CHAT':
             return{
                 ...state,

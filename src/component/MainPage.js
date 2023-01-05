@@ -14,8 +14,8 @@ import Store, {Context} from '../global/Store';
 import RoomClient from "./RoomClient";
 import Orientation from 'react-native-orientation-locker';
 import { RoomBoard } from "./RoomBoard";
-
-function MainPage({navigation}) {
+export function MainPage({navigation}){
+//function MainPage({navigation}) {
     const mounted = useRef()
     const [count, setCount] = useState(0)
     const [debugTest, setDebugTest] = useState("---");
@@ -536,8 +536,3 @@ function MainPage({navigation}) {
         </>
     )
 }
-
-
-
-
-export default MainPage;

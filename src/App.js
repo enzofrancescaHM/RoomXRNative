@@ -7,27 +7,22 @@
  */
 
 import React from 'react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
+import { StatusBar } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { useColorScheme, StatusBar } from 'react-native';
-import { Colors } from 'react-native/Libraries/NewAppScreen';
-import Store from './global/Store';
+import  Store  from './global/Store';
 import { Camera} from 'react-native-vision-camera';
+
 import { PermissionsPage } from './component/PermissionPage';
 import { StartPage } from './component/StartPage';
-import MainPage from './component/MainPage';
+import { MainPage } from './component/MainPage';
+import { SplashPage } from './component/SplashPage';
 import { ScannerPage } from './component/ScannerPage';
 
 const Stack = createNativeStackNavigator();
 const App = () => {
   
-  const isDarkMode = useColorScheme() === 'dark';
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
-
   const [cameraPermission, setCameraPermission] = useState();
   const [microphonePermission, setMicrophonePermission] = useState();
   
@@ -44,33 +39,31 @@ const App = () => {
   }
   const showPermissionsPage = cameraPermission !== 'authorized' || microphonePermission === 'not-determined';
   
+  return (
+    
+    <NavigationContainer>
+      <StatusBar
+          animated={true}
+          backgroundColor="transparent"
+        />
+        <Store>
+          <Stack.Navigator
+            screenOptions={{
+              headerShown: false,
+              animationTypeForReplace: 'push',
+            }}
+            initialRouteName={showPermissionsPage ? 'PermissionsPage' : 'SplashPage'}>
+            <Stack.Screen name="PermissionsPage" component={PermissionsPage} />
+            <Stack.Screen name="StartPage" component={StartPage} />
+            <Stack.Screen name="MainPage" component={MainPage} />
+            <Stack.Screen name="ScannerPage" component={ScannerPage} />
+            <Stack.Screen name="SplashPage" component={SplashPage} />
 
-return (
-  
-  <NavigationContainer>
-    <StatusBar
-        animated={true}
-        backgroundColor="transparent"
-      />
-    {/* <SocketContext.Provider value={socket}> */}
-      <Store>
-        <Stack.Navigator
-          screenOptions={{
-            headerShown: false,
-            animationTypeForReplace: 'push',
-          }}
-          initialRouteName={showPermissionsPage ? 'PermissionsPage' : 'StartPage'}>
-          <Stack.Screen name="PermissionsPage" component={PermissionsPage} />
-          <Stack.Screen name="StartPage" component={StartPage} />
-          <Stack.Screen name="MainPage" component={MainPage} />
-          <Stack.Screen name="ScannerPage" component={ScannerPage} />
-
-        </Stack.Navigator>    
-      </Store>
-    {/* </SocketContext.Provider> */}
-  </NavigationContainer>
-  
-);
+          </Stack.Navigator>    
+        </Store>
+    </NavigationContainer>
+    
+  );
  };
 
 export default App;

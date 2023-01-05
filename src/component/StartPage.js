@@ -5,7 +5,7 @@ import { Context } from '../global/Store';
 import usb from 'react-native-usb';
 
 import Orientation from 'react-native-orientation-locker';
-import { useWindowDimensions } from "react-native";
+import { useWindowDimensions, Dimensions } from "react-native";
 import {
   runSpring,
   mix,
@@ -28,12 +28,6 @@ import {
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import { Title } from "./neumorph/Title";
-import { Control } from "./neumorph/Control";
-import { Mode } from "./neumorph/Mode";
-import { Snow } from "./neumorph/icons/Snow";
-//import { Button } from "./Button";
-
 const width = 400;
 const height = 200;
 const src = rect(0, 0, width, height);
@@ -42,20 +36,27 @@ export function StartPage({navigation}){
 
     const [state, dispatch] = useContext(Context);
 
-    const window = useWindowDimensions();
-    const dst = rect(0, 0, window.width, window.height);
-    const rects = fitRects("cover", src, dst);
-    const transform = rect2rect(rects.src, rects.dst);
+    //const window = useWindowDimensions();
+    //const window = Dimensions.get("window");
+    //const window = Dimensions.get("screen");
+
+    //const dst = rect(0, 0, window.width, window.height);
+    //const rects = fitRects("cover", src, dst);
+    //const transform = rect2rect(rects.src, rects.dst);
     const translateY = useValue(0);
     const offsetY = useValue(0);
     const t = useLoop({ duration: 3000 });
     const x = useComputedValue(() => mix(t.current, 0, 180), [t]);
-    const progress = useComputedValue(() => x.current / 192, [x]);
-    const font = useFont(require("../fonts/Comfortaa-Bold.ttf"), 17);
+    //const progress = useComputedValue(() => x.current / 192, [x]);
+    //const font = useFont(require("../fonts/Comfortaa-Bold.ttf"), 17);
 
     const [usbIsEnabled, setUsbIsEnabled] = useState(false);
     const imageConnect = require("../images/connect.png");
     if (!imageConnect) {
+      //return null;
+    }
+    const imageQRCode = require("../images/qrcode.png");
+    if (!imageQRCode) {
       //return null;
     }
 
@@ -154,8 +155,7 @@ export function StartPage({navigation}){
 
     useEffect(function componentDidMount() {
         console.log("%c StartPage componetDidMount", "color:green;");
-         // read config from persistent memory
-         //var dec = getData();
+        // read config from persistent memory        
         const user = getUserValue();
         const room = getRoomValue();
         const root = getRootValue();
@@ -165,25 +165,6 @@ export function StartPage({navigation}){
 
         // do this at the start of the app
         requireUSBPermissions();
-
-       
-        /*console.log("user:" + JSON.stringify(user));
-        if (user != null && room != null && root != null &&
-            typeof user !== 'undefined' &&
-            typeof root !== 'undefined' &&
-            typeof room !== 'undefined')
-        {
-          // store in the volatile app memory
-          dispatch({ type: 'SET_PEER_NAME', payload:user});          
-          dispatch({ type: 'SET_ROOT', payload:root});
-          dispatch({ type: 'SET_ROOM', payload:room});  
-        }
-        else{
-          dispatch({ type: 'SET_PEER_NAME', payload:"empty"});          
-          dispatch({ type: 'SET_ROOT', payload:"empty"});
-          dispatch({ type: 'SET_ROOM', payload:"empty"});  
-        }*/
-
 
         return function componentWillUnmount() {
             //console.log("%c MainPage componetWillUnmount", "color:red")
@@ -207,6 +188,16 @@ export function StartPage({navigation}){
     }
 
     const styles = StyleSheet.create({
+      mainContainer:{
+        flex:1,
+            flexDirection: "column",
+            height: "100%",
+            padding: 2,
+            backgroundColor: '#000000',
+            //alignContent:"center", 
+            //justifyContent: 'center',
+            alignItems: 'center'
+      },
         headerContainer: {
             height:40,
             position: "absolute",
@@ -220,113 +211,135 @@ export function StartPage({navigation}){
         bottomContainer: {
             height:40,
             position: "absolute",
-            bottom:10,
+            bottom:state.real_height / 15,
             left:10,
             flexDirection: "row",
             padding: 2,
-            backgroundColor: '#00FF0000',
+            backgroundColor: '#00000000',
             zIndex:2, 
         },
-        buttonFacebookStyle: {
-            //flexDirection: 'row',
-            position: "absolute",
-            bottom:10,
-            left: window.width - 220,
-            right:"auto",
-            //alignItems: 'center',
+        buttonsContainer:{
+          flex:1,
+          flexDirection:"row",
+          
+        },
+        buttonScannerStyle: {
+            //position: "absolute",
+            //bottom:window.height/2 - 40,
+            //left: window.width / 2 - 210,
+            //right:"auto",
             backgroundColor: '#485a96',
             borderWidth: 0.5,
             borderColor: '#fff',
-            width:190,
-            height: 40,
+            width:state.real_width / 2.5,
+            height: state.real_height / 5,
             borderRadius: 5,
-            margin: -5,
+            margin: 5,
+            flex:1,
+            flexDirection:"row",
+          },
+        buttonFacebookStyle: {
+            //position: "absolute",
+            //bottom:window.height/2 - 40,
+            //left: "auto",
+            //right:"auto",
+            
+            backgroundColor: '#485a96',
+            borderWidth: 0.5,
+            borderColor: '#fff',
+            width:state.real_width / 2.5,
+            height: state.real_height / 5,
+            borderRadius: 5,
+            margin: 5,
+            flex:1,
+            flexDirection:"row",
           },
           buttonImageIconStyle: {
-            padding: 10,
-            margin: 5,
-            height: 25,
-            width: 25,
+            //padding: 20,
+            //margin: 5,
+            height: state.real_height / 5,
+            width: state.real_height / 5,
             resizeMode: 'stretch',
           },
           buttonTextStyle: {
             color: '#fff',
-            marginTop: -32,
-            marginLeft: 42,
+            fontSize: state.real_height / 10,
+            //marginTop: -32,
+            marginLeft: "auto",
+            marginRight:"auto",
+            marginTop:"auto",
+            marginBottom: "auto",
+            textAlign:"center",
           },
           buttonIconSeparatorStyle: {
             backgroundColor: '#fff',
-            marginLeft:36,
-            marginTop:-35,
+            //marginLeft:36,
+            //marginTop:-35,
             width: 1,
-            height: 40,
+            height: state.real_height / 5,
           },
           labelUsbTextStyle: {
+            fontSize:state.real_height / 16,
             color: '#fff',
             marginTop: 7,
             marginLeft: 20,
             marginRight:5,
           },
+          labelTitle:{
+            color: '#fff',
+            marginTop: 0,
+            fontSize:state.real_height / 7,
+            textAlign:"center",
+          },
+          labelUser:{
+            color: '#aaa',
+            marginTop: 0,
+            fontSize:state.real_height / 14,
+            textAlign:"center",
+            marginBottom:state.real_height /10,
+          },
+          labelVersion: {
+            fontSize:state.real_height / 16,
+            color: '#aaa',
+            marginTop: 7,
+            marginLeft: 20,
+            marginRight:5,
+          },
+
        
       });
     
     return (
         <>
-        <Canvas style={{ flex: 1 }} mode="continuous" onTouch={onTouch}>
-            <Group transform={transform}>
-                <Group>
-                <LinearGradient
-                    start={vec(0, 0)}
-                    end={vec(0, height)}
-                    colors={["#2A2D32", "#212326", "#131313"]}
-                />
-                <Fill />
-                </Group>
-                <Group>
-                <Blur blur={30} />
-                <Circle
-                    color="#56CCF2"
-                    opacity={0.2}
-                    cx={window.width}
-                    cy={window.height}
-                    r={150}
-                />
-                </Group>
-                 <Title title="RoomXR PRO" user={state.peer_name}/>
-                 {/* <Button x={50} y={100} width={50} height={50} pressed={0}>
-                 </Button>   */} 
-                {/*<ProgressBar progress={progress} />*/}
-               {/*  <Control
-                x={0}
-                y={100}
-                label="Ac"
-                active={true}
-                progress={progress}
-                //font={font}
-                >
-                <Snow />
-                </Control> 
-                <Mode translateY={translateY} /> */}
-            </Group>
-        </Canvas>
-        <View style={styles.bottomContainer}>
-        <Button 
-            title="Scanner"
-            enabled
-            onPress={scannergo}
-        />
-        {/*
-        <Button 
-            title="Test Chat"
-            enabled
-            onPress={testChat}
-        /> 
-        <Button 
-            title="Room"
-            enabled
-            onPress={}
-        />*/}
-        <Text style={styles.labelUsbTextStyle}>
+        <View style={styles.mainContainer}>
+          <Text style={styles.labelTitle}>RoomXR PRO</Text>
+          <Text style={styles.labelUser}>user: {state.peer_name}</Text>
+          <View style={styles.buttonsContainer}>
+          <TouchableOpacity
+            style={styles.buttonScannerStyle}
+            activeOpacity={0.5}
+            onPress={scannergo}>
+            <Image
+               source={imageQRCode}
+                style={styles.buttonImageIconStyle}
+            />
+            <View style={styles.buttonIconSeparatorStyle} />
+            <Text style={styles.buttonTextStyle}>QRCode</Text>
+        </TouchableOpacity>         
+        <TouchableOpacity
+            style={styles.buttonFacebookStyle}
+            activeOpacity={0.5}
+            onPress={connectgo}>
+            <Image
+               source={imageConnect}
+                style={styles.buttonImageIconStyle}
+            />
+            <View style={styles.buttonIconSeparatorStyle} />
+            <Text style={styles.buttonTextStyle}>Connect</Text>
+        </TouchableOpacity>           
+        </View>
+      <View style={styles.bottomContainer}>
+        <Text style={styles.labelVersion}>
            {"Version: " + state.app_ver}
         </Text>
         <Text style={styles.labelUsbTextStyle}>
@@ -339,18 +352,10 @@ export function StartPage({navigation}){
             onValueChange={toggleUsb}
             value={usbIsEnabled}
         />
-        <TouchableOpacity
-            style={styles.buttonFacebookStyle}
-            activeOpacity={0.5}
-            onPress={connectgo}>
-            <Image
-               source={imageConnect}
-                style={styles.buttonImageIconStyle}
-            />
-            <View style={styles.buttonIconSeparatorStyle} />
-            <Text style={styles.buttonTextStyle}>Connect to Platform</Text>
-        </TouchableOpacity>                
+            
     </View>
+    </View>
+    
     </>
     )
 

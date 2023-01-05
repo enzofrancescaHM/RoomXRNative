@@ -4,9 +4,11 @@ import React from "react";
 import { MiniButton, BUTTON_SIZE } from "./MiniButton";
 import { ChervronLeft } from "./icons/ChevronLeft";
 import { Cog } from "./icons/Cog";
+import { useWindowDimensions } from "react-native";
 
 
 export const Title = ({ title, user }) => {
+  const window = useWindowDimensions();
   const font = useFont(require("../../fonts/Comfortaa-Bold.ttf"), 28);
   const font2 = useFont(require("../../fonts/Comfortaa-Bold.ttf"), 14);
   if (!font) {
