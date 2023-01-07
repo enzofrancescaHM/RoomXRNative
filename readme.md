@@ -77,8 +77,10 @@ yarn install
 
 
 ## In Progress:
-- GUI redesign in glassmorphism or similar
-- save config to internal storage
+- Save usb option to the persistent memory
+
+
+
 
 
 
@@ -104,6 +106,8 @@ yarn install
 - (Whiteboard) implement resolution independent whiteboard
 - [FIX] Manage socket.io disconnection gracely
 - Implement QRCode Reader
+- Save config to internal storage
+- GUI redesign
 
 ## Changelist:
 
@@ -137,6 +141,10 @@ yarn install
 - [FIX] Get real screen dimensions for all devices
 - Implement Splash screen to collect relevant info
 - Implement back button in QRCode reader to return without read
+- Save config to internal storage
+
+### Ver. 0.7 Beta:
+- GUI redesign
 
 ## Univet Camera Procedure
 

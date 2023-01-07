@@ -1,6 +1,6 @@
 // react realated imports
 import React, { useEffect, useRef, useState, useContext } from "react";
-import { StyleSheet, Button, Image, Text, TouchableOpacity, View, StatusBar, ScrollView } from "react-native";
+import { StyleSheet, Button, Image, Text, TouchableOpacity,Pressable,View, StatusBar, ScrollView } from "react-native";
 import { RTCView, mediaDevices, registerGlobals } from "react-native-webrtc";
 import usb from 'react-native-usb';
 
@@ -27,6 +27,9 @@ export function MainPage({navigation}){
     const testChat = () => dispatch({ type: 'ADD_CHAT_MESSAGE', payload:"Messaggio di prova\n"}); 
     const clearChat = () => dispatch({ type: 'CLEAR_CHAT', payload:""});
     const scrollViewRef = useRef();
+
+    const imageBack = require("../images/back.png");
+    const imageFlip = require("../images/flip.png");
     
     const sayHello = () => {
         
@@ -79,6 +82,8 @@ export function MainPage({navigation}){
 
         // do this at the start of the app
         // requireUSBPermissions();
+
+        invokeCreateRoomClient();
 
 
         return function componentWillUnmount() {
@@ -145,16 +150,20 @@ export function MainPage({navigation}){
     }
 
     async function invokeCreateRoomClient(){
-        createRoomClient(false);
+        createRoomClient(state.usbcamera);
     }
 
+    /*
     async function invokeCreateRoomClientUSB(){
         createRoomClient(true);
     }
+    */
 
 
     async function createRoomClient(usbcameracase) {
 
+        console.log("STATE: " + state.usbcamera);
+        
         //console.log('00 ----> init Socket.IO');
         //console.log("[main page] first connect...socket id: " + socket.id);
         console.log('00.1 ----> registerGlobals');
@@ -320,7 +329,8 @@ export function MainPage({navigation}){
             zIndex:2, 
         },
         headerContainer: {
-            height:40,
+            height: state.real_height / 10,
+            width: state.real_width,
             position: "absolute",
             top:0,
             left:0,
@@ -331,6 +341,7 @@ export function MainPage({navigation}){
         },
         bottomContainer: {
             height:40,
+            width: state.real_width,
             position: "absolute",
             bottom:0,
             left:0,
@@ -399,40 +410,79 @@ export function MainPage({navigation}){
             borderRadius: 5,
             margin: 5,
           },
-          buttonFacebookStyle: {
-            flexDirection: 'row',
-            alignItems: 'center',
-            backgroundColor: '#485a96',
-            borderWidth: 0.5,
-            borderColor: '#fff',
-            height: 40,
-            borderRadius: 5,
-            margin: 5,
-          },
-          buttonImageIconStyle: {
-            padding: 10,
-            margin: 5,
-            height: 25,
-            width: 25,
-            resizeMode: 'stretch',
-          },
-          buttonTextStyle: {
-            color: '#fff',
-            marginBottom: 4,
-            marginLeft: 10,
-          },
-          buttonIconSeparatorStyle: {
-            backgroundColor: '#fff',
-            width: 1,
-            height: 40,
-          },
+            mainContainer: {
+              flex: 1,
+              flexDirection: "column",
+              height: "100%",
+              padding: 2,
+              backgroundColor: '#000000',
+              alignItems: 'center'
+            },
+          
+            buttonScannerStyle: {
+                //position: "absolute",
+                //bottom: 80,
+                //left: 80,
+                //right:"auto",
+                backgroundColor: '#485a9600',
+                borderWidth: 0.5,
+                //borderColor: '#fff',
+                width:state.real_height / 5,
+                height: state.real_height / 5,
+                borderRadius: 5,
+                //marginLeft: -370,
+                flex:1,
+                flexDirection:"row",
+              },
+            buttonImageIconStyle: {
+              height: state.real_height / 5,
+              width: state.real_height / 5,
+              resizeMode: 'stretch',
+            },
+            buttonTextStyle: {
+              color: '#fff',
+              fontSize: state.real_height / 10,
+              marginLeft: "auto",
+              marginRight: "auto",
+              //marginTop: "auto",
+              //marginBottom: "auto",
+              textAlign: "center",
+            },
+            buttonIconSeparatorStyle: {
+              backgroundColor: '#fff',
+              width: 1,
+              height: state.real_height / 5,
+            },
+            buttonContainerTop:{
+                position: "absolute",
+                top:20,
+                left:20,
+                width:state.real_width,
+                height: state.real_height / 5,
+                backgroundColor:'f00',
+                zIndex: 100,
+                zOrder:100,
+            },
+            buttonContainerBottom:{
+                position: "absolute",
+                bottom:20,
+                left:20,
+                width:state.real_width,
+                height: state.real_height / 5,
+                backgroundColor:'f00',
+                zIndex: 100,
+                zOrder:100,
+            }
+        
+        
+          
        
       });
 
     return (
         <>
                 <View style={styles.headerContainer}>
-                    <Button
+                  {/*   <Button
                         title="Connect"
                         enabled
                         onPress={invokeCreateRoomClient}
@@ -441,7 +491,7 @@ export function MainPage({navigation}){
                         title="Disconnect"
                         enabled
                         onPress={invokeDisconnect}
-                    />              
+                    />         */}      
                     {/* <Button
                         title="Connect USB"
                         enabled
@@ -469,11 +519,11 @@ export function MainPage({navigation}){
                     </ScrollView>
                 </View>
                 <View style={styles.bottomContainer}>
-                    <Button 
+                  {/*   <Button 
                         title="Switch"
                         enabled
                         onPress={switchCamera}
-                    />
+                    /> */}
                    {/*  <Switch
                         trackColor={{ false: "#767577", true: "#81b0ff" }}
                         thumbColor={debugIsEnabled ? "#f5dd4b" : "#f4f3f4"}
@@ -486,11 +536,11 @@ export function MainPage({navigation}){
                         enabled
                         onPress={testChat}
                     /> */}
-                    <Button 
+                  {/*   <Button 
                         title="Clear Chat"
                         enabled
                         onPress={clearChat}
-                    />
+                    /> */}
                     
                 </View>
                 <View style={styles.mainArea}>
@@ -531,6 +581,29 @@ export function MainPage({navigation}){
                         zOrder={1}>
                     </RTCView>
                 }
+                 
+                </View>
+                <View style={styles.buttonContainerTop}>
+                <TouchableOpacity
+                    style={styles.buttonScannerStyle}
+                    activeOpacity={0.9}
+                    onPress={invokeDisconnect}>
+                    <Image
+                    source={imageBack}
+                        style={styles.buttonImageIconStyle}
+                    />
+                </TouchableOpacity>    
+                </View>
+                <View style={styles.buttonContainerBottom}>
+                <TouchableOpacity
+                    style={styles.buttonScannerStyle}
+                    activeOpacity={0.9}
+                    onPress={switchCamera}>
+                    <Image
+                    source={imageFlip}
+                        style={styles.buttonImageIconStyle}
+                    />
+                </TouchableOpacity>    
                 </View>
             
         </>

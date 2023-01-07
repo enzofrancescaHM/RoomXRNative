@@ -291,8 +291,8 @@ function RoomClient() {
 
             this.producerTransport.on(
                 'connectionstatechange',
-                function (state) {
-                    switch (state) {
+                function (mystate) {
+                    switch (mystate) {
                         case 'connecting':
                             break;
 

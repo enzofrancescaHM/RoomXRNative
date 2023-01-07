@@ -36,6 +36,7 @@ export function StartPage({navigation}){
 
     const [state, dispatch] = useContext(Context);
 
+    
     //const window = useWindowDimensions();
     //const window = Dimensions.get("window");
     //const window = Dimensions.get("screen");
@@ -147,9 +148,14 @@ export function StartPage({navigation}){
       navigation.replace('ScannerPage');
     }
 
+    useEffect(() => {
+      console.log(usbIsEnabled); 
+      dispatch({ type: 'SET_USBCAMERA', payload:usbIsEnabled});
+  },[usbIsEnabled])
+
     function toggleUsb(){
-        setUsbIsEnabled(previousState => !previousState);        
-        dispatch({ type: 'SET_USBCAMERA', payload:usbIsEnabled});
+        setUsbIsEnabled(previousState => !previousState);       
+       
     }
 
 
@@ -209,7 +215,7 @@ export function StartPage({navigation}){
             zIndex:2, 
         },
         bottomContainer: {
-            height:40,
+            height:80,
             position: "absolute",
             bottom:state.real_height / 15,
             left:10,
@@ -285,6 +291,11 @@ export function StartPage({navigation}){
             marginLeft: 20,
             marginRight:5,
           },
+          switchusb:{
+            marginTop: -20,
+            marginLeft: 20,
+            marginRight:5,
+          },
           labelTitle:{
             color: '#fff',
             marginTop: 0,
@@ -343,9 +354,9 @@ export function StartPage({navigation}){
            {"Version: " + state.app_ver}
         </Text>
         <Text style={styles.labelUsbTextStyle}>
-          USB Glasses
+          {(usbIsEnabled==true)?"USB CAMERA ON":"USB CAMERA OFF"}
         </Text>
-         <Switch
+         <Switch style={styles.switchusb}
             trackColor={{ false: "#767577", true: "#81b0ff" }}
             thumbColor={usbIsEnabled ? "#f5dd4b" : "#f4f3f4"}
             ios_backgroundColor="#3e3e3e"
