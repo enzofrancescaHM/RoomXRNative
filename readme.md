@@ -108,6 +108,7 @@ yarn install
 - Implement QRCode Reader
 - Save config to internal storage
 - GUI redesign
+- [FIX] drawing order wrong
 
 ## Changelist:
 
@@ -145,6 +146,7 @@ yarn install
 
 ### Ver. 0.7 Beta:
 - GUI redesign
+- [FIX] drawing order wrong
 
 ## Univet Camera Procedure
 

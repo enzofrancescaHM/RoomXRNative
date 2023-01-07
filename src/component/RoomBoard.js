@@ -13,7 +13,7 @@ export function RoomBoard(props){
     const size = useValue({ width: 0, height: 0 });
   
     return (
-        
+        <>
         <Canvas style={props.containerStyle} onSize={size} onLayout={event => { console.log(JSON.stringify(size)) }}>             
             <FitBox src={rect(0, 0, 1200, 600)} dst={rect(0, 0, size.current.width, size.current.height)}> 
                 <Group blendMode="multiply">
@@ -33,6 +33,27 @@ export function RoomBoard(props){
                         ))          
                     }
                 </Group>
+            </FitBox>
+            </Canvas>        
+        <Canvas style={props.containerStyle} onSize={size} onLayout={event => { console.log(JSON.stringify(size)) }}>             
+            <FitBox src={rect(0, 0, 1200, 600)} dst={rect(0, 0, size.current.width, size.current.height)}> 
+                {/* <Group blendMode="multiply">
+                    {
+                        // cycle the image array and draw on the canvas
+                        state.image_array.map((image) => (
+                            
+                            <Image
+                                image={image.image}
+                                key={image.id}
+                                fit="contain"
+                                x={image.x}
+                                y={image.y}
+                                width={image.width * image.scalex}
+                                height={image.height * image.scaley}
+                            />
+                        ))          
+                    }
+                </Group> */}
                 <Group blendMode="multiply">
                     {
                         // cycle the path array and draw on the canvas
@@ -124,6 +145,7 @@ export function RoomBoard(props){
                         } 
                 </Group>
             </FitBox>
-        </Canvas>        
+        </Canvas>   
+        </>     
     );
 }

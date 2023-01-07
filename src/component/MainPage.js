@@ -308,6 +308,11 @@ export function MainPage({navigation}){
     }
 
     const styles = StyleSheet.create({
+        chatText:{
+            color:"white",
+            fontSize: state.real_height / 20,
+            backgroundColor: "#00000022"
+        },
         textDebugOn: {
             color:"white"
         },
@@ -315,6 +320,10 @@ export function MainPage({navigation}){
             color:"#00000000"
         },
         scrollView: {
+            position:"absolute",
+            left:20,
+            top: state.real_height / 3,
+            height: state.real_height / 5,
           backgroundColor: '#FF000000',
           marginLeft: 20,
         },
@@ -515,7 +524,7 @@ export function MainPage({navigation}){
                         ref={scrollViewRef}
                         onContentSizeChange={(contentWidth, contentHeight)=>{        
                         scrollViewRef.current.scrollToEnd({animated: true});}}>
-                        <Text style={styles.textDebugOn}>{state.chat_array}</Text>
+                        <Text style={styles.chatText}>{state.chat_array}</Text>
                     </ScrollView>
                 </View>
                 <View style={styles.bottomContainer}>
