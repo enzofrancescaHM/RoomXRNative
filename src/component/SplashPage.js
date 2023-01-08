@@ -12,13 +12,11 @@ export function SplashPage({ navigation }) {
     const [state, dispatch] = useContext(Context);
     const imageConnect = require("../images/connect.png");
     const imageHolomask = require("../images/holomask.png");
-
     const [loadingLabel, setLoadingLabel] = useState("loading");
     const [count, setCount] = useState(0);
     var timeoutHandle, intervalHandle;
 
     const clearBuffer = count > 3;
-
 
     const getUserValue = async () => {
         try {
@@ -46,6 +44,7 @@ export function SplashPage({ navigation }) {
 
         console.log('room Done.')
     }
+    
     const getRootValue = async () => {
         try {
             var myRoot = await AsyncStorage.getItem('root');
@@ -89,9 +88,6 @@ export function SplashPage({ navigation }) {
 
            navigation.replace('StartPage');
         }, 3000);
-
-       
-
 
         return function componentWillUnmount() {
             //console.log("%c MainPage componetWillUnmount", "color:red")

@@ -1,21 +1,18 @@
 // react realated imports
 import React, { useEffect, useRef, useState, useContext } from "react";
-import { StyleSheet, Button, Image, Text, TouchableOpacity,Pressable,View, StatusBar, ScrollView } from "react-native";
+import { StyleSheet, Button, Image, Text, TouchableOpacity, Pressable, View, StatusBar, ScrollView } from "react-native";
 import { RTCView, mediaDevices, registerGlobals } from "react-native-webrtc";
-import usb from 'react-native-usb';
-
 // mediasoup import
 import * as mediasoupClient from "mediasoup-client";
-
 // local project imports
-import Store, {Context} from '../global/Store';
-
+import Store, { Context } from '../global/Store';
 //import {SocketContext} from '../global/socket';
 import RoomClient from "./RoomClient";
 import Orientation from 'react-native-orientation-locker';
 import { RoomBoard } from "./RoomBoard";
-export function MainPage({navigation}){
-//function MainPage({navigation}) {
+
+export function MainPage({ navigation }) {
+    //function MainPage({navigation}) {
     const mounted = useRef()
     const [count, setCount] = useState(0)
     const [debugTest, setDebugTest] = useState("---");
@@ -23,68 +20,69 @@ export function MainPage({navigation}){
     const [debugLine, setDebugLine] = useState("this is the debug line... ;)")
     const [state, dispatch] = useContext(Context);
     const [debugIsEnabled, setDebugIsEnabled] = useState(false);
-    const toggleDebug = () => setDebugIsEnabled(previousState => !previousState);
-    const testChat = () => dispatch({ type: 'ADD_CHAT_MESSAGE', payload:"Messaggio di prova\n"}); 
-    const clearChat = () => dispatch({ type: 'CLEAR_CHAT', payload:""});
+    //const toggleDebug = () => setDebugIsEnabled(previousState => !previousState);
+    //const testChat = () => dispatch({ type: 'ADD_CHAT_MESSAGE', payload: "Messaggio di prova\n" });
+    //const clearChat = () => dispatch({ type: 'CLEAR_CHAT', payload: "" });
     const scrollViewRef = useRef();
 
     const imageBack = require("../images/back.png");
     const imageFlip = require("../images/flip.png");
-    
-    const sayHello = () => {
-        
-        dispatch({type: 'CLEAR_PATHS',payload:""});
+
+    /*const sayHello = () => {
+
+        dispatch({ type: 'CLEAR_PATHS', payload: "" });
 
     }
 
     const addPath = () => {
-        
+
         // draw a star (5 tips)
-        dispatch({type: 'ADD_PATH', payload:{
-            path:"M 128 0 L 168 80 L 256 93 L 192 155 L 207 244 L 128 202 L 49 244 L 64 155 L 0 93 L 88 80 L 128 0 Z",
-            id:Date.now() + Math.floor(Math.random() * 100) + 1,
-            color:"red",
-            width:3,
-        }});
+        dispatch({
+            type: 'ADD_PATH', payload: {
+                path: "M 128 0 L 168 80 L 256 93 L 192 155 L 207 244 L 128 202 L 49 244 L 64 155 L 0 93 L 88 80 L 128 0 Z",
+                id: Date.now() + Math.floor(Math.random() * 100) + 1,
+                color: "red",
+                width: 3,
+            }
+        });
 
         // draw a triangle
-        dispatch({type: 'ADD_PATH', payload:{
-            path:"M 128 0 L 168 80 L 266 93 Z",
-            id:Date.now() + Math.floor(Math.random() * 100) + 1,
-            color:"white",
-            width:5
-        }});
+        dispatch({
+            type: 'ADD_PATH', payload: {
+                path: "M 128 0 L 168 80 L 266 93 Z",
+                id: Date.now() + Math.floor(Math.random() * 100) + 1,
+                color: "white",
+                width: 5
+            }
+        });
 
         // draw a path with two lines not closed
-        dispatch({type: 'ADD_PATH', payload:{
-            path:"M 528 0 L 168 80 L 266 93",
-            id:Date.now() + Math.floor(Math.random() * 100) + 1,
-            color:"blue",
-            width:5
-        }});
+        dispatch({
+            type: 'ADD_PATH', payload: {
+                path: "M 528 0 L 168 80 L 266 93",
+                id: Date.now() + Math.floor(Math.random() * 100) + 1,
+                color: "blue",
+                width: 5
+            }
+        });
     }
-
+*/
 
     // ####################################################
     // DYNAMIC SETTINGS
     // ####################################################
     let isEnumerateAudioDevices = false;
     let isEnumerateVideoDevices = false;
-    //let isMobileDevice = true;
 
     useEffect(function componentDidMount() {
         console.log("%c MainPage componetDidMount", "color:green;");
-        
+
         StatusBar.setHidden(true, 'none');
         Orientation.lockToLandscapeLeft();
 
-        dispatch({type: 'SET_MEDIASOUPCLIENT', payload: mediasoupClient});
-
-        // do this at the start of the app
-        // requireUSBPermissions();
+        dispatch({ type: 'SET_MEDIASOUPCLIENT', payload: mediasoupClient });
 
         invokeCreateRoomClient();
-
 
         return function componentWillUnmount() {
             //console.log("%c MainPage componetWillUnmount", "color:red")
@@ -122,48 +120,40 @@ export function MainPage({navigation}){
         return true;
     }
 
-   
 
-    function testWhiteBoard(){
+
+  /*  function testWhiteBoard() {
         console.log("test whiteBoard");
-        if (canvasRef.current)
-        {
+        if (canvasRef.current) {
             console.log("canvasref current is defined");
             canvasRef.current.reset;
         }
-        else
-        {
+        else {
             console.log("canvasref current not defined");
         }
-        
+
         //canvasRef.current?.addPoints([[250, 250]]);
 
-    }
+    }*/
 
-    async function invokeDisconnect(){
-        dispatch({type: 'SET_CONNECTED', payload: false});
+    async function invokeDisconnect() {
+        dispatch({ type: 'SET_CONNECTED', payload: false });
 
         //setTimeout(()=>{ this.props.navigation.navigate("Home") }, 3000);
-        
+
         navigation.replace('StartPage');
 
     }
 
-    async function invokeCreateRoomClient(){
+    async function invokeCreateRoomClient() {
         createRoomClient(state.usbcamera);
     }
-
-    /*
-    async function invokeCreateRoomClientUSB(){
-        createRoomClient(true);
-    }
-    */
 
 
     async function createRoomClient(usbcameracase) {
 
         console.log("STATE: " + state.usbcamera);
-        
+
         //console.log('00 ----> init Socket.IO');
         //console.log("[main page] first connect...socket id: " + socket.id);
         console.log('00.1 ----> registerGlobals');
@@ -175,26 +165,26 @@ export function MainPage({navigation}){
         mediaDevices
             .enumerateDevices()
             .then((devices) =>
-                devices.forEach((device) => {                    
+                devices.forEach((device) => {
                     console.log("device: ", device);
                     dText = dText + "dev: " + JSON.stringify(device) + "\n";
                     setDebugTest(dText);
                     if ('videoinput' === device.kind) {
-                    }                    
+                    }
                 }),
             )
 
         //await initEnumerateVideoDevices();
         checkMedia();
-        console.log('04 ----> Who are you');        
-        dispatch({type: 'SET_CONNECTED', payload: true});        
+        console.log('04 ----> Who are you');
+        dispatch({ type: 'SET_CONNECTED', payload: true });
     }
 
-   
 
-    function switchCamera(){        
+
+    function switchCamera() {
         state.localstream.getVideoTracks().forEach((track) => {
-            console.log('sc',track);
+            console.log('sc', track);
             track._switchCamera();
         })
     }
@@ -206,12 +196,12 @@ export function MainPage({navigation}){
             .getUserMedia({ audio: true })
             .then((stream) => {
                 enumerateAudioDevices(stream);
-                dispatch({type: 'SET_IS_AUDIO_ALLOWED', payload: true});
+                dispatch({ type: 'SET_IS_AUDIO_ALLOWED', payload: true });
                 //isAudioAllowed = true;
             })
             .catch(() => {
                 //isAudioAllowed = false;
-                dispatch({type: 'SET_IS_AUDIO_ALLOWED', payload: false});
+                dispatch({ type: 'SET_IS_AUDIO_ALLOWED', payload: false });
             });
     }
 
@@ -222,11 +212,11 @@ export function MainPage({navigation}){
             .getUserMedia({ video: true })
             .then((stream) => {
                 enumerateVideoDevices(stream);
-                dispatch({type: 'SET_IS_VIDEO_ALLOWED', payload: true});
+                dispatch({ type: 'SET_IS_VIDEO_ALLOWED', payload: true });
                 //isVideoAllowed = true;
             })
             .catch(() => {
-                dispatch({type: 'SET_IS_VIDEO_ALLOWED', payload: false});
+                dispatch({ type: 'SET_IS_VIDEO_ALLOWED', payload: false });
                 //isVideoAllowed = false;
             });
     }
@@ -296,118 +286,118 @@ export function MainPage({navigation}){
         if (audio) {
             audio = audio.toLowerCase();
             let queryPeerAudio = audio === '1' || audio === 'true';
-            if (queryPeerAudio != null) 
-            dispatch({type: 'SET_IS_AUDIO_ALLOWED', payload: queryPeerAudio});//isAudioAllowed = queryPeerAudio;
+            if (queryPeerAudio != null)
+                dispatch({ type: 'SET_IS_AUDIO_ALLOWED', payload: queryPeerAudio });//isAudioAllowed = queryPeerAudio;
         }
         if (video) {
             video = video.toLowerCase();
             let queryPeerVideo = video === '1' || video === 'true';
-            if (queryPeerVideo != null) 
-            dispatch({type: 'SET_IS_VIDEO_ALLOWED', payload: queryPeerVideo});//isVideoAllowed = queryPeerVideo;
+            if (queryPeerVideo != null)
+                dispatch({ type: 'SET_IS_VIDEO_ALLOWED', payload: queryPeerVideo });//isVideoAllowed = queryPeerVideo;
         }
     }
 
     const styles = StyleSheet.create({
-        chatText:{
-            color:"white",
+        chatText: {
+            color: "white",
             fontSize: state.real_height / 20,
             backgroundColor: "#00000022"
         },
         textDebugOn: {
-            color:"white"
+            color: "white"
         },
         textDebugOff: {
-            color:"#00000000"
+            color: "#00000000"
         },
         scrollView: {
-            position:"absolute",
-            left:20,
+            position: "absolute",
+            left: 20,
             top: state.real_height / 3,
             height: state.real_height / 5,
-          backgroundColor: '#FF000000',
-          marginLeft: 20,
+            backgroundColor: '#FF000000',
+            marginLeft: 20,
         },
         debugContainer: {
-            height:"80%",
+            height: "80%",
             position: "absolute",
-            top:"10%",
-            bottom:0,
+            top: "10%",
+            bottom: 0,
             flexDirection: "column",
             padding: 2,
             backgroundColor: '#00FF0000',
-            zIndex:2, 
+            zIndex: 2,
         },
         headerContainer: {
             height: state.real_height / 10,
             width: state.real_width,
             position: "absolute",
-            top:0,
-            left:0,
+            top: 0,
+            left: 0,
             flexDirection: "row",
             padding: 0,
             backgroundColor: '#00FF0000',
-            zIndex:2, 
+            zIndex: 2,
         },
         bottomContainer: {
-            height:40,
+            height: 40,
             width: state.real_width,
             position: "absolute",
-            bottom:0,
-            left:0,
+            bottom: 0,
+            left: 0,
             flexDirection: "row",
             padding: 2,
             backgroundColor: '#00FF0000',
-            zIndex:2, 
+            zIndex: 2,
         },
         mainArea: {
-            flex:1,
+            flex: 1,
             flexDirection: "row",
             height: "100%",
             padding: 2,
-            backgroundColor: '#000000' 
+            backgroundColor: '#000000'
         },
         localStream: {
-            width: "100%", 
-            height: "100%", 
-            backgroundColor: '#000000', 
-            zIndex:0
+            width: "100%",
+            height: "100%",
+            backgroundColor: '#000000',
+            zIndex: 0
         },
-        remoteStream: { 
-            position: "absolute", 
-            right: 0, 
-            bottom: 0, 
-            width: "30%", 
-            height: "30%", 
-            backgroundColor: '#00000000', 
-            zIndex:1 
+        remoteStream: {
+            position: "absolute",
+            right: 0,
+            bottom: 0,
+            width: "30%",
+            height: "30%",
+            backgroundColor: '#00000000',
+            zIndex: 1
         },
-        guest1Stream: { 
-            position: "absolute", 
-            right: 0, 
-            top: 0, 
-            width: "30%", 
-            height: "30%", 
-            backgroundColor: '#FF000000', 
-            zIndex:1 
-        },
-        guest2Stream: { 
-            position: "absolute", 
-            right: 0, 
-            top: "33%", 
-            width: "30%", 
-            height: "30%", 
-            backgroundColor: '#FF000000', 
-            zIndex:1 
-        },
-        whiteBoard: { 
-            position: "absolute", 
-            left: 0, 
-            top: 0, 
-            width: "100%", 
-            height: "100%", 
+        guest1Stream: {
+            position: "absolute",
+            right: 0,
+            top: 0,
+            width: "30%",
+            height: "30%",
             backgroundColor: '#FF000000',
-            border: '#FF0000', 
-            zIndex:1 
+            zIndex: 1
+        },
+        guest2Stream: {
+            position: "absolute",
+            right: 0,
+            top: "33%",
+            width: "30%",
+            height: "30%",
+            backgroundColor: '#FF000000',
+            zIndex: 1
+        },
+        whiteBoard: {
+            position: "absolute",
+            left: 0,
+            top: 0,
+            width: "100%",
+            height: "100%",
+            backgroundColor: '#FF000000',
+            border: '#FF0000',
+            zIndex: 1
         },
         buttonGPlusStyle: {
             flexDirection: 'row',
@@ -418,141 +408,96 @@ export function MainPage({navigation}){
             height: 40,
             borderRadius: 5,
             margin: 5,
-          },
-            mainContainer: {
-              flex: 1,
-              flexDirection: "column",
-              height: "100%",
-              padding: 2,
-              backgroundColor: '#000000',
-              alignItems: 'center'
-            },
-          
-            buttonScannerStyle: {
-                //position: "absolute",
-                //bottom: 80,
-                //left: 80,
-                //right:"auto",
-                backgroundColor: '#485a9600',
-                borderWidth: 0.5,
-                //borderColor: '#fff',
-                width:state.real_height / 5,
-                height: state.real_height / 5,
-                borderRadius: 5,
-                //marginLeft: -370,
-                flex:1,
-                flexDirection:"row",
-              },
-            buttonImageIconStyle: {
-              height: state.real_height / 5,
-              width: state.real_height / 5,
-              resizeMode: 'stretch',
-            },
-            buttonTextStyle: {
-              color: '#fff',
-              fontSize: state.real_height / 10,
-              marginLeft: "auto",
-              marginRight: "auto",
-              //marginTop: "auto",
-              //marginBottom: "auto",
-              textAlign: "center",
-            },
-            buttonIconSeparatorStyle: {
-              backgroundColor: '#fff',
-              width: 1,
-              height: state.real_height / 5,
-            },
-            buttonContainerTop:{
-                position: "absolute",
-                top:20,
-                left:20,
-                width:state.real_width,
-                height: state.real_height / 5,
-                backgroundColor:'f00',
-                zIndex: 100,
-                zOrder:100,
-            },
-            buttonContainerBottom:{
-                position: "absolute",
-                bottom:20,
-                left:20,
-                width:state.real_width,
-                height: state.real_height / 5,
-                backgroundColor:'f00',
-                zIndex: 100,
-                zOrder:100,
-            }
-        
-        
-          
-       
-      });
+        },
+        mainContainer: {
+            flex: 1,
+            flexDirection: "column",
+            height: "100%",
+            padding: 2,
+            backgroundColor: '#000000',
+            alignItems: 'center'
+        },
+
+        buttonScannerStyle: {
+            backgroundColor: '#485a9600',
+            borderWidth: 0.5,
+            width: state.real_height / 5,
+            height: state.real_height / 5,
+            borderRadius: 5,
+            flex: 1,
+            flexDirection: "row",
+        },
+        buttonImageIconStyle: {
+            height: state.real_height / 5,
+            width: state.real_height / 5,
+            resizeMode: 'stretch',
+        },
+        buttonTextStyle: {
+            color: '#fff',
+            fontSize: state.real_height / 10,
+            marginLeft: "auto",
+            marginRight: "auto",
+            textAlign: "center",
+        },
+        buttonIconSeparatorStyle: {
+            backgroundColor: '#fff',
+            width: 1,
+            height: state.real_height / 5,
+        },
+        buttonContainerTop: {
+            position: "absolute",
+            top: 20,
+            left: 20,
+            width: state.real_width,
+            height: state.real_height / 5,
+            backgroundColor: 'f00',
+            zIndex: 100,
+            zOrder: 100,
+        },
+        buttonContainerBottom: {
+            position: "absolute",
+            bottom: 20,
+            left: 20,
+            width: state.real_width,
+            height: state.real_height / 5,
+            backgroundColor: 'f00',
+            zIndex: 100,
+            zOrder: 100,
+        }
+
+
+
+
+    });
 
     return (
         <>
-                <View style={styles.headerContainer}>
-                  {/*   <Button
-                        title="Connect"
-                        enabled
-                        onPress={invokeCreateRoomClient}
-                    /> 
-                       <Button
-                        title="Disconnect"
-                        enabled
-                        onPress={invokeDisconnect}
-                    />         */}      
-                    {/* <Button
-                        title="Connect USB"
-                        enabled
-                        onPress={invokeCreateRoomClientUSB}
-                    />       */}    
-                </View>
-                <View style={styles.debugContainer}>                   
-                    <Text style={ debugIsEnabled ? styles.textDebugOn : styles.textDebugOff }>
-                        {debugTest}
-                    </Text>
-                    <Text style={ debugIsEnabled ? styles.textDebugOn : styles.textDebugOff }>
-                            {state.localstream == "empty" ? "Local Stream: empty" : "Local Stream: " + state.localstream.toURL()} {"\n"}
-                            {state.remotestream == "empty" ? "Remote Stream: empty" : "Remote Stream: " + state.remotestream.toURL()} {"\n"}
-                            {state.screenstream == "empty" ? "Screen Stream: empty" : "Screen Stream: " + state.screenstream.toURL()} {"\n"}
-                            {state.remotestreamid == "empty" ? "Remote Stream ID: empty" : "Remote Stream ID: " + state.remotestreamid} {"\n"}
-                            {state.screenstreamid == "empty" ? "Screen Stream ID: empty" : "Screen Stream ID: " + state.screenstreamid}
-                    </Text>
-                    { state.connected ? <RoomClient></RoomClient> : <Text style={styles.textDebugOn}>Room disconnected...</Text> }
-                    <ScrollView 
-                        style={styles.scrollView}
-                        ref={scrollViewRef}
-                        onContentSizeChange={(contentWidth, contentHeight)=>{        
-                        scrollViewRef.current.scrollToEnd({animated: true});}}>
-                        <Text style={styles.chatText}>{state.chat_array}</Text>
-                    </ScrollView>
-                </View>
-                <View style={styles.bottomContainer}>
-                  {/*   <Button 
-                        title="Switch"
-                        enabled
-                        onPress={switchCamera}
-                    /> */}
-                   {/*  <Switch
-                        trackColor={{ false: "#767577", true: "#81b0ff" }}
-                        thumbColor={debugIsEnabled ? "#f5dd4b" : "#f4f3f4"}
-                        ios_backgroundColor="#3e3e3e"
-                        onValueChange={toggleDebug}
-                        value={debugIsEnabled}
-                    />
-                    <Button 
-                        title="Test Chat"
-                        enabled
-                        onPress={testChat}
-                    /> */}
-                  {/*   <Button 
-                        title="Clear Chat"
-                        enabled
-                        onPress={clearChat}
-                    /> */}
-                    
-                </View>
-                <View style={styles.mainArea}>
+            <View style={styles.headerContainer}>
+            </View>
+            <View style={styles.debugContainer}>
+                <Text style={debugIsEnabled ? styles.textDebugOn : styles.textDebugOff}>
+                    {debugTest}
+                </Text>
+                <Text style={debugIsEnabled ? styles.textDebugOn : styles.textDebugOff}>
+                    {state.localstream == "empty" ? "Local Stream: empty" : "Local Stream: " + state.localstream.toURL()} {"\n"}
+                    {state.remotestream == "empty" ? "Remote Stream: empty" : "Remote Stream: " + state.remotestream.toURL()} {"\n"}
+                    {state.screenstream == "empty" ? "Screen Stream: empty" : "Screen Stream: " + state.screenstream.toURL()} {"\n"}
+                    {state.remotestreamid == "empty" ? "Remote Stream ID: empty" : "Remote Stream ID: " + state.remotestreamid} {"\n"}
+                    {state.screenstreamid == "empty" ? "Screen Stream ID: empty" : "Screen Stream ID: " + state.screenstreamid}
+                </Text>
+                {state.connected ? <RoomClient></RoomClient> : <Text style={styles.textDebugOn}>Room disconnected...</Text>}
+                <ScrollView
+                    style={styles.scrollView}
+                    ref={scrollViewRef}
+                    onContentSizeChange={(contentWidth, contentHeight) => {
+                        scrollViewRef.current.scrollToEnd({ animated: true });
+                    }}>
+                    <Text style={styles.chatText}>{state.chat_array}</Text>
+                </ScrollView>
+            </View>
+            <View style={styles.bottomContainer}>
+            </View>
+            <View style={styles.mainArea}>
                 <RTCView
                     style={styles.localStream}
                     mirror={state.screenstream == "empty" ? true : false}
@@ -561,9 +506,9 @@ export function MainPage({navigation}){
                     zOrder={0}>
                 </RTCView>
                 <RoomBoard
-                    containerStyle = {styles.whiteBoard}>
+                    containerStyle={styles.whiteBoard}>
                 </RoomBoard>
-                { (state.remotestream != "empty") && 
+                {(state.remotestream != "empty") &&
                     <RTCView
                         style={styles.remoteStream}
                         mirror={false}
@@ -572,7 +517,7 @@ export function MainPage({navigation}){
                         zOrder={1}>
                     </RTCView>
                 }
-                { (state.guest1stream != "empty") &&  
+                {(state.guest1stream != "empty") &&
                     <RTCView
                         style={styles.guest1Stream}
                         mirror={false}
@@ -581,7 +526,7 @@ export function MainPage({navigation}){
                         zOrder={1}>
                     </RTCView>
                 }
-                { (state.guest2stream != "empty") && 
+                {(state.guest2stream != "empty") &&
                     <RTCView
                         style={styles.guest2Stream}
                         mirror={false}
@@ -590,31 +535,31 @@ export function MainPage({navigation}){
                         zOrder={1}>
                     </RTCView>
                 }
-                 
-                </View>
-                <View style={styles.buttonContainerTop}>
+
+            </View>
+            <View style={styles.buttonContainerTop}>
                 <TouchableOpacity
                     style={styles.buttonScannerStyle}
                     activeOpacity={0.9}
                     onPress={invokeDisconnect}>
                     <Image
-                    source={imageBack}
+                        source={imageBack}
                         style={styles.buttonImageIconStyle}
                     />
-                </TouchableOpacity>    
-                </View>
-                <View style={styles.buttonContainerBottom}>
+                </TouchableOpacity>
+            </View>
+            <View style={styles.buttonContainerBottom}>
                 <TouchableOpacity
                     style={styles.buttonScannerStyle}
                     activeOpacity={0.9}
                     onPress={switchCamera}>
                     <Image
-                    source={imageFlip}
+                        source={imageFlip}
                         style={styles.buttonImageIconStyle}
                     />
-                </TouchableOpacity>    
-                </View>
-            
+                </TouchableOpacity>
+            </View>
+
         </>
     )
 }

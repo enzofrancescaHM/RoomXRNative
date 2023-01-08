@@ -3,7 +3,7 @@ import { useContext, useState } from 'react';
 import { StyleSheet, Text, Image, View,TouchableOpacity } from 'react-native';
 import { useCameraDevices } from 'react-native-vision-camera';
 import { Camera } from 'react-native-vision-camera';
-import { useScanBarcodes, BarcodeFormat, useFrameProcessor } from 'vision-camera-code-scanner';
+import { useScanBarcodes, BarcodeFormat} from 'vision-camera-code-scanner';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 // local project imports
 import Store, { Context } from '../global/Store';

@@ -8,6 +8,7 @@ import {setIsAudio, setIsVideo, setIsScreen, getAudioConstraints, getVideoConstr
 import {getScreenConstraints, getEncoding, getMapKeyByValue, getVideoConstraintsUSB} from "../global/constraints"
 import { Skia, useImage } from "@shopify/react-native-skia";
 import socketio from "socket.io-client";
+
 let chatMessage = "chatMessage";
 let receiveFileInfo = "receiveFileInfo";
 let receiveFileDiv = "receiveFileDiv";
