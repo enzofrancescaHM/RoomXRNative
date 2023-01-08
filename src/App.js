@@ -19,6 +19,7 @@ import { StartPage } from './component/StartPage';
 import { MainPage } from './component/MainPage';
 import { SplashPage } from './component/SplashPage';
 import { ScannerPage } from './component/ScannerPage';
+import { QRCodePage } from './component/QRCodePage';
 
 const Stack = createNativeStackNavigator();
 const App = () => {
@@ -58,6 +59,7 @@ const App = () => {
             <Stack.Screen name="MainPage" component={MainPage} />
             <Stack.Screen name="ScannerPage" component={ScannerPage} />
             <Stack.Screen name="SplashPage" component={SplashPage} />
+            <Stack.Screen name="QRCodePage" component={QRCodePage} />
 
           </Stack.Navigator>    
         </Store>

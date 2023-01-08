@@ -74,15 +74,13 @@ yarn install
 - implement chat with: https://github.com/FaridSafi/react-native-gifted-chat
 - Evaluate disconnect and riconnect the Univet glasses cases, it should gracely manage those states
 - (Whiteboard) implement Decals
-
+- evaluate possibility to remove reanimated2 dependency
 
 ## In Progress:
 - Save usb option to the persistent memory
-
-
-
-
-
+- Generate guest QRCode for external camera on site
+- Evaluate why scannerpage crashes sometimes, maybe because it searches for back camera and   
+  not always is present
 
 ## Done:
 - implement git (done with github)
@@ -109,6 +107,7 @@ yarn install
 - Save config to internal storage
 - GUI redesign
 - [FIX] drawing order wrong
+- QRCode Guest generation
 
 ## Changelist:
 
@@ -147,6 +146,7 @@ yarn install
 ### Ver. 0.7 Beta:
 - GUI redesign
 - [FIX] drawing order wrong
+- QRCode guest generation
 
 ## Univet Camera Procedure
 
@@ -195,6 +195,14 @@ https://reactnative.dev/docs/native-modules-android#sending-events-to-javascript
 A normal external USB Camera works as is with no usb external libraries, i.e. the one on the helmet is working properly
 So, to use a normal USB UVC Compatible camera it is enough to click change camera in order to switch to the external one
 
+## QRCode format definition
+```
+{
+  "user":"pippo",
+  "base":"https://roomxr.eu:5001",
+  "room":"holomask-test"
+}
+```
 
 ## Whiteboard Considerations
 

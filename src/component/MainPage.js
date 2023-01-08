@@ -6,13 +6,13 @@ import { RTCView, mediaDevices, registerGlobals } from "react-native-webrtc";
 import * as mediasoupClient from "mediasoup-client";
 // local project imports
 import Store, { Context } from '../global/Store';
-//import {SocketContext} from '../global/socket';
 import RoomClient from "./RoomClient";
 import Orientation from 'react-native-orientation-locker';
 import { RoomBoard } from "./RoomBoard";
+import QRCode from "react-native-qrcode-svg";
 
 export function MainPage({ navigation }) {
-    //function MainPage({navigation}) {
+    
     const mounted = useRef()
     const [count, setCount] = useState(0)
     const [debugTest, setDebugTest] = useState("---");
@@ -21,52 +21,14 @@ export function MainPage({ navigation }) {
     const [state, dispatch] = useContext(Context);
     const [debugIsEnabled, setDebugIsEnabled] = useState(false);
     //const toggleDebug = () => setDebugIsEnabled(previousState => !previousState);
-    //const testChat = () => dispatch({ type: 'ADD_CHAT_MESSAGE', payload: "Messaggio di prova\n" });
-    //const clearChat = () => dispatch({ type: 'CLEAR_CHAT', payload: "" });
     const scrollViewRef = useRef();
 
     const imageBack = require("../images/back.png");
     const imageFlip = require("../images/flip.png");
+    const imageUser = require("../images/adduser.png");
 
-    /*const sayHello = () => {
-
-        dispatch({ type: 'CLEAR_PATHS', payload: "" });
-
-    }
-
-    const addPath = () => {
-
-        // draw a star (5 tips)
-        dispatch({
-            type: 'ADD_PATH', payload: {
-                path: "M 128 0 L 168 80 L 256 93 L 192 155 L 207 244 L 128 202 L 49 244 L 64 155 L 0 93 L 88 80 L 128 0 Z",
-                id: Date.now() + Math.floor(Math.random() * 100) + 1,
-                color: "red",
-                width: 3,
-            }
-        });
-
-        // draw a triangle
-        dispatch({
-            type: 'ADD_PATH', payload: {
-                path: "M 128 0 L 168 80 L 266 93 Z",
-                id: Date.now() + Math.floor(Math.random() * 100) + 1,
-                color: "white",
-                width: 5
-            }
-        });
-
-        // draw a path with two lines not closed
-        dispatch({
-            type: 'ADD_PATH', payload: {
-                path: "M 528 0 L 168 80 L 266 93",
-                id: Date.now() + Math.floor(Math.random() * 100) + 1,
-                color: "blue",
-                width: 5
-            }
-        });
-    }
-*/
+    const [qrvalue, setQrvalue] = useState('');
+    const [qrVisible, setQrVisible] = useState(false);
 
     // ####################################################
     // DYNAMIC SETTINGS
@@ -81,6 +43,12 @@ export function MainPage({ navigation }) {
         Orientation.lockToLandscapeLeft();
 
         dispatch({ type: 'SET_MEDIASOUPCLIENT', payload: mediasoupClient });
+
+        // compose qrcode guest link
+        // the format is the following: 
+        // https://roomxr.eu:5001/join/holomask-test?name=ciccio&notify=0
+        // or, in general: base + /join/ + room + ?name= + user + &notify=0
+        setQrvalue(state.root_address + "/join/" + state.room_id + "?name=" + state.peer_name + "&notify=0")
 
         invokeCreateRoomClient();
 
@@ -120,26 +88,8 @@ export function MainPage({ navigation }) {
         return true;
     }
 
-
-
-  /*  function testWhiteBoard() {
-        console.log("test whiteBoard");
-        if (canvasRef.current) {
-            console.log("canvasref current is defined");
-            canvasRef.current.reset;
-        }
-        else {
-            console.log("canvasref current not defined");
-        }
-
-        //canvasRef.current?.addPoints([[250, 250]]);
-
-    }*/
-
     async function invokeDisconnect() {
         dispatch({ type: 'SET_CONNECTED', payload: false });
-
-        //setTimeout(()=>{ this.props.navigation.navigate("Home") }, 3000);
 
         navigation.replace('StartPage');
 
@@ -187,6 +137,13 @@ export function MainPage({ navigation }) {
             console.log('sc', track);
             track._switchCamera();
         })
+    }
+
+    function addUSer() {
+        if(qrVisible)
+            setQrVisible(false);
+        else
+            setQrVisible(true);
     }
 
     async function initEnumerateAudioDevices() {
@@ -427,6 +384,16 @@ export function MainPage({ navigation }) {
             flex: 1,
             flexDirection: "row",
         },
+        buttonUserStyle: {
+            backgroundColor: '#485a9600',
+            borderWidth: 0.5,
+            marginLeft: state.real_height / 5 + 20,
+            width: state.real_height / 5,
+            height: state.real_height / 5,
+            borderRadius: 5,
+            flex: 1,
+            flexDirection: "row",
+        },
         buttonImageIconStyle: {
             height: state.real_height / 5,
             width: state.real_height / 5,
@@ -461,6 +428,16 @@ export function MainPage({ navigation }) {
             width: state.real_width,
             height: state.real_height / 5,
             backgroundColor: 'f00',
+            zIndex: 100,
+            zOrder: 100,
+        },
+        qrcode:{
+            position: "absolute",
+            bottom: 20,
+            left: state.real_height / 2.5 + 60,
+            width: state.real_width,
+            height: state.real_height / 2.5,
+            backgroundColor: '000',
             zIndex: 100,
             zOrder: 100,
         }
@@ -559,6 +536,27 @@ export function MainPage({ navigation }) {
                     />
                 </TouchableOpacity>
             </View>
+            <View style={styles.buttonContainerBottom}>
+                <TouchableOpacity
+                    style={styles.buttonUserStyle}
+                    activeOpacity={0.9}
+                    onPress={addUSer}>
+                    <Image
+                        source={imageUser}
+                        style={styles.buttonImageIconStyle}
+                    />
+                </TouchableOpacity>
+                
+            </View>
+            <View style={styles.qrcode}>
+                {qrVisible?<QRCode 
+                        //QR code value
+                        value={qrvalue ? qrvalue : 'NA'}
+                        //size of QR Code
+                        size={state.real_height / 2.5}
+                />:""}
+            </View>
+           
 
         </>
     )

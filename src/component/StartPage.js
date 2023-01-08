@@ -2,7 +2,6 @@ import React, { useEffect, useState, useContext } from "react";
 import { StyleSheet, Image, Text, TouchableOpacity, View, StatusBar, Alert, Switch } from "react-native";
 import { Context } from '../global/Store';
 import usb from 'react-native-usb';
-
 import Orientation from 'react-native-orientation-locker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -14,7 +13,7 @@ export function StartPage({ navigation }) {
   const imageConnect = require("../images/connect.png");
   const imageQRCode = require("../images/qrcode.png");
   var timeoutHandle;
-  
+
   const getUserValue = async () => {
     try {
       var myuser = await AsyncStorage.getItem('user');
@@ -58,7 +57,11 @@ export function StartPage({ navigation }) {
     // check if all the needed parameters are set
     if (state.root_address == "empty" ||
       state.room_id == "empty" ||
-      state.peer_name == "empty") {
+      state.peer_name == "empty" ||
+      state.root_address == null ||
+      state.room_id == null ||
+      state.peer_name == null
+      ) {
       console.log("uh-oh, something missing!");
       Alert.alert(
         "Warning",

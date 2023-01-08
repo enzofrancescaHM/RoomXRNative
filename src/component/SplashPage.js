@@ -4,7 +4,7 @@ import { Context } from '../global/Store';
 import Orientation from 'react-native-orientation-locker';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { interpolateNode } from "react-native-reanimated";
+//import { interpolateNode } from "react-native-reanimated";
 
 
 export function SplashPage({ navigation }) {
