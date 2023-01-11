@@ -108,9 +108,11 @@ yarn install
 - Save config to internal storage
 - GUI redesign
 - [FIX] drawing order wrong
-- QRCode Guest generation
+- QRCode Guest generation on GUI
 - [FIX] mirrored self camera and screenshare wrong
 - [FIX] clean display after disconnection
+- Clean Chat Button on GUI
+- [FIX] require permission only in case of USB Glasses
 
 ## Changelist:
 
@@ -149,9 +151,13 @@ yarn install
 ### Ver. 0.7 Beta:
 - GUI redesign
 - [FIX] drawing order wrong
-- QRCode guest generation
+- QRCode guest generation on GUI
 - [FIX] mirrored self camera and screenshare wrong
 - [FIX] clean display after disconnection
+- Clean Chat Button on GUI
+- [FIX] require permission only in case of USB Glasses
+
+
 
 ## Univet Camera Procedure
 

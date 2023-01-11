@@ -85,9 +85,15 @@ export function StartPage({ navigation }) {
   useEffect(() => {
     console.log(usbIsEnabled);
     dispatch({ type: 'SET_USBCAMERA', payload: usbIsEnabled });
+    if(usbIsEnabled == true)
+    {
+      console.log("useeffect requirepermissions");
+      requireUSBPermissions();
+    }
   }, [usbIsEnabled])
 
   function toggleUsb() {
+    console.log("toggle..");
     setUsbIsEnabled(previousState => !previousState);
 
   }
@@ -107,7 +113,13 @@ export function StartPage({ navigation }) {
 
       // do this at the start of the app
       console.log("before require permissions");
-      requireUSBPermissions();
+      // require only if USB is selected...
+      if(usbIsEnabled == true)
+      {
+        console.log("component mount usb permission");
+        requireUSBPermissions();
+      }
+        
 
     }, 500);
 
@@ -118,6 +130,8 @@ export function StartPage({ navigation }) {
   }, [])
 
   async function requireUSBPermissions() {
+
+    console.log("requiring permissions...")
 
     // Manage USB Permission on any device
     usb.getUsbDevices(async mydevices => {

@@ -25,6 +25,7 @@ export function MainPage({ navigation }) {
     const imageBack = require("../images/back.png");
     const imageFlip = require("../images/flip.png");
     const imageUser = require("../images/adduser.png");
+    const imageClean = require("../images/trash.png");
 
     const [qrvalue, setQrvalue] = useState('');
     const [qrVisible, setQrVisible] = useState(false);
@@ -139,6 +140,10 @@ export function MainPage({ navigation }) {
             setQrVisible(false);
         else
             setQrVisible(true);
+    }
+
+    function cleanChat(){
+        dispatch({ type: 'CLEAR_CHAT', payload: true });
     }
 
     async function initEnumerateAudioDevices() {
@@ -415,7 +420,7 @@ export function MainPage({ navigation }) {
             zIndex: 100,
             zOrder: 100,
         },
-        buttonContainerBottom: {
+        buttonContainerSwitchCamera: {
             position: "absolute",
             bottom: 20,
             left: 20,
@@ -425,7 +430,7 @@ export function MainPage({ navigation }) {
             zIndex: 100,
             zOrder: 100,
         },
-        buttonContainerBottom2: {
+        buttonContainerShowQRCode: {
             position: "absolute",
             bottom: 20,
             left: state.real_height / 5 + 40,
@@ -435,9 +440,19 @@ export function MainPage({ navigation }) {
             zIndex: 100,
             zOrder: 100,
         },
-        qrcode:{
+        buttonContainerCleanChat: {
             position: "absolute",
             bottom: 20,
+            left: state.real_height / 5 + state.real_height / 5 + 60,
+            width: state.real_height / 5,
+            height: state.real_height / 5,
+            backgroundColor: '#ff000000',
+            zIndex: 100,
+            zOrder: 100,
+        },
+        qrcode:{
+            position: "absolute",
+            bottom: state.real_height / 5 + 40,
             left: state.real_height / 2.5 + 60,
             width: state.real_width,
             height: state.real_height / 2.5,
@@ -529,7 +544,7 @@ export function MainPage({ navigation }) {
                     />
                 </TouchableOpacity>
             </View>
-            <View style={styles.buttonContainerBottom}>
+            <View style={styles.buttonContainerSwitchCamera}>
                 <TouchableOpacity
                     style={styles.buttonScannerStyle}
                     activeOpacity={0.9}
@@ -540,13 +555,25 @@ export function MainPage({ navigation }) {
                     />
                 </TouchableOpacity>
             </View>
-            <View style={styles.buttonContainerBottom2}>
+            <View style={styles.buttonContainerShowQRCode}>
                 <TouchableOpacity
                     style={styles.buttonUserStyle}
                     activeOpacity={0.9}
                     onPress={addUSer}>
                     <Image
                         source={imageUser}
+                        style={styles.buttonImageIconStyle}
+                    />
+                </TouchableOpacity>
+                
+            </View>
+            <View style={styles.buttonContainerCleanChat}>
+                <TouchableOpacity
+                    style={styles.buttonUserStyle}
+                    activeOpacity={0.9}
+                    onPress={cleanChat}>
+                    <Image
+                        source={imageClean}
                         style={styles.buttonImageIconStyle}
                     />
                 </TouchableOpacity>
