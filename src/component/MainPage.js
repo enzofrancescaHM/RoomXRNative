@@ -14,7 +14,6 @@ import QRCode from "react-native-qrcode-svg";
 export function MainPage({ navigation }) {
     
     const mounted = useRef()
-    const [count, setCount] = useState(0)
     const [debugTest, setDebugTest] = useState("---");
     const [rc, setRc] = useState(null);
     const [debugLine, setDebugLine] = useState("this is the debug line... ;)")
@@ -60,10 +59,6 @@ export function MainPage({ navigation }) {
     useEffect(function componentDidMountAndCompontDidUpdate() {
         //console.log("%c MainPage componentDidMountAndCompontDidUpdate", "color:teal;")
     })
-
-    useEffect(function ComponentDidUpdateForCount() {
-        //console.log("%c MainPage CompontDidUpdateForCount", "color:blue;")
-    }, [count])
 
     useEffect(function runComponentDidUpdate() {
         if (!isComponetMounted()) {
@@ -387,7 +382,6 @@ export function MainPage({ navigation }) {
         buttonUserStyle: {
             backgroundColor: '#485a9600',
             borderWidth: 0.5,
-            marginLeft: state.real_height / 5 + 20,
             width: state.real_height / 5,
             height: state.real_height / 5,
             borderRadius: 5,
@@ -415,9 +409,9 @@ export function MainPage({ navigation }) {
             position: "absolute",
             top: 20,
             left: 20,
-            width: state.real_width,
+            width:  state.real_height / 5,
             height: state.real_height / 5,
-            backgroundColor: 'f00',
+            backgroundColor: '#ff000000',
             zIndex: 100,
             zOrder: 100,
         },
@@ -425,9 +419,19 @@ export function MainPage({ navigation }) {
             position: "absolute",
             bottom: 20,
             left: 20,
-            width: state.real_width,
+            width: state.real_height / 5,
             height: state.real_height / 5,
-            backgroundColor: 'f00',
+            backgroundColor: '#ff000000',
+            zIndex: 100,
+            zOrder: 100,
+        },
+        buttonContainerBottom2: {
+            position: "absolute",
+            bottom: 20,
+            left: state.real_height / 5 + 40,
+            width: state.real_height / 5,
+            height: state.real_height / 5,
+            backgroundColor: '#ff000000',
             zIndex: 100,
             zOrder: 100,
         },
@@ -477,7 +481,7 @@ export function MainPage({ navigation }) {
             <View style={styles.mainArea}>
                 <RTCView
                     style={styles.localStream}
-                    mirror={state.screenstream == "empty" ? true : false}
+                    mirror={state.screenstream == "empty" ? false : true}
                     objectFit={'contain'}
                     streamURL={state.localstream == "empty" ? "" : state.localstream.toURL()}
                     zOrder={0}>
@@ -536,7 +540,7 @@ export function MainPage({ navigation }) {
                     />
                 </TouchableOpacity>
             </View>
-            <View style={styles.buttonContainerBottom}>
+            <View style={styles.buttonContainerBottom2}>
                 <TouchableOpacity
                     style={styles.buttonUserStyle}
                     activeOpacity={0.9}

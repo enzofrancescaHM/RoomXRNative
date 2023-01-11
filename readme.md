@@ -81,6 +81,7 @@ yarn install
 - Generate guest QRCode for external camera on site
 - Evaluate why scannerpage crashes sometimes, maybe because it searches for back camera and   
   not always is present
+- [FIX] loopback does not stop when leave mainpage
 
 ## Done:
 - implement git (done with github)
@@ -108,6 +109,8 @@ yarn install
 - GUI redesign
 - [FIX] drawing order wrong
 - QRCode Guest generation
+- [FIX] mirrored self camera and screenshare wrong
+- [FIX] clean display after disconnection
 
 ## Changelist:
 
@@ -147,23 +150,25 @@ yarn install
 - GUI redesign
 - [FIX] drawing order wrong
 - QRCode guest generation
+- [FIX] mirrored self camera and screenshare wrong
+- [FIX] clean display after disconnection
 
 ## Univet Camera Procedure
 
-- install ReactNativeUsbModule from: https://github.com/andy-shea/react-native-usb
-- follow the readme instruction in order to modify but not this one: "Add new ReactNativeUsbPackage() to the list returned by the getPackages() method"  
+1. install ReactNativeUsbModule from: https://github.com/andy-shea/react-native-usb
+2. follow the readme instruction in order to modify but not this one: "Add new ReactNativeUsbPackage() to the list returned by the getPackages() method"  
   otherwise an error will occur
-- change ReactNativeUsbModule.java and the others .java accordingly with the file stored in the changes folder (they are .txt files)
-- add UsbCapturer.java from changes directory
-- add to the build gradle of reactnativeWebRTC the folowing:  
+3. change ReactNativeUsbModule.java and the others .java accordingly with the file stored in the changes folder (they are .txt files)
+4. add UsbCapturer.java from changes directory
+5. add to the build gradle of reactnativeWebRTC the folowing:  
 '''implementation("com.serenegiant:common:${commonLibVersion}") {
 	    exclude module: 'support-v4'
     }'''
-- it's better the following;
+6. it's better the following;
 ''' implementation 'com.licheedev:usbcameracommon:1.0.1' '''
-- raise sdk in build.gradle of reactnativeWebRTC to 26 (please refer to the build.gradle put in the changes folder)
-- in general the whole project was raised to 26 minimum, the changes are in git, so nothing to change manually
-- The core of the connection with Univet Glasses is in the UsbCapturer.java file. In that file we connect both to UsbCamera and    
+7. raise sdk in build.gradle of reactnativeWebRTC to 26 (please refer to the build.gradle put in the changes folder)
+8. in general the whole project was raised to 26 minimum, the changes are in git, so nothing to change manually
+9. The core of the connection with Univet Glasses is in the UsbCapturer.java file. In that file we connect both to UsbCamera and    
 the display of glasses. This file and the other associated are in the ReactNativeWebRTC implementation so everytime something   
 changes in that project we must fix it with our changes.
 
@@ -181,21 +186,24 @@ exposed to ReactNative, in particular if we would like to add showTextMessage fu
 https://reactnative.dev/docs/native-modules-android#sending-events-to-javascript
 
 ## Phones compatible so far
-- Epson control unit, it is compatible, but the USB camera of Univet Glasses is badly recognized and is null.
-  vendorID= 1155, DEV: eRGlassFb - PID: a306 - VID: 483
+- Epson control unit, it is compatible, but the USB camera of Univet Glasses is badly recognized and is null.  
+  vendorID= 1155, DEV: eRGlassFb - PID: a306 - VID: 483  
   vendorID= 0, DEV: null - PID: 0 - VID: 0
 
-- Galaxy XCover 4s, it is fully compatible
-  vendorID= 1155, DEV: eRGlassFb - PID: a306 - VID: 483
+- Galaxy XCover 4s, it is fully compatible  
+  vendorID= 1155, DEV: eRGlassFb - PID: a306 - VID: 483  
   vendorID= 3141, DEV: USB 2.0 Camera - PID: 6366 - VID: c45
 
 
 ## Notes
 
-A normal external USB Camera works as is with no usb external libraries, i.e. the one on the helmet is working properly
+A normal external USB Camera works as is with no usb external libraries, i.e. the one on the helmet is working properly  
 So, to use a normal USB UVC Compatible camera it is enough to click change camera in order to switch to the external one
 
 ## QRCode format definition
+in order to connect to roomxr in the format  https://roomxr.eu:5001/join/holomask-test?name=ciccio&notify=0   
+we have to conform to this qrcode format:
+
 ```
 {
   "user":"pippo",

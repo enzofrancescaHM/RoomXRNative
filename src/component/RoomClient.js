@@ -543,6 +543,13 @@ function RoomClient() {
                 // send to the store the x and y values of the pointer position
                 dispatch({type: 'POINTER_DATA', payload:serialized});
 
+                // this is a good point to send pointer info also to the Univet glasses
+                // Univet
+                if(state.usbcamera){
+                    mediaDevices.showLoopBackCamera(false);
+                    //mediaDevices.showPointer(serialized);
+                }
+
                 
             }.bind(this),
         );
@@ -1773,6 +1780,10 @@ function removeVideoOff(peer_id) {
         this.producerTransport.close();
         cleanConsumers();
         socket.disconnect();
+        // disable loopback and clear image on the screen if any
+        if(state.usbcamera){
+            mediaDevices.showLoopBackCamera(false);
+        }
 
     }
 

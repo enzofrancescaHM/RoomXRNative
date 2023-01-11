@@ -467,6 +467,18 @@ public class UsbCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
     public void showLoopBackCamera(boolean showLoop) {
         //Log.d("showLoopBackCamera start...","hey!");
         showLoopBack = showLoop;
+
+        // clean display after half a second in order to simulate display off
+        // after a disconnection
+        if(!showLoop) {
+          Timer mytimer = new Timer();
+          mytimer.schedule(new TimerTask() {
+            public void run() {
+                Bitmap cleanBmp = Bitmap.createBitmap(419, 138, Bitmap.Config.ARGB_8888);
+                dFb.writeImage(cleanBmp,-1,false); // write black image with no battery sign    
+            }
+          }, 500L);
+        }
     }  
 
     // show a bitmap on the display
