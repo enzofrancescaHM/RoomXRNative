@@ -49,6 +49,10 @@ class MediaDevices extends defineCustomEventTarget(...MEDIA_DEVICES_EVENTS) {
     showLoopBackCamera(show){
         return showLoopBackCamera(show);
     }
+
+    heartBeat() {
+        return new Promise(resolve => WebRTCModule.heartBeat(resolve));
+    }
 }
 
 export default new MediaDevices();

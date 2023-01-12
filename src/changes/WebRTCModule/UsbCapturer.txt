@@ -79,6 +79,7 @@ public class UsbCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
     private Timer timer = null;
     private Lock lock = new ReentrantLock();
     boolean isLocked = false;
+    boolean isConnected = true; // this variable become false only when usb is disconnected...
 
     public enum writeStatus {
         SUCCESS,
@@ -134,9 +135,6 @@ public class UsbCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
         return false;
     }
 
-
-    
-
     @Override
     public void onAttach(UsbDevice device) {
         monitor.requestPermission(device);
@@ -144,7 +142,8 @@ public class UsbCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
 
     @Override
     public void onDettach(UsbDevice device) {
-        
+      Log.d("USB-UNIVET", "ON DETTACH!");
+      isConnected=false;
     }
 
     UvcCameraDataCallBack firstDataCallBack = new UvcCameraDataCallBack() {
@@ -335,6 +334,8 @@ public class UsbCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
 
     @Override
     public void onDisconnect(UsbDevice device, USBMonitor.UsbControlBlock ctrlBlock) {
+      Log.d("USB-UNIVET", "ON DISCONNECT!");
+      isConnected = false;
     }
 
     @Override
@@ -344,8 +345,6 @@ public class UsbCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
     @Override
     public void onFrame(ByteBuffer frame) {
     }
-
-
 
     private writeStatus getProtocolVersion(/*byte[] values*/) {
         //if (values.length != 2)
@@ -453,6 +452,13 @@ public class UsbCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
     //        External Functions                 //
     ///////////////////////////////////////////////
 
+    // this function is an heartbeat to check if glasses
+    // are still connected. Normally IsConnected is true from
+    // the beginning, but it became false once usb is disconnected.
+    public boolean heartBeat(){
+      return isConnected;
+    }
+
     // this function writes a string on the display
     public void testWrite(String mystring){
         //Log.d("testWrite start...","hey!");
@@ -489,4 +495,4 @@ public class UsbCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
             dFb.writeImage(bitmapToShow,0,false);
         }
     }  
-}
+  }

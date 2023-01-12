@@ -1,7 +1,7 @@
 # RoomXR React Native Client
 
 This is the Android / iOS client that connects with RoomXR Server, built with React Native, Mediasoup and Socket.io. 
-
+It is also composed of a lot of native android code in order to connect to different glasses.
 
 ## Project Initialization
 
@@ -72,16 +72,15 @@ yarn install
 - explore expo compilation
 - implement voice recognition with: pocketsphynx
 - implement chat with: https://github.com/FaridSafi/react-native-gifted-chat
-- Evaluate disconnect and riconnect the Univet glasses cases, it should gracely manage those states
 - (Whiteboard) implement Decals
 - evaluate possibility to remove reanimated2 dependency
 
 ## In Progress:
 - Save usb option to the persistent memory
-- Generate guest QRCode for external camera on site
 - Evaluate why scannerpage crashes sometimes, maybe because it searches for back camera and   
   not always is present
-- [FIX] loopback does not stop when leave mainpage
+- Evaluate disconnect and riconnect the Univet glasses cases, it should gracely manage those states
+
 
 ## Done:
 - implement git (done with github)
@@ -113,6 +112,7 @@ yarn install
 - [FIX] clean display after disconnection
 - Clean Chat Button on GUI
 - [FIX] require permission only in case of USB Glasses
+- [FIX] loopback does not stop when leave mainpage
 
 ## Changelist:
 
@@ -156,6 +156,9 @@ yarn install
 - [FIX] clean display after disconnection
 - Clean Chat Button on GUI
 - [FIX] require permission only in case of USB Glasses
+- [FIX] loopback does not stop when leave mainpage
+
+
 
 
 
@@ -184,9 +187,11 @@ The communication between React Native and the glasses is made by adding some su
 exposed to ReactNative, in particular if we would like to add showTextMessage function we must modify:
 - INDEX.TS - extend the register globals by adding our new function
 - MEDIADEVICES.TS - it's the bridge where the function is exported
-- SHOWTEXTMESSAGE.TS - it's a new file where a bridge funcion is called from WebRTCModule.java
+- SHOWTEXTMESSAGE.TS - it's a new file where a bridge funcion is called from WebRTCModule.java (if the function involves a promise it is not necessary)
 - WebRTCModule.java - here we call the GetUserMediaImpl.java that finally calls the real function in UsbCapturer.java
 - GetUserMediaImpl.java - direct call to the real function in UsbCapturer.java
+
+**NOTICE! if a new file is added, please add it to the changes section and also to the batch files tha copy the relevant changes to git.**
 
 - to send notification to javascript from JAVA we can do the following:   
 https://reactnative.dev/docs/native-modules-android#sending-events-to-javascript

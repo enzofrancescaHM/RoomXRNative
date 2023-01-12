@@ -36,6 +36,7 @@ function registerGlobals(): void {
     global.navigator.mediaDevices.enumerateDevices = mediaDevices.enumerateDevices.bind(mediaDevices);
     global.navigator.mediaDevices.showTextMessage = mediaDevices.showTextMessage.bind(mediaDevices);
     global.navigator.mediaDevices.showLoopBackCamera = mediaDevices.showLoopBackCamera.bind(mediaDevices);
+    global.navigator.mediaDevices.heartBeat = mediaDevices.heartBeat.bind(mediaDevices);
 
     global.RTCPeerConnection = RTCPeerConnection;
     global.RTCIceCandidate = RTCIceCandidate;

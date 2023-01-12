@@ -28,6 +28,8 @@ import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 
+import javax.security.auth.callback.CallbackHandler;
+
 import org.webrtc.*;
 import org.webrtc.audio.AudioDeviceModule;
 import org.webrtc.audio.JavaAudioDeviceModule;
@@ -481,6 +483,10 @@ public class WebRTCModule extends ReactContextBaseJavaModule {
         return mediaConstraints;
     }
 
+    @ReactMethod
+    public void heartBeat(Callback callback) {
+        ThreadUtils.runOnExecutor(() -> callback.invoke(getUserMediaImpl.heartBeat()));
+    }
     @ReactMethod
     public void showTextMessage(String message) {
         ThreadUtils.runOnExecutor(() -> getUserMediaImpl.writeText(message));

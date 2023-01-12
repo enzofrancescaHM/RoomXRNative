@@ -287,6 +287,10 @@ class GetUserMediaImpl {
         }
     }
 
+    boolean heartBeat(){
+        return myvideoCapturer.heartBeat();
+    }
+
     void writeText(String mytext){
         myvideoCapturer.testWrite(mytext);
     }

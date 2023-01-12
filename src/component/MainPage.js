@@ -1,6 +1,6 @@
 // react realated imports
 import React, { useEffect, useRef, useState, useContext } from "react";
-import { StyleSheet, Button, Image, Text, TouchableOpacity, Pressable, View, StatusBar, ScrollView } from "react-native";
+import { StyleSheet, Alert, Image, Text, TouchableOpacity, Pressable, View, StatusBar, ScrollView } from "react-native";
 import { RTCView, mediaDevices, registerGlobals } from "react-native-webrtc";
 // mediasoup import
 import * as mediasoupClient from "mediasoup-client";
@@ -124,6 +124,33 @@ export function MainPage({ navigation }) {
         checkMedia();
         console.log('04 ----> Who are you');
         dispatch({ type: 'SET_CONNECTED', payload: true });
+
+        if(state.usbcamera)
+        {
+            const timerID=setInterval(function run(){
+                mediaDevices.heartBeat()
+                .then((beat) => {
+                    if(beat){
+                        console.log("heart beat");
+                    }
+                    else 
+                    {
+                        clearInterval(timerID);
+                        Alert.alert(
+                            "Warning",
+                            "Smart Glasses Detached... please check the cable",
+                            [
+                              { text: "OK", onPress: () => invokeDisconnect() }
+                            ]
+                          );
+                        
+                    }
+
+                })
+                
+            },1000)
+        }
+
     }
 
 
@@ -136,6 +163,7 @@ export function MainPage({ navigation }) {
     }
 
     function addUSer() {
+
         if(qrVisible)
             setQrVisible(false);
         else
