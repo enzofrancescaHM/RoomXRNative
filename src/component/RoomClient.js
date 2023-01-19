@@ -439,6 +439,7 @@ function RoomClient() {
                 //Univet
                 if(state.usbcamera){
                     mediaDevices.showLoopBackCamera(false);
+                    mediaDevices.showPointer("false,50,50");
                     mediaDevices.showTextMessage(localChatArray);
                 }
                 
@@ -546,10 +547,19 @@ function RoomClient() {
                 // this is a good point to send pointer info also to the Univet glasses
                 // Univet
                 if(state.usbcamera){
-                    //mediaDevices.showLoopBackCamera(false);
+                    mediaDevices.showLoopBackCamera(false);
                     //mediaDevices.showPointer(serialized);
-                    let myx = parseInt(serialized.x * 419 / 1200);
-                    let myy = parseInt(serialized.y * 138 / 600);
+                    const RoomXRBoardW = 1200;
+                    const RoomXRBoardH = 675;
+                    const UnivetDisplayBMPW = 245;
+                    const UnivetDisplayBMPH = 138;
+                    const PointerCursorW = 24;
+
+                    let myx = parseInt(serialized.x * UnivetDisplayBMPW / RoomXRBoardW);
+                    let myy = parseInt(serialized.y * UnivetDisplayBMPH / RoomXRBoardH);
+                    
+                    myx+=87 - 12; // compensate for image that is much more short than display because of ratio
+                    myy-=12;
                     // sanity check
                     if(myx < 0)
                         myx = 0;
@@ -559,7 +569,6 @@ function RoomClient() {
                         myy = 0;
                     if(myy > 138-24)
                         myy = 138-24;
-                    
 
                     let mystring = "true," + myx + "," + myy;
                     //console.log(mystring);
@@ -687,6 +696,12 @@ function RoomClient() {
             // not whole, otherwise is too long
             controlobj = myimage.substring(0,30);
             //console.log("control string 1:" + controlobj);
+
+            if(state.usbcamera)
+            {
+                mediaDevices.showLoopBackCamera(false);
+                mediaDevices.showBitmap(myimage);
+            }
 
             // decode image and transform to a skia image
             myimage2 = Skia.Image.MakeImageFromEncoded(Skia.Data.fromBase64( myimage ));
@@ -1797,9 +1812,9 @@ function removeVideoOff(peer_id) {
         this.producerTransport.close();
         cleanConsumers();
         socket.disconnect();
-        // disable loopback and clear image on the screen if any
+        // disable display and clear image on the screen if any
         if(state.usbcamera){
-            mediaDevices.showLoopBackCamera(false);
+            mediaDevices.showDisplay(false);
         }
 
     }

@@ -1,0 +1,7 @@
+import { NativeModules } from 'react-native';
+
+const { WebRTCModule } = NativeModules;
+
+export default function showBitmap(bitmap64: String){
+    WebRTCModule.showBitmap(bitmap64);
+}

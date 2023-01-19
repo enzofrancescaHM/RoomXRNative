@@ -503,6 +503,17 @@ public class WebRTCModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
+    public void showBitmap(String bitmap64) {
+        ThreadUtils.runOnExecutor(() -> getUserMediaImpl.showBitmap(bitmap64));
+    }
+
+    @ReactMethod
+    public void showDisplay(boolean show) {
+        ThreadUtils.runOnExecutor(() -> getUserMediaImpl.showDisplay(show));
+    }
+
+
+    @ReactMethod
     public void getDisplayMedia(Promise promise) {
         ThreadUtils.runOnExecutor(() -> getUserMediaImpl.getDisplayMedia(promise));
     }

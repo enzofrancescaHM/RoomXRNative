@@ -7,6 +7,8 @@ import getUserMedia from './getUserMedia';
 import showTextMessage from './showTextMessage';
 import showLoopBackCamera from './showLoopBackCamera';
 import showPointer from './showPointer';
+import showBitmap from './showBitmap';
+import showDisplay from './showDisplay';
 
 const { WebRTCModule } = NativeModules;
 
@@ -58,6 +60,15 @@ class MediaDevices extends defineCustomEventTarget(...MEDIA_DEVICES_EVENTS) {
     showPointer(message){
         return showPointer(message);
     }
+
+    showBitmap(bitmap64){
+        return showBitmap(bitmap64);
+    }
+
+    showDisplay(show){
+        return showDisplay(show);
+    }
+
 }
 
 export default new MediaDevices();

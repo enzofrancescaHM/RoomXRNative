@@ -164,6 +164,7 @@ yarn install
 ### Ver. 0.8 Beta:
 - Live Pointer on Univet Glasses
 - Toggle Display on Univet Glasses
+- Toggle LoopBack on Univet Glasses
 
 ## Univet Camera Procedure
 

@@ -305,6 +305,17 @@ class GetUserMediaImpl {
         myvideoCapturer.showPointer(message);
     }
 
+    void showDisplay(boolean show){
+        Log.d(TAG, "showPointer : ");
+        myvideoCapturer.showDisplay(show);
+    }
+
+    void showBitmap(String bitmap64){
+        //Log.d(TAG, "showPointer : ");
+        myvideoCapturer.showBitmap(bitmap64);
+    }
+
+
     private void createScreenStream() {
         VideoTrack track = createScreenTrack();
 

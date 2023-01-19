@@ -29,10 +29,14 @@ export function MainPage({ navigation }) {
     const imageUser = require("../images/adduser.png");
     const imageClean = require("../images/trash.png");
     const imageAR = require("../images/ar.png");
+    const imageLoop = require("../images/loopcamera.png");
+
 
     const [qrvalue, setQrvalue] = useState('');
     const [qrVisible, setQrVisible] = useState(false);
     const [displayVisible, setDisplayVisible] = useState(true);
+    const [loopVisible, setLoopVisible] = useState(true);
+
 
     // ####################################################
     // DYNAMIC SETTINGS
@@ -191,11 +195,25 @@ export function MainPage({ navigation }) {
         if(displayVisible)
         {
             setDisplayVisible(false);
-            mediaDevices.showLoopBackCamera(false);
+            mediaDevices.showDisplay(false);
         }
         else
         {
             setDisplayVisible(true);
+            mediaDevices.showDisplay(true);
+        }
+
+    }
+
+    function toggleLoopBack(){
+        if(loopVisible)
+        {
+            setLoopVisible(false);
+            mediaDevices.showLoopBackCamera(false);
+        }
+        else
+        {
+            setLoopVisible(true);
             mediaDevices.showLoopBackCamera(true);
         }
 
@@ -488,7 +506,7 @@ export function MainPage({ navigation }) {
         buttonContainerShowQRCode: {
             position: "absolute",
             bottom: 20,
-            left: state.real_height / 5 + 40,
+            left: state.real_height / 5 + 30,
             width: state.real_height / 5,
             height: state.real_height / 5,
             backgroundColor: '#ff000000',
@@ -498,7 +516,7 @@ export function MainPage({ navigation }) {
         buttonContainerCleanChat: {
             position: "absolute",
             bottom: 20,
-            left: state.real_height / 5 + state.real_height / 5 + 60,
+            left: state.real_height / 5 + state.real_height / 5 + 40,
             width: state.real_height / 5,
             height: state.real_height / 5,
             backgroundColor: '#ff000000',
@@ -508,7 +526,17 @@ export function MainPage({ navigation }) {
         buttonContainerDisplay: {
             position: "absolute",
             bottom: 20,
-            left: state.real_height / 5 + state.real_height / 5 + state.real_height / 5 + 80,
+            left: state.real_height / 5 + state.real_height / 5 + state.real_height / 5 + 50,
+            width: state.real_height / 5,
+            height: state.real_height / 5,
+            backgroundColor: '#ff000000',
+            zIndex: 100,
+            zOrder: 100,
+        },
+        buttonContainerLoopBack: {
+            position: "absolute",
+            bottom: 20,
+            left: state.real_height / 5 + state.real_height / 5 + state.real_height / 5 + state.real_height / 5 + 60,
             width: state.real_height / 5,
             height: state.real_height / 5,
             backgroundColor: '#ff000000',
@@ -659,6 +687,17 @@ export function MainPage({ navigation }) {
                     onPress={toggleDisplay}>
                     <Image
                         source={imageAR}
+                        style={styles.buttonImageIconStyle}
+                    />
+                </TouchableOpacity>
+            </View>
+            <View style={styles.buttonContainerLoopBack}>
+                <TouchableOpacity
+                    style={styles.buttonUserStyle}
+                    activeOpacity={0.9}
+                    onPress={toggleLoopBack}>
+                    <Image
+                        source={imageLoop}
                         style={styles.buttonImageIconStyle}
                     />
                 </TouchableOpacity>

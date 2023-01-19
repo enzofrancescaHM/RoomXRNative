@@ -21,9 +21,6 @@ import android.graphics.Paint;
 import android.graphics.Canvas;
 import android.graphics.Color;
 
-
-
-
 import android.view.ViewGroup;
 import android.view.View;
 import android.view.Surface;
@@ -33,25 +30,23 @@ import android.os.Looper;
 import android.os.SystemClock;
 
 import android.util.Log;
+import android.util.Base64;
 
-
-//import java.Array;
-//import java.ArrayList;
 import java.nio.ByteBuffer;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
-//import java.awt.Color;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 import com.serenegiant.usb.IFrameCallback;
 import com.serenegiant.usb.USBMonitor;
@@ -70,8 +65,6 @@ import org.webrtc.VideoFrame;
 import org.webrtc.NV21Buffer;
 
 
-
-
 public class UsbCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectListener, IFrameCallback {
     private Context context;
     private USBMonitor monitor;
@@ -84,6 +77,7 @@ public class UsbCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
     private boolean weFoundItDisplay = false;
     private boolean showLoopBack = true;
     private boolean pointerShow = false;
+    private boolean showScreen = true;
     private int pointerX = 200;
     private int pointerY = 100;
 
@@ -100,6 +94,8 @@ public class UsbCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
     boolean isLocked = false;
     boolean isConnected = true; // this variable become false only when usb is disconnected...
     private Bitmap frozenBitmap = null; // this is the last frame from video feed (for pointer and other things)
+    private Bitmap baseBitmap = null; // this is the last frame from video feed (for pointer and other things)
+
     private static final String ACTION_USB_PERMISSION = "Capturer.USB_PERMISSION";
 
     public enum writeStatus {
@@ -127,6 +123,8 @@ public class UsbCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
     public void initialize(SurfaceTextureHelper surfaceTextureHelper, Context context, CapturerObserver capturerObserver) {
         this.surfaceTextureHelper = surfaceTextureHelper;
         this.capturerObserver = capturerObserver;
+        frozenBitmap = Bitmap.createBitmap(419, 138, Bitmap.Config.ARGB_8888); // initialize bitmap to empty bitmap
+        baseBitmap = Bitmap.createBitmap(419, 138, Bitmap.Config.ARGB_8888); // initialize bitmap to empty bitmap
     }
 
     @Override
@@ -179,7 +177,7 @@ public class UsbCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
             capturerObserver.onFrameCaptured(videoFrame);
 
             // loopback on Univet Display
-            if(showLoopBack && dFb != null)
+            if(dFb != null && showScreen)
             {
                 // every frame will be converted to bitmap and fired to the display
                 YuvImage yuvImage = new YuvImage(bArr, ImageFormat.NV21, 1280, 720, null);
@@ -198,18 +196,18 @@ public class UsbCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
                     }
                 }
 
-                frozenBitmap = BitmapFactory.decodeByteArray(jpegByteArray, 0, jpegByteArray.length);
-
-                if(pointerShow)
-                {                  
-                  dFb.writeImagePointer(myimg,pointerX,pointerY, false);
+                if(showLoopBack)
+                {
+                  frozenBitmap = BitmapFactory.decodeByteArray(jpegByteArray, 0, jpegByteArray.length);
+                  dFb.writeImage(frozenBitmap,0,false);
                 }
                 else
                 {
-                  dFb.writeImage(myimg,0,false);
-                }
-                
-                
+                  if(pointerShow)
+                  {                  
+                    dFb.writeImagePointer(frozenBitmap,pointerX,pointerY, false);
+                  }
+                }                
             }
 
             videoFrame.release();
@@ -527,18 +525,18 @@ public class UsbCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
          if(dFb != null)
          {
             Bitmap createBitmap = UnivetUtils.TextToBitmap(mystring);
-            dFb.writeImage(createBitmap,0,false);
+            if(showScreen)
+              dFb.writeImage(createBitmap,0,false);
          }                                    
     }
 
-    // enable / disable LoopBack Camera Feed on the display
-    public void showLoopBackCamera(boolean showLoop) {
-        //Log.d("showLoopBackCamera start...","hey!");
-        showLoopBack = showLoop;
+    // enable / disable Display
+    public void showDisplay(boolean showDisp) {
+      showScreen = showDisp;
 
         // clean display after half a second in order to simulate display off
         // after a disconnection
-        if(!showLoop) {
+        if(!showDisp) {
           Timer mytimer = new Timer();
           mytimer.schedule(new TimerTask() {
             public void run() {
@@ -548,6 +546,14 @@ public class UsbCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
             }
           }, 500L);
         }
+
+    }
+
+    // enable / disable LoopBack Camera Feed on the display
+    public void showLoopBackCamera(boolean showLoop) {
+        //Log.d("showLoopBackCamera start...","hey!");
+        showLoopBack = showLoop;
+
     }  
 
     public void showPointer(String message){
@@ -572,11 +578,20 @@ public class UsbCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
     }
 
     // show a bitmap on the display
-    public void showBitmap(Bitmap bitmapToShow) {
+    public void showBitmap(String bitmap64) {
         //Log.d("showBitmap start...","hey!");
-        if(dFb != null)
-        {
-            dFb.writeImage(bitmapToShow,0,false);
+        try {
+          byte[] decodedString = Base64.decode(bitmap64,0);
+          frozenBitmap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+          if(dFb != null)
+          {
+            if(showScreen)  
+              dFb.writeImage(frozenBitmap,0,false);
+          }
+        } catch (Exception e) {
+          e.printStackTrace();
         }
+
+       
     }  
   }
