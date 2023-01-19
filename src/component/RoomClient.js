@@ -546,8 +546,25 @@ function RoomClient() {
                 // this is a good point to send pointer info also to the Univet glasses
                 // Univet
                 if(state.usbcamera){
-                    mediaDevices.showLoopBackCamera(false);
+                    //mediaDevices.showLoopBackCamera(false);
                     //mediaDevices.showPointer(serialized);
+                    let myx = parseInt(serialized.x * 419 / 1200);
+                    let myy = parseInt(serialized.y * 138 / 600);
+                    // sanity check
+                    if(myx < 0)
+                        myx = 0;
+                    if(myx > 419-24)
+                        myx = 419-24;
+                    if(myy < 0)
+                        myy = 0;
+                    if(myy > 138-24)
+                        myy = 138-24;
+                    
+
+                    let mystring = "true," + myx + "," + myy;
+                    //console.log(mystring);
+                    mediaDevices.showPointer(mystring);
+                    //mediaDevices.showPointer("true,200,100");
                 }
 
                 

@@ -1,0 +1,7 @@
+import { NativeModules } from 'react-native';
+
+const { WebRTCModule } = NativeModules;
+
+export default function showPointer(message: String){
+    WebRTCModule.showPointer(message);
+}

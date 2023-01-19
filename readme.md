@@ -113,6 +113,9 @@ yarn install
 - Clean Chat Button on GUI
 - [FIX] require permission only in case of USB Glasses
 - [FIX] loopback does not stop when leave mainpage
+- Live Pointer on Univet Glasses
+- Toggle Display on Univet Glasses
+
 
 ## Changelist:
 
@@ -158,9 +161,9 @@ yarn install
 - [FIX] require permission only in case of USB Glasses
 - [FIX] loopback does not stop when leave mainpage
 
-
-
-
+### Ver. 0.8 Beta:
+- Live Pointer on Univet Glasses
+- Toggle Display on Univet Glasses
 
 ## Univet Camera Procedure
 

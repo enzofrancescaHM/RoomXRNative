@@ -22,13 +22,17 @@ export function MainPage({ navigation }) {
     //const toggleDebug = () => setDebugIsEnabled(previousState => !previousState);
     const scrollViewRef = useRef();
 
+    const [timerID, setTimerID] = useState(1234);
+
     const imageBack = require("../images/back.png");
     const imageFlip = require("../images/flip.png");
     const imageUser = require("../images/adduser.png");
     const imageClean = require("../images/trash.png");
+    const imageAR = require("../images/ar.png");
 
     const [qrvalue, setQrvalue] = useState('');
     const [qrVisible, setQrVisible] = useState(false);
+    const [displayVisible, setDisplayVisible] = useState(true);
 
     // ####################################################
     // DYNAMIC SETTINGS
@@ -53,7 +57,7 @@ export function MainPage({ navigation }) {
         invokeCreateRoomClient();
 
         return function componentWillUnmount() {
-            //console.log("%c MainPage componetWillUnmount", "color:red")
+            console.log("%c MainPage componetWillUnmount", "color:red")
         }
     }, [])
 
@@ -85,7 +89,12 @@ export function MainPage({ navigation }) {
     }
 
     async function invokeDisconnect() {
+        if(timerID != 1234)
+            clearInterval(timerID);
+        
         dispatch({ type: 'SET_CONNECTED', payload: false });
+
+
 
         navigation.replace('StartPage');
 
@@ -127,8 +136,9 @@ export function MainPage({ navigation }) {
 
         if(state.usbcamera)
         {
-            const timerID=setInterval(function run(){
-                mediaDevices.heartBeat()
+            setTimerID( setInterval(function run(){
+                //mediaDevices.showPointer("false,200,150");
+                /*mediaDevices.heartBeat()
                 .then((beat) => {
                     if(beat){
                         console.log("heart beat");
@@ -146,9 +156,9 @@ export function MainPage({ navigation }) {
                         
                     }
 
-                })
+                })*/
                 
-            },1000)
+            },1000))
         }
 
     }
@@ -163,6 +173,7 @@ export function MainPage({ navigation }) {
     }
 
     function addUSer() {
+        //mediaDevices.showPointer("true,200,150");
 
         if(qrVisible)
             setQrVisible(false);
@@ -172,6 +183,22 @@ export function MainPage({ navigation }) {
 
     function cleanChat(){
         dispatch({ type: 'CLEAR_CHAT', payload: true });
+        // TEST
+        //mediaDevices.showPointer("false,200,150");
+    }
+
+    function toggleDisplay(){
+        if(displayVisible)
+        {
+            setDisplayVisible(false);
+            mediaDevices.showLoopBackCamera(false);
+        }
+        else
+        {
+            setDisplayVisible(true);
+            mediaDevices.showLoopBackCamera(true);
+        }
+
     }
 
     async function initEnumerateAudioDevices() {
@@ -478,6 +505,16 @@ export function MainPage({ navigation }) {
             zIndex: 100,
             zOrder: 100,
         },
+        buttonContainerDisplay: {
+            position: "absolute",
+            bottom: 20,
+            left: state.real_height / 5 + state.real_height / 5 + state.real_height / 5 + 80,
+            width: state.real_height / 5,
+            height: state.real_height / 5,
+            backgroundColor: '#ff000000',
+            zIndex: 100,
+            zOrder: 100,
+        },
         qrcode:{
             position: "absolute",
             bottom: state.real_height / 5 + 40,
@@ -615,7 +652,17 @@ export function MainPage({ navigation }) {
                         size={state.real_height / 2.5}
                 />:""}
             </View>
-           
+            <View style={styles.buttonContainerDisplay}>
+                <TouchableOpacity
+                    style={styles.buttonUserStyle}
+                    activeOpacity={0.9}
+                    onPress={toggleDisplay}>
+                    <Image
+                        source={imageAR}
+                        style={styles.buttonImageIconStyle}
+                    />
+                </TouchableOpacity>
+            </View>
 
         </>
     )

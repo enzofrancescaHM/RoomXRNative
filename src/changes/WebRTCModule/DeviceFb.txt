@@ -54,7 +54,17 @@ public class DeviceFb {
       return 0;
     } 
   }
-
+  public int writeImagePointer(Bitmap img, int pointerX, int pointerY, boolean invert) {
+    Bitmap scaledBmp = scalePreserveRatio(img, 419, 138);
+    byte[] convertedImage = convertToGrayPointer(scaledBmp, pointerX, pointerY, invert);
+    byte[] dataToSend = buildRequest(convertedImage);
+    try {
+      return writeBulk(dataToSend, 5000);
+    } catch (IOException e) {
+      e.printStackTrace();
+      return 0;
+    } 
+  }
 
   
   private byte[] buildRequest(byte[] dataImg) {
@@ -102,6 +112,41 @@ public class DeviceFb {
       for (i = 0; i < 24; i++) {
         for (int j = 0; j < 38; j++)
           grayscale[i * 419 + j + 419 - 38] = BatteryLevelArray(batteryLevel)[i * 38 + j]; 
+      }  
+    return grayscale;
+  }
+
+  private byte[] convertToGrayPointer(Bitmap bmp, int pointerX, int pointerY, boolean invert) {
+    int w = 419;
+    int h = 138;
+    byte[] grayscale = new byte[57822];
+    int[] pixels = new int[57822];
+    bmp.getPixels(pixels, 0, bmp.getWidth(), 0, 0, bmp.getWidth(), bmp.getHeight());
+    int i;
+    for (i = 0; i < 138; i++) {
+      for (int j = 0; j < 419; j++) {
+        int val = pixels[i * 419 + j];
+        int A = val >>> 24;
+        int R = val >> 16 & 0xFF;
+        int G = val >> 8 & 0xFF;
+        int B = val & 0xFF;
+        int grayscalev = 0;
+        if (!invert) {
+          grayscalev = (R * 299 + G * 587 + B * 114) / 1000;
+        } else {
+          grayscalev = ((255 - R) * 299 + (255 - G) * 587 + (255 - B) * 114) / 1000;
+        } 
+        int grayscaleValue = grayscalev * A / 255;
+        grayscale[i * 419 + j] = (byte)grayscaleValue;
+      } 
+    } 
+    if (PointerArrayValue.pointer0 != null)
+      for (i = 0; i < 24; i++) {
+        for (int j = 0; j < 24; j++){
+          if(PointerArrayValue.pointer0[i * 24 + j] == -1) // commenting this line the transparency id off!
+            grayscale[(i+pointerY) * 419 + j + 419 - (419-pointerX)] = PointerArrayValue.pointer0[i * 24 + j]; 
+        }
+          
       }  
     return grayscale;
   }

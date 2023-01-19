@@ -300,6 +300,11 @@ class GetUserMediaImpl {
         myvideoCapturer.showLoopBackCamera(show);
     }
 
+    void showPointer(String message){
+        Log.d(TAG, "showPointer : ");
+        myvideoCapturer.showPointer(message);
+    }
+
     private void createScreenStream() {
         VideoTrack track = createScreenTrack();
 

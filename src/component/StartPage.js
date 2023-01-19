@@ -125,11 +125,13 @@ export function StartPage({ navigation }) {
 
     return function componentWillUnmount() {
       clearTimeout(timeoutHandle);
+      //usb.disconnect();
       console.log("%c MainPage componetWillUnmount", "color:red")
     }
   }, [])
 
   async function requireUSBPermissions() {
+    
 
     console.log("requiring permissions...")
 
