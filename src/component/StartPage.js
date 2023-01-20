@@ -132,7 +132,7 @@ export function StartPage({ navigation }) {
 
   async function requireUSBPermissions() {
     
-
+    //return;
     console.log("requiring permissions...")
 
     // Manage USB Permission on any device

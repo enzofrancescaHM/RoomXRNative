@@ -115,6 +115,8 @@ yarn install
 - [FIX] loopback does not stop when leave mainpage
 - Live Pointer on Univet Glasses
 - Toggle Display on Univet Glasses
+- Toggle LoopBack on Univet Glasses
+
 
 
 ## Changelist:

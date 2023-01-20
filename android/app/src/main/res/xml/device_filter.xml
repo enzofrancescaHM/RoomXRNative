@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- UNIVET -->
+    <usb-device vendor-id="4437" product-id="41734" /> <!-- 0x6001: FT232R -->
+    <usb-device vendor-id="12609" product-id="25446" /> <!-- 0x6010: FT2232H -->
+    <usb-device vendor-id="1155" product-id="A306" /> <!-- 0x6001: FT232R -->
+    <usb-device vendor-id="3141" product-id="6366" /> <!-- 0x6010: FT2232H -->
+   
+</resources>
