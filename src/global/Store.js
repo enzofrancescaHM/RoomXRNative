@@ -52,7 +52,12 @@ const initialState = {
     real_width: 640,
     real_height: 480,
     socket: null,
-
+    camCount: 0,
+    micCount: 0,
+    speakerCount: 0,
+    mic_array: [],
+    speaker_array: [],
+    cam_array: [],
 
 };
 

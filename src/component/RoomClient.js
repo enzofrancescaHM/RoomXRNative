@@ -521,12 +521,7 @@ function RoomClient() {
                 //console.log(data);
                 
                 // first clear all paths because we receive the entire drawing
-                dispatch({type: 'CLEAR_PATHS', payload:""});
-                dispatch({type: 'CLEAR_IMAGES', payload:""});
-                dispatch({type: 'CLEAR_LINES', payload:""});
-                dispatch({type: 'CLEAR_ELLIPSES', payload:""});
-                dispatch({type: 'CLEAR_RECTS', payload:""});
-                dispatch({type: 'CLEAR_TEXTS', payload:""});
+                clearScreenBoard();
 
                 // decode the strokes
                 JsonToSkia(data);
@@ -633,12 +628,7 @@ function RoomClient() {
                     console.log("not implemented yet...");
                     break;
                 case 'clear':
-                    dispatch({type: 'CLEAR_PATHS', payload:""});
-                    dispatch({type: 'CLEAR_IMAGES', payload:""});
-                    dispatch({type: 'CLEAR_LINES', payload:""});
-                    dispatch({type: 'CLEAR_ELLIPSES', payload:""});
-                    dispatch({type: 'CLEAR_RECTS', payload:""});
-                    dispatch({type: 'CLEAR_TEXTS', payload:""});
+                    clearScreenBoard();
                     break;
                 case 'close':
                     //if (wbIsOpen) toggleWhiteboard();
@@ -879,7 +869,41 @@ function RoomClient() {
         }*/
         if (state.isAudioAllowed) {
             console.log('[RoomClientComp] 09 ----> Start audio media');
-            produce(mediaType.audio, 0/*microphoneSelect.value*/);
+            var deviceid = state.mic_array[state.micCount-1]; // take always the last device attached... maybe
+            console.log(state.mic_array);
+            console.log(state.micCount);
+            console.log("device_id microphone", deviceid);
+            mediaDevices.addEventListener('deviceChange',()=>{
+                console.log("wow! devices changed!!!");
+                let miccount = 0;
+                let speakcount = 0;
+                dispatch({ type: 'SET_MIC_COUNT', payload: 0 });
+                dispatch({ type: 'SET_SPEAKER_COUNT', payload: 0 });
+                dispatch({ type: 'CLEAR_MICS', payload: "" });
+                dispatch({ type: 'CLEAR_SPEAKERS', payload: "" });
+                mediaDevices
+                    .enumerateDevices()
+                    .then((devices) =>
+                        devices.forEach((device) => {
+                            let el = null;
+                            if ('audioinput' === device.kind  || 'audio' === device.kind) {
+                            miccount++;
+                            
+                            dispatch({ type: 'ADD_MIC', payload: device.deviceId});
+                            } else if ('audiooutput' === device.kind) {
+                            speakcount++;
+                            dispatch({ type: 'ADD_SPEAKER', payload: device.deviceId});
+                            }
+                        }),
+                    )
+                    .then(() => {
+                        dispatch({ type: 'SET_MIC_COUNT', payload: miccount });
+                        dispatch({ type: 'SET_SPEAKER_COUNT', payload: speakcount });
+                        mediaDevices.setAudioDevice(state.mic_array[miccount-1]);
+                    });
+            })
+            mediaDevices.setAudioDevice(deviceid);
+            produce(mediaType.audio, deviceid/*microphoneSelect.value*/);
         } else {
 
             console.log('[RoomClientComp] 09 ----> Audio is off');
@@ -1043,6 +1067,9 @@ function RoomClient() {
                     break;
                 case mediaType.screen:
                     setIsScreen(true);
+                    // we should clean the board...
+                    clearScreenBoard();
+
                     //this.event(_EVENTS.startScreen);
                     break;
                 default:
@@ -1057,6 +1084,15 @@ function RoomClient() {
         } catch (err) {
             console.error('Produce error:', err);
         }
+    }
+
+    function clearScreenBoard(){
+        dispatch({type: 'CLEAR_PATHS', payload:""});
+        dispatch({type: 'CLEAR_IMAGES', payload:""});
+        dispatch({type: 'CLEAR_LINES', payload:""});
+        dispatch({type: 'CLEAR_ELLIPSES', payload:""});
+        dispatch({type: 'CLEAR_RECTS', payload:""});
+        dispatch({type: 'CLEAR_TEXTS', payload:""});
     }
     
     async function produceScreenAudio(stream) {

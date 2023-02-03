@@ -75,9 +75,9 @@ public class UsbCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
     private boolean isRequest = false;
     private boolean weFoundIt = false;
     private boolean weFoundItDisplay = false;
-    private boolean showLoopBack = true;
-    private boolean pointerShow = false;
-    private boolean showScreen = true;
+    private boolean showLoopBack = false; // disabled at start
+    private boolean pointerShow = false; // disabled at start
+    private boolean showScreen = true; // enabled at start
     private int pointerX = 200;
     private int pointerY = 100;
 

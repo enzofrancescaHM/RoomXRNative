@@ -199,6 +199,52 @@ const Reducer = (state, action) => {
                 board_W: action.payload.w,
                 board_H: action.payload.h
             };
+        case 'SET_MIC_COUNT':
+            return{
+                ...state,
+                micCount: action.payload
+            };
+        case 'ADD_MIC':
+            return{
+                ...state,
+                mic_array: [...state.mic_array, action.payload]
+            };
+        case 'CLEAR_MICS':
+            return{
+                ...state,
+                mic_array: []
+            };     
+        case 'SET_SPEAKER_COUNT':
+            return{
+                ...state,
+                speakerCount: action.payload
+            };        
+        case 'ADD_SPEAKER':
+            return{
+                ...state,
+                speaker_array: [...state.speaker_array, action.payload]
+            };
+        case 'CLEAR_SPEAKERS':
+            return{
+                ...state,
+                speaker_array: []
+            };     
+        
+        case 'SET_CAM_COUNT':
+            return{
+                ...state,
+                camCount: action.payload
+            };
+        case 'ADD_CAM':
+            return{
+                ...state,
+                cam_array: [...state.cam_array, action.payload]
+            };
+        case 'CLEAR_CAMS':
+            return{
+                ...state,
+                cam_array: []
+            };     
         
         default:
             return state;

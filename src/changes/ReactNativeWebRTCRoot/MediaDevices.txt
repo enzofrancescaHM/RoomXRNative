@@ -10,11 +10,24 @@ import showPointer from './showPointer';
 import showBitmap from './showBitmap';
 import showDisplay from './showDisplay';
 
+
+// audio part
+import EventEmitter from './EventEmitter';
+import RTCEvent from './RTCEvent';
+
+
+
 const { WebRTCModule } = NativeModules;
 
 const MEDIA_DEVICES_EVENTS = ['devicechange'];
 
 class MediaDevices extends defineCustomEventTarget(...MEDIA_DEVICES_EVENTS) {
+
+    constructor() {
+        super();
+        this._registerEvents();
+    }
+
     /**
      * W3C "Media Capture and Streams" compatible {@code enumerateDevices}
      * implementation.
@@ -67,6 +80,25 @@ class MediaDevices extends defineCustomEventTarget(...MEDIA_DEVICES_EVENTS) {
 
     showDisplay(show){
         return showDisplay(show);
+    }
+
+    setAudioDevice(device){
+        return WebRTCModule.setAudioDevice(device);
+    }
+
+    startMediaDevicesEventMonitor(){
+        return WebRTCModule.startMediaDevicesEventMonitor();
+    }
+
+    _registerEvents(): void {
+        console.log('MediaDevices _registerEvents invoked');
+        WebRTCModule.startMediaDevicesEventMonitor();
+        EventEmitter.addListener('mediaDevicesOnDeviceChange', ev => {
+            console.log('MediaDevices => mediaDevicesOnDeviceChange');
+            //let nystring:string = 'devicechange';
+            //let myevent:RTCEvent = new RTCEvent(nystring);
+            this.dispatchEvent(new RTCEvent("deviceChange"));
+        });
     }
 
 }

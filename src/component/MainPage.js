@@ -35,7 +35,7 @@ export function MainPage({ navigation }) {
     const [qrvalue, setQrvalue] = useState('');
     const [qrVisible, setQrVisible] = useState(false);
     const [displayVisible, setDisplayVisible] = useState(true);
-    const [loopVisible, setLoopVisible] = useState(true);
+    const [loopVisible, setLoopVisible] = useState(false);
 
 
     // ####################################################
@@ -115,10 +115,10 @@ export function MainPage({ navigation }) {
 
         //console.log('00 ----> init Socket.IO');
         //console.log("[main page] first connect...socket id: " + socket.id);
-        console.log('00.1 ----> registerGlobals');
-        registerGlobals();
-        console.log('01 ----> init Enumerate Devices');
-        await initEnumerateAudioDevices();
+        //console.log('00.1 ----> registerGlobals');
+        //registerGlobals();
+        //console.log('01 ----> init Enumerate Devices');
+        //await initEnumerateAudioDevices();
         console.log('03 ----> Get Video Devices');
         var dText = "Debug Devices:\n";
         mediaDevices
@@ -219,7 +219,7 @@ export function MainPage({ navigation }) {
 
     }
 
-    async function initEnumerateAudioDevices() {
+   /*  async function initEnumerateAudioDevices() {
         if (isEnumerateAudioDevices) return;
         // allow the audio
         await mediaDevices
@@ -233,7 +233,7 @@ export function MainPage({ navigation }) {
                 //isAudioAllowed = false;
                 dispatch({ type: 'SET_IS_AUDIO_ALLOWED', payload: false });
             });
-    }
+    } */
 
     async function initEnumerateVideoDevices() {
         if (isEnumerateVideoDevices) return;
@@ -251,7 +251,7 @@ export function MainPage({ navigation }) {
             });
     }
 
-    function enumerateAudioDevices(stream) {
+ /*    function enumerateAudioDevices(stream) {
         console.log('02 ----> Get Audio Devices');
         mediaDevices
             .enumerateDevices()
@@ -274,7 +274,7 @@ export function MainPage({ navigation }) {
                 isEnumerateAudioDevices = true;
                 //speakerSelect.disabled = !('sinkId' in HTMLMediaElement.prototype);
             });
-    }
+    } */
 
     function enumerateVideoDevices(stream) {
         console.log('03 ----> Get Video Devices');
@@ -637,7 +637,7 @@ export function MainPage({ navigation }) {
                     />
                 </TouchableOpacity>
             </View>
-            <View style={styles.buttonContainerSwitchCamera}>
+            {(!state.usbcamera)&&<View style={styles.buttonContainerSwitchCamera}>
                 <TouchableOpacity
                     style={styles.buttonScannerStyle}
                     activeOpacity={0.9}
@@ -647,7 +647,7 @@ export function MainPage({ navigation }) {
                         style={styles.buttonImageIconStyle}
                     />
                 </TouchableOpacity>
-            </View>
+            </View>}
             <View style={styles.buttonContainerShowQRCode}>
                 <TouchableOpacity
                     style={styles.buttonUserStyle}
@@ -680,7 +680,7 @@ export function MainPage({ navigation }) {
                         size={state.real_height / 2.5}
                 />:""}
             </View>
-            <View style={styles.buttonContainerDisplay}>
+            {(state.usbcamera)&&<View style={styles.buttonContainerDisplay}>
                 <TouchableOpacity
                     style={styles.buttonUserStyle}
                     activeOpacity={0.9}
@@ -690,8 +690,8 @@ export function MainPage({ navigation }) {
                         style={styles.buttonImageIconStyle}
                     />
                 </TouchableOpacity>
-            </View>
-            <View style={styles.buttonContainerLoopBack}>
+            </View>}
+            {(state.usbcamera)&&<View style={styles.buttonContainerLoopBack}>
                 <TouchableOpacity
                     style={styles.buttonUserStyle}
                     activeOpacity={0.9}
@@ -701,7 +701,7 @@ export function MainPage({ navigation }) {
                         style={styles.buttonImageIconStyle}
                     />
                 </TouchableOpacity>
-            </View>
+            </View>}
 
         </>
     )

@@ -21,5 +21,7 @@ copy .\node_modules\react-native-webrtc\android\src\main\java\com\oney\WebRTCMod
 copy .\node_modules\react-native-webrtc\android\src\main\java\com\oney\WebRTCModule\UsbCapturer.java .\src\changes\WebRTCModule\UsbCapturer.txt
 copy .\node_modules\react-native-webrtc\android\src\main\java\com\oney\WebRTCModule\UsbException.java .\src\changes\WebRTCModule\UsbException.txt
 copy .\node_modules\react-native-webrtc\android\src\main\java\com\oney\WebRTCModule\WebRTCModule.java .\src\changes\WebRTCModule\WebRTCModule.txt
+copy .\node_modules\react-native-webrtc\android\src\main\java\com\oney\WebRTCModule\DailyAudioManager.java .\src\changes\WebRTCModule\DailyAudioManager.txt
+copy .\node_modules\react-native-webrtc\android\src\main\java\com\oney\WebRTCModule\DailyWebRTCDevicesManager.java .\src\changes\WebRTCModule\DailyWebRTCDevicesManager.txt
 copy .\node_modules\react-native-webrtc\android\build.gradle .\src\changes\WebRTCModule\buildgradle.txt
 REM FINISHED!

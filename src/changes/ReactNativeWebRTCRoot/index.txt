@@ -40,6 +40,11 @@ function registerGlobals(): void {
     global.navigator.mediaDevices.showPointer = mediaDevices.showPointer.bind(mediaDevices);
     global.navigator.mediaDevices.showBitmap = mediaDevices.showBitmap.bind(mediaDevices);
     global.navigator.mediaDevices.showDisplay = mediaDevices.showDisplay.bind(mediaDevices);
+
+    global.navigator.mediaDevices.addEventListener = mediaDevices.addEventListener.bind(mediaDevices);
+    mediaDevices.addEventListener('deviceChange', () => {
+        if (global.navigator.mediaDevices.ondevicechange) global.navigator.mediaDevices.ondevicechange();
+    });
     
     global.RTCPeerConnection = RTCPeerConnection;
     global.RTCIceCandidate = RTCIceCandidate;

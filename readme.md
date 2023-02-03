@@ -80,6 +80,8 @@ yarn install
 - Evaluate why scannerpage crashes sometimes, maybe because it searches for back camera and   
   not always is present
 - Evaluate disconnect and riconnect the Univet glasses cases, it should gracely manage those states
+- [FIX] First chat message is not displayed on the Univet glasses
+- [FIX] clean board whenever screen sharing starts
 
 
 ## Done:
@@ -116,6 +118,11 @@ yarn install
 - Live Pointer on Univet Glasses
 - Toggle Display on Univet Glasses
 - Toggle LoopBack on Univet Glasses
+- [FIX] lowered targetsdk to 30 in order to avoid errors on Android 12,13
+- LoopBack disabled by default
+- Univet custom buttons (video and loopback) showed only if USB Case
+- [FIX] clean board whenever screen sharing starts
+- [FIX] Manage audio peripherals switch automatically
 
 
 
@@ -167,6 +174,13 @@ yarn install
 - Live Pointer on Univet Glasses
 - Toggle Display on Univet Glasses
 - Toggle LoopBack on Univet Glasses
+- [FIX] lowered targetsdk to 30 in order to avoid errors on Android 12,13
+
+### Ver. 0.8.5 Beta:
+- LoopBack disabled by default
+- Univet custom buttons (video and loopback) showed only if USB Case
+- [FIX] clean board whenever screen sharing starts
+- [FIX] Manage audio peripherals switch automatically
 
 ## Univet Camera Procedure
 

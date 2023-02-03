@@ -4,6 +4,7 @@ import { Context } from '../global/Store';
 import usb from 'react-native-usb';
 import Orientation from 'react-native-orientation-locker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { mediaDevices, registerGlobals } from "react-native-webrtc";
 
 
 export function StartPage({ navigation }) {
@@ -13,6 +14,8 @@ export function StartPage({ navigation }) {
   const imageConnect = require("../images/connect.png");
   const imageQRCode = require("../images/qrcode.png");
   var timeoutHandle;
+
+  let isEnumerateAudioDevices = false;
 
   const getUserValue = async () => {
     try {
@@ -106,6 +109,11 @@ export function StartPage({ navigation }) {
     const room = getRoomValue();
     const root = getRootValue();
 
+    console.log('00.1 ----> registerGlobals');
+    registerGlobals();
+    console.log('01 ----> init Enumerate Devices');
+    initEnumerateAudioDevices();
+
     timeoutHandle = setTimeout(() => {
 
       StatusBar.setHidden(true, 'none');
@@ -148,6 +156,83 @@ export function StartPage({ navigation }) {
     });
 
   }
+
+  async function initEnumerateAudioDevices() {
+    if (isEnumerateAudioDevices) 
+    {
+      console.log("isenumerateaudiodevices = true");
+      return;
+    }
+    dispatch({ type: 'SET_MIC_COUNT', payload: 0 });
+    dispatch({ type: 'SET_SPEAKER_COUNT', payload: 0 });
+    dispatch({ type: 'CLEAR_MICS', payload: "" });
+    dispatch({ type: 'CLEAR_SPEAKERS', payload: "" });
+
+
+    // start the audio monitor in order to monitor the changes in audio peripherals
+    // i.e. whenever a bluetooth set is added or removed
+    mediaDevices.startMediaDevicesEventMonitor();
+
+    // allow the audio
+    await mediaDevices
+        .getUserMedia({ audio: true })
+        .then((stream) => {
+            enumerateAudioDevices(stream);
+            dispatch({ type: 'SET_IS_AUDIO_ALLOWED', payload: true });
+            //isAudioAllowed = true;
+        })
+        .catch(() => {
+            //isAudioAllowed = false;
+            dispatch({ type: 'SET_IS_AUDIO_ALLOWED', payload: false });
+        });
+  }
+
+  function enumerateAudioDevices(stream) {
+    console.log('02 ----> Get Audio Devices');
+
+
+    let miccount = 0;
+    let speakcount = 0;
+
+    mediaDevices
+        .enumerateDevices()
+        .then((devices) =>
+            devices.forEach((device) => {
+                console.log("audio device: ") 
+                console.log(device);
+                let el = null;
+                if ('audioinput' === device.kind  || 'audio' === device.kind) {
+                  miccount++;
+                  
+                  dispatch({ type: 'ADD_MIC', payload: device.deviceId});
+                    //el = microphoneSelect;
+                    //RoomClient.DEVICES_COUNT.audio++;
+                } else if ('audiooutput' === device.kind) {
+                  //dispatch({ type: 'SET_SPEAKER_COUNT', payload: state.speakerCount + 1 });
+                  speakcount++;
+                  dispatch({ type: 'ADD_SPEAKER', payload: device.deviceId});
+                    //el = speakerSelect;
+                    //RoomClient.DEVICES_COUNT.speaker++;
+                }
+                if (!el) return;
+                //addChild(device, el);
+            }),
+        )
+        .then(() => {
+            stopTracks(stream);
+            isEnumerateAudioDevices = true;
+            dispatch({ type: 'SET_MIC_COUNT', payload: miccount });
+            dispatch({ type: 'SET_SPEAKER_COUNT', payload: speakcount });
+
+            //speakerSelect.disabled = !('sinkId' in HTMLMediaElement.prototype);
+        });
+  }
+
+  function stopTracks(stream) {
+    stream.getTracks().forEach((track) => {
+        track.stop();
+    });
+}
 
   const styles = StyleSheet.create({
     mainContainer: {
@@ -263,6 +348,7 @@ export function StartPage({ navigation }) {
       <View style={styles.mainContainer}>
         <Text style={styles.labelTitle}>RoomXR PRO</Text>
         <Text style={styles.labelUser}>user: {state.peer_name}</Text>
+        {/* <Text style={styles.labelUser}>audio mic: {state.peer_name}</Text> */}
         <View style={styles.buttonsContainer}>
           <TouchableOpacity
             style={styles.buttonScannerStyle}
