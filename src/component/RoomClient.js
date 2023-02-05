@@ -902,7 +902,7 @@ function RoomClient() {
                         mediaDevices.setAudioDevice(state.mic_array[miccount-1]);
                     });
             })
-            mediaDevices.setAudioDevice(deviceid);
+            mediaDevices.setAudioDevice(getBestAudioDevice());
             produce(mediaType.audio, deviceid/*microphoneSelect.value*/);
         } else {
 
@@ -917,6 +917,33 @@ function RoomClient() {
             //this.setVideoOff(this.peer_info, false);
             //this.sendVideoOff();
         }
+    }
+
+    function getBestAudioDevice()
+    {
+        let best = "SPEAKERPHONE";
+        state.mic_array.forEach((devid) => {
+            //console.log(devid);
+            if(devid == "BLUETOOTH")
+            {
+                console.log("found bluetootj");
+                best = "BLUETOOTH";
+            }
+        });
+        if(best == "BLUETOOTH")
+            return best;
+        state.mic_array.forEach((devid) => {
+            //console.log(devid);
+            if(devid == "WIRED_OR_EARPIECE")
+            {
+                console.log("found wired");
+                best = "WIRED_OR_EARPIECE";
+            }
+        });
+        if(best == "WIRED_OR_EARPIECE")
+            return best;
+        
+        return best;
     }
 
     // ####################################################
@@ -1186,7 +1213,7 @@ function RoomClient() {
         };
     }
 
-    function getVideoConstraints(deviceId) {
+    /*function getVideoConstraints(deviceId) {
         return {
             audio: false,
             video: {
@@ -1209,7 +1236,7 @@ function RoomClient() {
                 },
             },
         };
-    }
+    }*/
 
     function getScreenConstraints() {
         return {

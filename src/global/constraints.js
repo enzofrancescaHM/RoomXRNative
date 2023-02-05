@@ -62,7 +62,7 @@
     }
     function getVideoConstraintsUSB(deviceId) {
         return {
-            usb:true,
+            //usb:true,
             audio: false,
             video: {
                 width: {
@@ -75,7 +75,7 @@
                     ideal: 720, //1080
                     max: 720, //2160
                 },
-                deviceId: deviceId,
+                deviceId: "uvc",
                 //facingMode: "environment",
                 aspectRatio: 1.777, // 16:9
                 frameRate: {

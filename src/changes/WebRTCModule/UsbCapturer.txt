@@ -48,12 +48,14 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import com.serenegiant.usb.IFrameCallback;
-import com.serenegiant.usb.USBMonitor;
-import com.serenegiant.usbcameracommon.UVCCameraHandler;
-import com.serenegiant.usbcameracommon.UvcCameraDataCallBack;
-import com.serenegiant.widget.UVCCameraTextureView;
-import com.serenegiant.widget.CameraViewInterface;
+
+
+//import com.serenegiant.usb.IFrameCallback;
+//import com.serenegiant.usb.USBMonitor;
+//import com.serenegiant.usbcameracommon.UVCCameraHandler;
+//import com.serenegiant.usbcameracommon.UvcCameraDataCallBack;
+//import com.serenegiant.widget.UVCCameraTextureView;
+//import com.serenegiant.widget.CameraViewInterface;
 
 import com.facebook.react.bridge.ReactApplicationContext;
 
@@ -65,7 +67,7 @@ import org.webrtc.VideoFrame;
 import org.webrtc.NV21Buffer;
 
 
-public class UsbCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectListener, IFrameCallback {
+public class UsbCapturer implements VideoCapturer/*  USBMonitor.OnDeviceConnectListener, IFrameCallback */{
     private Context context;
     private USBMonitor monitor;
     private SurfaceViewRenderer svVideoRender;
@@ -112,8 +114,8 @@ public class UsbCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
             public void run() {               
                 mUsbManager = (UsbManager) ((ReactApplicationContext)context).getCurrentActivity().getSystemService("usb");
                 
-                monitor = new USBMonitor(context, UsbCapturer.this);
-                monitor.register();
+                //monitor = new USBMonitor(context, UsbCapturer.this);
+                //monitor.register();
 
             }
         });
@@ -144,8 +146,8 @@ public class UsbCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
 
     @Override
     public void dispose() {
-        monitor.unregister();
-        monitor.destroy();
+        //monitor.unregister();
+        //monitor.destroy();
 
     }
 
@@ -154,9 +156,9 @@ public class UsbCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
         return false;
     }
 
-    @Override
+ /*    @Override
     public void onAttach(UsbDevice device) {
-        monitor.requestPermission(device);
+        //monitor.requestPermission(device);
         //UsbManager manager = (UsbManager)((ReactApplicationContext)context.getSystemService(Context.USB_SERVICE));
         PendingIntent usbPermissionIntent = PendingIntent.getBroadcast((ReactApplicationContext)context, 0, new Intent(ACTION_USB_PERMISSION), 0);
         IntentFilter filter = new IntentFilter(ACTION_USB_PERMISSION);
@@ -168,8 +170,8 @@ public class UsbCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
     public void onDettach(UsbDevice device) {
       Log.d("USB-UNIVET", "ON DETTACH!");
       isConnected=false;
-    }
-
+    } */
+/* 
     UvcCameraDataCallBack firstDataCallBack = new UvcCameraDataCallBack() {
         public final void getData(byte[] bArr) {
              
@@ -214,8 +216,8 @@ public class UsbCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
             
         }
     };
-
-    @Override
+*/
+   /*  @Override
     public void onConnect(UsbDevice device, USBMonitor.UsbControlBlock ctrlBlock, boolean createNew) {
         executor.execute(new Runnable() {
             @Override
@@ -226,7 +228,7 @@ public class UsbCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
                     Log.d("USB-UNIVET", "vendorID= " + device.getVendorId());
                     Log.d("USB-UNIVET",String.format("DEV: %s - PID: %x - VID: %x", device.getProductName(), device.getProductId(), device.getVendorId()));
 
-                    if(weFoundItDisplay == false && /*device.getProductName() == "eRGlassFb" */device.getProductId() == 0xa306 /*&& device.getVendorId() != 0*/ )
+                    if(weFoundItDisplay == false && device.getProductId() == 0xa306  )
                     {
                             Log.d("USB-UNIVET DISPLAY", "We are in!");
                             
@@ -237,7 +239,7 @@ public class UsbCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
                             }
                             if (connection != null) {
                                 Log.d("USB-CAMERA DISPLAY", "Connection done!");
-                                //this.connected = true;
+                                
                                 Log.e("name display: ", device.getDeviceName());
 
                                 // initialize Univet Display Peripheral
@@ -270,11 +272,11 @@ public class UsbCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
                             }
                     }
 
-                    if(true)
+                    if(false)
                     if(weFoundIt == false && 
                         (device.getProductId() == 0x6366 || // this is the normal case
                           (device.getVendorId() == 0 && device.getProductId() == 0) // this is the special case in which camera is not recognized properly as in Epson BOC40
-                        ) /*  && device.getVendorId() == 0  && device.getProductName() == "USB 2.0 Camera"*/
+                        ) //  && device.getVendorId() == 0  && device.getProductName() == "USB 2.0 Camera"
                       )
                     {
                         weFoundIt = true;
@@ -372,14 +374,14 @@ public class UsbCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
       Log.d("USB-UNIVET", "ON DISCONNECT!");
       isConnected = false;
     }
-
-    @Override
+ */
+ /*    @Override
     public void onCancel(UsbDevice device) {
     }
 
     @Override
     public void onFrame(ByteBuffer frame) {
-    }
+    } */
 
     private writeStatus getProtocolVersion(/*byte[] values*/) {
         //if (values.length != 2)

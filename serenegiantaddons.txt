@@ -1,0 +1,11 @@
+CharsetsUtils.java
+Const.java
+ContextUtils.java
+DeviceFilter.java
+HandlerThreadHandler.java
+ResourceHelper.java
+UsbDeviceInfo.java
+USBMonitor.java
+UsbUtils.java
+UsbVendorId.java
+XmlHelper.java

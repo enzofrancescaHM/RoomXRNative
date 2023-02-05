@@ -18,6 +18,8 @@ import com.facebook.react.bridge.UiThreadUtil;
 import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
 
+import com.jiangdg.ausbc.camera.CameraUvcStrategy; // UVC
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -48,17 +50,22 @@ class GetUserMediaImpl {
     private final Map<String, TrackPrivate> tracks = new HashMap<>();
 
     private final WebRTCModule webRTCModule;
-    private boolean usbcameraflag;
+    //private boolean usbcameraflag;
 
     private Promise displayMediaPromise;
     private Intent mediaProjectionPermissionResultData;
 
-    // Univet: expose UsbCapturer to external
-    private UsbCapturer myvideoCapturer;
+    // Univet: expose UvcCapturer to external
+    private UvcCapturer myvideoCapturer; // UVC
+    private UvcEnumerator uvcEnumerator; // UVC
+    private CameraUvcStrategy cameraUvcStrategy; // UVC
 
     GetUserMediaImpl(WebRTCModule webRTCModule, ReactApplicationContext reactContext) {
         this.webRTCModule = webRTCModule;
         this.reactContext = reactContext;
+
+        this.cameraUvcStrategy = new CameraUvcStrategy(reactContext); // UVC
+        this.uvcEnumerator = new UvcEnumerator(this.cameraUvcStrategy); // UVC
 
         boolean camera2supported = false;
 
@@ -137,11 +144,23 @@ class GetUserMediaImpl {
     }
 
     ReadableArray enumerateDevices() {
+        Log.d(TAG,"enumerate devices");
         WritableArray array = Arguments.createArray();
+
+        ReadableArray uvcDevices = uvcEnumerator.enumerateDevices(); // UVC
+
         String[] devices = cameraEnumerator.getDeviceNames();
+
+        if (uvcDevices.size() > 0) {  // UVC
+            for (int j = 0; j < uvcDevices.size(); j++) {  // UVC
+                
+                array.pushMap(uvcDevices.getMap(j));  // UVC
+            }  // UVC
+        } // UVC
 
         for (int i = 0; i < devices.length; ++i) {
             String deviceName = devices[i];
+            Log.d(TAG,deviceName);
             boolean isFrontFacing;
             try {
                 // This can throw an exception when using the Camera 1 API.
@@ -190,10 +209,10 @@ class GetUserMediaImpl {
         AudioTrack audioTrack = null;
         VideoTrack videoTrack = null;
 
-        if(constraints.hasKey("usb"))
+       /*  if(constraints.hasKey("usb"))
             this.usbcameraflag = true;
         else
-            this.usbcameraflag = false;
+            this.usbcameraflag = false; */
 
         if (constraints.hasKey("audio")) {
             audioTrack = createAudioTrack(constraints);
@@ -206,7 +225,9 @@ class GetUserMediaImpl {
 
             CameraCaptureController cameraCaptureController = new CameraCaptureController(
                 cameraEnumerator,
-                videoConstraintsMap);
+                videoConstraintsMap,
+                cameraUvcStrategy // UVC
+                );
 
             videoTrack = createVideoTrack(cameraCaptureController);
         }
@@ -288,11 +309,12 @@ class GetUserMediaImpl {
     }
 
     boolean heartBeat(){
-        return myvideoCapturer.heartBeat();
+        return /*myvideoCapturer.heartBeat()*/ false;
+
     }
 
     void writeText(String mytext){
-        myvideoCapturer.testWrite(mytext);
+       myvideoCapturer.testWrite(mytext);
     }
 
     void showLoopBackCamera(boolean show){
@@ -400,15 +422,16 @@ class GetUserMediaImpl {
         videoCaptureController.initializeVideoCapturer();
 
         VideoCapturer videoCapturer = null;
-        if(this.usbcameraflag == false){
+        //if(this.usbcameraflag == false){
             videoCapturer = videoCaptureController.videoCapturer;
-        }
-        else{
-            Log.d("ciccio2!", "prima della new UsbCapturer");
-            SurfaceViewRenderer surfaceViewRenderer = new SurfaceViewRenderer(reactContext);
-            myvideoCapturer = new UsbCapturer(reactContext,surfaceViewRenderer);
-            videoCapturer = myvideoCapturer;
-        }
+            myvideoCapturer = (UvcCapturer) videoCapturer;
+        //}
+        //else{
+        //    Log.d("ciccio2!", "prima della new UsbCapturer");
+        //    SurfaceViewRenderer surfaceViewRenderer = new SurfaceViewRenderer(reactContext);
+           // myvideoCapturer = new UsbCapturer(reactContext,surfaceViewRenderer);
+            //videoCapturer = myvideoCapturer;
+        //}
             
         
         if (videoCapturer == null) {
@@ -504,7 +527,7 @@ class GetUserMediaImpl {
                  * called. This also means that the caller can reuse the SurfaceTextureHelper to initialize a new
                  * VideoCapturer once the previous VideoCapturer has been disposed. */
                 
-                if(surfaceTextureHelper != null) {
+                if (surfaceTextureHelper != null) {
                     surfaceTextureHelper.stopListening();
                     surfaceTextureHelper.dispose();
                 }
