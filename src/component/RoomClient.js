@@ -1120,6 +1120,8 @@ function RoomClient() {
         dispatch({type: 'CLEAR_ELLIPSES', payload:""});
         dispatch({type: 'CLEAR_RECTS', payload:""});
         dispatch({type: 'CLEAR_TEXTS', payload:""});
+
+        mediaDevices.showTextMessage("command_cleardisplay");
     }
     
     async function produceScreenAudio(stream) {

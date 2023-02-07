@@ -358,9 +358,19 @@ public class UvcCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
           //Log.d("testWrite start...","hey!");
            if(dFb != null)
            {
-              Bitmap createBitmap = UnivetUtils.TextToBitmap(mystring);
-              if(showScreen)
-                dFb.writeImage(createBitmap,0,false);
+              
+                if(mystring.equals("command_cleardisplay"))
+                {
+                    Bitmap cleanBmp = Bitmap.createBitmap(419, 138, Bitmap.Config.ARGB_8888);
+                    if(dFb != null)
+                      dFb.writeImage(cleanBmp,-1,false); // write black image with no battery sign    
+                }
+                else{
+                    Bitmap createBitmap = UnivetUtils.TextToBitmap(mystring);
+                    if(showScreen)
+                      dFb.writeImage(createBitmap,0,false);      
+                }
+            
            }                                    
       }
   
@@ -428,5 +438,7 @@ public class UvcCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
   
          
       }  
+
+      
 
 }

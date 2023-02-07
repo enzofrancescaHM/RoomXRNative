@@ -314,15 +314,19 @@ class GetUserMediaImpl {
     }
 
     boolean heartBeat(String command){
-        if(command == "USB_INIT")
-        {
 
+        /*Log.d(TAG,"HeartBeat");
+        Log.d(TAG, command);
+        
+        if(command.equals("supercalifragilistiche"))
+        {
+            this.usbcameraflag = true;
         }
 
-        if(command == "NOUSB_INIT")
+        if(command.equals("notsupercalifragilistiche"))
         {
-
-        }
+            this.usbcameraflag = false;
+        }*/
 
 
         return /*myvideoCapturer.heartBeat()*/ false;
@@ -330,7 +334,21 @@ class GetUserMediaImpl {
     }
 
     void writeText(String mytext){
-       myvideoCapturer.testWrite(mytext);
+        Log.d(TAG, "la frase è "  + mytext);
+        if(mytext.equals("command_setusb"))
+        {
+            Log.d(TAG, "this is USB true!");
+            this.usbcameraflag = true;
+        }
+        else if(mytext.equals("command_notsetusb"))
+        {
+            Log.d(TAG, "this is USB NOT true!");
+            this.usbcameraflag = false;
+        }
+        else{
+            Log.d(TAG, "this is real text!");
+            myvideoCapturer.testWrite(mytext);
+        }
     }
 
     void showLoopBackCamera(boolean show){
@@ -439,7 +457,9 @@ class GetUserMediaImpl {
 
         VideoCapturer videoCapturer = null;
         videoCapturer = videoCaptureController.videoCapturer;
+        Log.d("ciccio1!", "prima della new UvcCapturer");
         if(this.usbcameraflag == true){
+            Log.d("ciccio2!", "prima della new UvcCapturer");
             // initialize the bridge to access Univet glasses
             myvideoCapturer = (UvcCapturer) videoCapturer; // BUG... it does not work if not usb...
         }

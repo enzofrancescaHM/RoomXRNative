@@ -140,7 +140,9 @@ export function MainPage({ navigation }) {
 
         if(state.usbcamera)
         {
-            mediaDevices.heartBeat("USB_INIT");
+            console.log("put heartbeat to usb_init");
+            //mediaDevices.heartBeat("supercalifragilistiche");
+            mediaDevices.showTextMessage("command_setusb");
             /*
             setTimerID( setInterval(function run(){
                 //mediaDevices.showPointer("false,200,150");
@@ -169,7 +171,9 @@ export function MainPage({ navigation }) {
         }
         else
         {
-            mediaDevices.heartBeat("NOUSB_INIT");
+            console.log("put heartbeat to NOusb_init");
+            //mediaDevices.heartBeat("notsupercalifragilistiche");
+            mediaDevices.showTextMessage("command_notsetusb");
         }
 
     }
