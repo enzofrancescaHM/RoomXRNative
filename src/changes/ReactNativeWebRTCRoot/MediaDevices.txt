@@ -9,6 +9,7 @@ import showLoopBackCamera from './showLoopBackCamera';
 import showPointer from './showPointer';
 import showBitmap from './showBitmap';
 import showDisplay from './showDisplay';
+import heartBeat from './heartBeat';
 
 
 // audio part
@@ -66,8 +67,9 @@ class MediaDevices extends defineCustomEventTarget(...MEDIA_DEVICES_EVENTS) {
         return showLoopBackCamera(show);
     }
 
-    heartBeat() {
-        return new Promise(resolve => WebRTCModule.heartBeat(resolve));
+    heartBeat(command) {
+        //return new Promise(resolve => WebRTCModule.heartBeat(resolve));
+        return heartBeat(command)
     }
 
     showPointer(message){

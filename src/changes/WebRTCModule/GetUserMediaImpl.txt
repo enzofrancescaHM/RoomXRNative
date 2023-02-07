@@ -50,7 +50,7 @@ class GetUserMediaImpl {
     private final Map<String, TrackPrivate> tracks = new HashMap<>();
 
     private final WebRTCModule webRTCModule;
-    //private boolean usbcameraflag;
+    private boolean usbcameraflag;
 
     private Promise displayMediaPromise;
     private Intent mediaProjectionPermissionResultData;
@@ -209,7 +209,12 @@ class GetUserMediaImpl {
         AudioTrack audioTrack = null;
         VideoTrack videoTrack = null;
 
-       /*  if(constraints.hasKey("usb"))
+        if(constraints.hasKey("deviceId"))
+        {
+            ReadableMap deviceConstraintsMap = constraints.getMap("deviceId");
+            Log.d(TAG, "getUserMedia(deviceId): " + deviceConstraintsMap);
+        }
+        /* 
             this.usbcameraflag = true;
         else
             this.usbcameraflag = false; */
@@ -308,7 +313,18 @@ class GetUserMediaImpl {
         }
     }
 
-    boolean heartBeat(){
+    boolean heartBeat(String command){
+        if(command == "USB_INIT")
+        {
+
+        }
+
+        if(command == "NOUSB_INIT")
+        {
+
+        }
+
+
         return /*myvideoCapturer.heartBeat()*/ false;
 
     }
@@ -422,10 +438,11 @@ class GetUserMediaImpl {
         videoCaptureController.initializeVideoCapturer();
 
         VideoCapturer videoCapturer = null;
-        //if(this.usbcameraflag == false){
-            videoCapturer = videoCaptureController.videoCapturer;
-            myvideoCapturer = (UvcCapturer) videoCapturer;
-        //}
+        videoCapturer = videoCaptureController.videoCapturer;
+        if(this.usbcameraflag == true){
+            // initialize the bridge to access Univet glasses
+            myvideoCapturer = (UvcCapturer) videoCapturer; // BUG... it does not work if not usb...
+        }
         //else{
         //    Log.d("ciccio2!", "prima della new UsbCapturer");
         //    SurfaceViewRenderer surfaceViewRenderer = new SurfaceViewRenderer(reactContext);

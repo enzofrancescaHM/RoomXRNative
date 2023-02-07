@@ -9,6 +9,7 @@ copy .\node_modules\react-native-webrtc\src\showLoopBackCamera.ts .\src\changes\
 copy .\node_modules\react-native-webrtc\src\showPointer.ts .\src\changes\ReactNativeWebRTCRoot\showPointer.txt
 copy .\node_modules\react-native-webrtc\src\showBitmap.ts .\src\changes\ReactNativeWebRTCRoot\showBitmap.txt
 copy .\node_modules\react-native-webrtc\src\showDisplay.ts .\src\changes\ReactNativeWebRTCRoot\showDisplay.txt
+copy .\node_modules\react-native-webrtc\src\heartBeat.ts .\src\changes\ReactNativeWebRTCRoot\heartBeat.txt
 REM webRTCModule
 copy .\node_modules\react-native-webrtc\android\src\main\java\com\oney\WebRTCModule\BatteryArrayValue.java .\src\changes\WebRTCModule\BatteryArrayValue.txt
 copy .\node_modules\react-native-webrtc\android\src\main\java\com\oney\WebRTCModule\PointerArrayValue.java .\src\changes\WebRTCModule\PointerArrayValue.txt
