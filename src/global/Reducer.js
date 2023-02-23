@@ -1,3 +1,5 @@
+import { Skia, useFont } from "@shopify/react-native-skia";
+
 const Reducer = (state, action) => {
     switch (action.type) {
         case 'SET_PEER_NAME':
@@ -132,6 +134,43 @@ const Reducer = (state, action) => {
                 ...state,
                 path_array: [...state.path_array, action.payload]
             };
+        case 'MOD_PATH':
+            // try to modify the image object here because 
+            // it is not possibile into the RoomClient...
+            console.log("we are in mod path");
+            //console.log(action.payload);
+            state.path_array.forEach((path) => {                
+                if(path.id == action.payload.elementID)
+                {
+                    console.log("path found!");
+                    
+                    
+                    // rebuild the path
+                    var newdata = JSON.stringify(action.payload.target.path);     // convert to string       
+                    
+                    newdata = newdata.replace(/,/g , ' ');  // substitute comma with spaces
+                    newdata = newdata.replace(/\[/g , '');  // get rid of open parenthesis        
+                    newdata = newdata.replace(/\]/g , '');  // get rid of close parenthesis              
+                    newdata = newdata.replace(/\"/g , '');  // get rid of extra characters
+                    
+                    path.path = newdata;
+                    
+                    var mypath = Skia.Path.MakeFromSVGString(newdata);
+                    
+                    var myoffsetx = action.payload.target.left - action.payload.lastleft;
+                    var myoffsety = action.payload.target.top - action.payload.lasttop;
+
+                    mypath.offset(myoffsetx, myoffsety);
+                    
+                    path.path = mypath;
+                    
+
+                }
+            });
+            return{
+                ...state,
+                path_array: [...state.path_array]
+            };            
         case 'CLEAR_PATHS':
             return{
                 ...state,
@@ -142,6 +181,21 @@ const Reducer = (state, action) => {
                 ...state,
                 ellipse_array: [...state.ellipse_array, action.payload]
             };
+        case 'MOD_ELLIPSE':
+            // try to modify the ellipse object here because 
+            // it is not possibile into the RoomClient...
+            state.ellipse_array.forEach((ellipse) => {                
+                if(ellipse.id == action.payload.elementID)
+                {
+                    ellipse.x = action.payload.target.left;
+                    ellipse.y = action.payload.target.top;
+                    //image.angle = action.payload.target.angle;                    
+                }
+            });
+            return{
+                ...state,
+                ellipse_array: [...state.ellipse_array]
+            };          
         case 'CLEAR_ELLIPSES':
             return{
                 ...state,
@@ -152,6 +206,21 @@ const Reducer = (state, action) => {
                 ...state,
                 rect_array: [...state.rect_array, action.payload]
             };
+        case 'MOD_RECT':
+            // try to modify the rect object here because 
+            // it is not possibile into the RoomClient...
+            state.rect_array.forEach((rect) => {                
+                if(rect.id == action.payload.elementID)
+                {
+                    rect.x = action.payload.target.left;
+                    rect.y = action.payload.target.top;
+                    //image.angle = action.payload.target.angle;                    
+                }
+            });
+            return{
+                ...state,
+                rect_array: [...state.rect_array]
+            };                  
         case 'CLEAR_RECTS':
             return{
                 ...state,
@@ -162,6 +231,42 @@ const Reducer = (state, action) => {
                 ...state,
                 line_array: [...state.line_array, action.payload]
             };
+        case 'MOD_LINE':
+            // try to modify the line object here because 
+            // it is not possibile into the RoomClient...
+            state.line_array.forEach((line) => {                
+                if(line.id == action.payload.elementID)
+                {
+                    
+                    // determine the slope of the line in order to decide 
+                    // what vertex is what
+                    var myx1, myx2, myy1, myy2
+                    if(action.payload.target.x1 < 0 && action.payload.target.y1 < 0) // this case is the following slope: /
+                    {
+                        myx1 = action.payload.target.left;
+                        myy1 = action.payload.target.top;
+                        myx2 = action.payload.target.left + action.payload.target.width;
+                        myy2 = action.payload.target.top + action.payload.target.height;
+                    }
+                    else // this case is the following slope: \
+                    {
+                        myx1 = action.payload.target.left;
+                        myy1 = action.payload.target.top + action.payload.target.height;
+                        myx2 = action.payload.target.left + action.payload.target.width;
+                        myy2 = action.payload.target.top;
+                    }
+                    
+                    line.x1 = myx1; 
+                    line.y1 = myy1; 
+                    line.x2 = myx2;
+                    line.y2 = myy2;
+
+                }
+            });
+            return{
+                ...state,
+                line_array: [...state.line_array]
+            };                  
         case 'CLEAR_LINES':
             return{
                 ...state,
@@ -171,6 +276,21 @@ const Reducer = (state, action) => {
             return{
                 ...state,
                 text_array: [...state.text_array, action.payload]
+            };
+        case 'MOD_TEXT':
+            // try to modify the text object here because 
+            // it is not possibile into the RoomClient...
+            state.text_array.forEach((text) => {                
+                if(text.id == action.payload.elementID)
+                {
+                    text.x = action.payload.target.left;
+                    text.y = action.payload.target.top;
+                    //text.angle = action.payload.target.angle;                    
+                }
+            });
+            return{
+                ...state,
+                text_array: [...state.text_array]
             };
         case 'CLEAR_TEXTS':
             return{
@@ -182,6 +302,21 @@ const Reducer = (state, action) => {
                 ...state,
                 image_array: [...state.image_array, action.payload]
             };
+        case 'MOD_IMAGE':
+            // try to modify the image object here because 
+            // it is not possibile into the RoomClient...
+            state.image_array.forEach((image) => {                
+                if(image.id == action.payload.elementID)
+                {
+                    image.x = action.payload.target.left;
+                    image.y = action.payload.target.top;
+                    //image.angle = action.payload.target.angle;                    
+                }
+            });
+            return{
+                ...state,
+                image_array: [...state.image_array]
+            };            
         case 'CLEAR_IMAGES':
             return{
                 ...state,
@@ -245,6 +380,12 @@ const Reducer = (state, action) => {
                 ...state,
                 cam_array: []
             };     
+        case 'SET_USBCAMERAREADY':
+            return{
+                ...state,
+                usbcamera_ready: action.payload
+            };
+    
         
         default:
             return state;

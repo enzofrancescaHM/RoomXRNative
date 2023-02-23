@@ -347,7 +347,7 @@ export function StartPage({ navigation }) {
     <>
       <View style={styles.mainContainer}>
         <Text style={styles.labelTitle}>RoomXR PRO</Text>
-        <Text style={styles.labelUser}>user: {state.peer_name}</Text>
+        <Text style={styles.labelUser}>user: {state.peer_name}, room: {state.room_id}</Text>
         {/* <Text style={styles.labelUser}>audio mic: {state.peer_name}</Text> */}
         <View style={styles.buttonsContainer}>
           <TouchableOpacity

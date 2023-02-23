@@ -74,6 +74,8 @@ yarn install
 - implement chat with: https://github.com/FaridSafi/react-native-gifted-chat
 - (Whiteboard) implement Decals
 - evaluate possibility to remove reanimated2 dependency
+- define difference between screenshot , images and decals.
+- give possibility to hide miniature preview of other partecipants by touching it
 
 ## In Progress:
 - Save usb option to the persistent memory
@@ -81,7 +83,7 @@ yarn install
   not always is present
 - Evaluate disconnect and riconnect the Univet glasses cases, it should gracely manage those states
 - [FIX] First chat message is not displayed on the Univet glasses
-- [FIX] clean board whenever screen sharing starts
+
 
 
 ## Done:
@@ -123,6 +125,9 @@ yarn install
 - Univet custom buttons (video and loopback) showed only if USB Case
 - [FIX] clean board whenever screen sharing starts
 - [FIX] Manage audio peripherals switch automatically
+- [FIX] Clean the board if a full picture arrive
+- [FIX] Decals show base64 decode error
+- [FIX] paths dont move in sync at all, stay in place.
 
 
 
@@ -181,6 +186,14 @@ yarn install
 - Univet custom buttons (video and loopback) showed only if USB Case
 - [FIX] clean board whenever screen sharing starts
 - [FIX] Manage audio peripherals switch automatically
+
+### Ver. 0.8.6 Beta:
+- [FIX] Clean the board if a full picture arrive
+- [FIX] Decals show base64 decode error
+
+### Ver. 0.8.6 Beta:
+- [FIX] paths dont move in sync at all, stay in place.
+
 
 ## Univet Camera Procedure
 

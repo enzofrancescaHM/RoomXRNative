@@ -1,7 +1,8 @@
-import React, { useContext } from "react";
-import {Canvas, Circle, Oval, Group, Image, Paint, Path} from "@shopify/react-native-skia"; 
+import React, { useContext, useEffect } from "react";
+import {Canvas, Circle, Oval, Group, Image, Paint, Path, useCanvasRef, Fill, ImageFormat} from "@shopify/react-native-skia"; 
 import {Rect, Line, vec,rect,Text, useFont, useValue,FitBox} from "@shopify/react-native-skia";
 import Store, {Context} from '../global/Store';
+import { mediaDevices } from "react-native-webrtc";
  
 export function RoomBoard(props){
     const [state, dispatch] = useContext(Context);
@@ -10,10 +11,120 @@ export function RoomBoard(props){
     const fontSize = 42;
     const font = useFont(require("../fonts/Comfortaa-Bold.ttf"), fontSize);
     const size = useValue({ width: 0, height: 0 });
+    const ref = useCanvasRef();
+    var timeoutHandle;
+
+
+    useEffect(function componentDidMount() {
+        console.log("%c RoomBoard componetDidMount", "color:green;");
+
+         // wait 5 seconds in order to be sure the glasses are connected
+         timeoutHandle = setTimeout(() => {
+            if(state.usbcamera)
+                dispatch({type: 'SET_USBCAMERAREADY', payload:true});
+        }, 5000);
+
+
+        return function componentWillUnmount() {
+          clearTimeout(timeoutHandle);
+        
+          dispatch({type: 'SET_USBCAMERAREADY', payload:false});
+
+          console.log("%c RoomBoard componetWillUnmount", "color:red")
+        }
+      }, [])
+
+
+
+    useEffect(() => {
+        setTimeout(() => {
+            if(state.usbcamera && state.usbcamera_ready)
+            {
+                // you can pass an optional rectangle
+                // to only save part of the image
+                const image = ref.current?.makeImageSnapshot();
+                if (image) {
+                    const data = image.encodeToBase64(ImageFormat.PNG, 100);
+                        mediaDevices.showLoopBackCamera(false);
+                        mediaDevices.showBitmap(data);           
+                }
+            }
+        }, 1000);
+      });
+
+    useEffect(() => {
+        console.log("image array changed!");
+        if(state.image_array.length > 0 && state.usbcamera)
+        {
+            //const image = ref.current?.makeImageSnapshot();
+            //const bytes = image.encodeToBytes();
+            //mediaDevices.showLoopBackCamera(false);
+            //mediaDevices.showBitmap(bytes);
+        }
+        
+    }, [state.image_array])
+
+    useEffect(() => {
+        console.log("ellipse array changed!");
+        if(state.ellipse_array.length > 0 && state.usbcamera)
+        {
+            // const image = ref.current?.makeImageSnapshot();
+            // const bytes = image.encodeToBytes();
+            // mediaDevices.showLoopBackCamera(false);
+            // mediaDevices.showBitmap(bytes);
+        }
+
+        
+    }, [state.ellipse_array])
+
+    useEffect(() => {
+        console.log("rect array changed!");
+        if(state.rect_array.length > 0 && state.usbcamera)
+        { 
+            // const image = ref.current?.makeImageSnapshot();
+            // const bytes = image.encodeToBytes();
+            // mediaDevices.showLoopBackCamera(false);
+            // mediaDevices.showBitmap(bytes);
+            
+        }
+
+        
+    }, [state.rect_array])
+
+    useEffect(() => {
+        console.log("line array changed!");
+        if(state.line_array.length > 0 && state.usbcamera)
+        {
+            // const image = ref.current?.makeImageSnapshot();
+            // const bytes = image.encodeToBytes();
+            // mediaDevices.showLoopBackCamera(false);
+            // mediaDevices.showBitmap(bytes);
+        }
+
+        
+    }, [state.line_array])
+    
+    useEffect(() => {
+        console.log("path array changed!");
+        if(state.path_array.length > 0 && state.usbcamera)
+        {
+            // const image = ref.current?.makeImageSnapshot();
+            // const bytes = image.encodeToBytes();
+            // mediaDevices.showLoopBackCamera(false);
+            // mediaDevices.showBitmap(bytes);
+        }
+
+        
+    }, [state.path_array])
   
     return (
         <>
-        <Canvas style={props.containerStyle} onSize={size} onLayout={event => { console.log(JSON.stringify(size)) }}>             
+        {/* <Canvas style={props.containerStyle} onSize={size} onLayout={event => { console.log(JSON.stringify(size)) }}>             
+            <FitBox src={rect(0, 0, 1200, 600)} dst={rect(0, 0, size.current.width, size.current.height)}> 
+                
+            </FitBox>
+        </Canvas>         */}
+        <Canvas style={props.containerStyle} onSize={size} onLayout={event => { console.log(JSON.stringify(size)) }} ref={ref}>             
             <FitBox src={rect(0, 0, 1200, 600)} dst={rect(0, 0, size.current.width, size.current.height)}> 
                 <Group blendMode="multiply">
                     {
@@ -32,10 +143,6 @@ export function RoomBoard(props){
                         ))          
                     }
                 </Group>
-            </FitBox>
-            </Canvas>        
-        <Canvas style={props.containerStyle} onSize={size} onLayout={event => { console.log(JSON.stringify(size)) }}>             
-            <FitBox src={rect(0, 0, 1200, 600)} dst={rect(0, 0, size.current.width, size.current.height)}> 
                 <Group blendMode="multiply">
                     {
                         // cycle the path array and draw on the canvas
@@ -50,7 +157,8 @@ export function RoomBoard(props){
                         ))              
                     }
                 </Group>
-                <Group blendMode="multiply">
+                <Group  blendMode="multiply">
+               
                     {
                         // cycle the path array and draw on the canvas
                         state.rect_array.map((rect) => (
@@ -60,8 +168,10 @@ export function RoomBoard(props){
                             y={rect.y}
                             width={rect.width}
                             height={rect.height}
-                            color={rect.fillColor}
+                            color={rect.strokeColor}
+                            style="stroke"
                             >
+                                <Paint color={rect.fillColor} />
                                 <Paint color={rect.strokeColor} style="stroke" strokeWidth={rect.strokeWidth} />
                             </Rect>
                         ))              
@@ -77,9 +187,12 @@ export function RoomBoard(props){
                             y={ellipse.y}
                             width={ellipse.width}
                             height={ellipse.height}
-                            color={ellipse.fillColor}
+                            color={ellipse.strokeColor}
+                            style="stroke"
                             >
+                                <Paint color={ellipse.fillColor} />
                                 <Paint color={ellipse.strokeColor} style="stroke" strokeWidth={ellipse.strokeWidth} />
+                                
                             </Oval>
                         ))              
                     }

@@ -3,7 +3,7 @@ import Reducer from './Reducer'
 
 
 const initialState = {
-    app_ver: "0.8.0 beta",
+    app_ver: "0.8.7 beta",
     root_address:"empty",
     room_id: "empty",
     peer_name: "empty",
@@ -38,6 +38,7 @@ const initialState = {
     peer_hand: false,
     connected: false,
     usbcamera:false,
+    usbcamera_ready:false,
     chat_array: [],
     path_array: [],
     rect_array: [],

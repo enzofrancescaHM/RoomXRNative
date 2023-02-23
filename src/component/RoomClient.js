@@ -531,6 +531,37 @@ function RoomClient() {
         );
 
         socket.on(
+            'wbSingleToJson',
+            function(data) {
+                console.log('[RoomClientComp] Received whiteboard stroke JSON');
+                //console.log(data);
+                var serialized = JSON.parse(data);
+                DecodeSingleObject(serialized);
+            }.bind(this),
+        );
+
+        socket.on(
+            'wbModify',
+            function(data) {
+                console.log('[RoomClientComp] Received whiteboard modify JSON');
+                //console.log(data);
+                var serialized = JSON.parse(data);
+                DecodeSingleModify(serialized);
+            }.bind(this),
+        )
+        
+        socket.on(
+            'wbDeleteObject',
+            function(data) {
+                console.log('[RoomClientComp] Received whiteboard delete JSON');
+                //console.log(data);
+                //var serialized = JSON.parse(data);
+                DecodeSingleDelete(data);
+            }.bind(this),
+        )
+
+
+        socket.on(
             'wbPointer',
             function (data) {
                 //console.log('[RoomClientComp] Received whiteboard pointer JSON');
@@ -656,25 +687,114 @@ function RoomClient() {
         ));      
     }
 
+
+    async function DecodeSingleDelete(elementid){
+        console.log(elementid);
+        // we have the element id, we have to delete it if found
+        // but it is too difficult to delete it from an array in state
+        // so we decide to park it outside the view
+        // it is terrible, but effective, in fact the deletion is
+        // a rare action, it tends to be replaced by clear all
+
+        // prepare the fake payload
+        var object={"elementID":elementid,"target":{left:2500,top:2500}};
+        
+        // select different object types
+        if((elementid.match(/text/g) || []).length > 0)
+        {
+            dispatch({type:'MOD_TEXT', payload:object})
+        }
+        if((elementid.match(/path/g) || []).length > 0)
+        {
+            dispatch({type:'MOD_PATH', payload:object})
+        }
+        if((elementid.match(/image/g) || []).length > 0)
+        {
+            dispatch({type:'MOD_IMAGE', payload:object})
+        }
+        if((elementid.match(/rect/g) || []).length > 0)
+        {
+            dispatch({type:'MOD_RECT', payload:object})
+        }
+        if((elementid.match(/ellipse/g) || []).length > 0)
+        {
+            dispatch({type:'MOD_ELLIPSE', payload:object})
+        }
+        if((elementid.match(/line/g) || []).length > 0)
+        {
+            dispatch({type:'MOD_LINE', payload:object})
+        }
+
+    }
+
+    async function DecodeSingleModify(object){
+        console.log("we are in the modify section!");
+        if(object.target.type == "text")
+        {
+            console.log("we are in the text section!");
+            dispatch({type:'MOD_TEXT', payload:object})
+        }
+        if(object.target.type == "path")
+        {
+            console.log("we are in the path section!");
+            dispatch({type:'MOD_PATH', payload:object})
+        }
+        if(object.target.type == "image")
+        {
+            console.log("we are in the image section!");
+            dispatch({type:'MOD_IMAGE', payload:object})
+        }
+        if(object.target.type == "rect")
+        {
+            console.log("we are in the rect section!");
+            dispatch({type:'MOD_RECT', payload:object})
+        }
+        if(object.target.type == "ellipse")
+        {
+            console.log("we are in the ellipse section!");
+            dispatch({type:'MOD_ELLIPSE', payload:object})
+        }        
+        if(object.target.type == "line")
+        {
+            console.log("we are in the line section!");
+            dispatch({type:'MOD_LINE', payload:object})
+        }        
+
+    }
+
     async function DecodeSingleObject(object){
         if(object.type == "path")
         {            
             dispatch({type: 'ADD_PATH', payload:{
                 path:FabricPathToSkiaPath(object.path),
-                id:"path:" + Date.now() + Math.floor(Math.random() * 100) + 1,
+                //id:"path:" + Date.now() + Math.floor(Math.random() * 100) + 1,
+                id: object.elementID,
                 color:object.stroke,
                 width:object.strokeWidth,
             }});    
         }
         else if(object.type == "image"){
             // ensure the object is a string
-            var myimage = JSON.stringify(object.src);            
+            var myimage = JSON.stringify(object.src);  
+            
+           //console.log("the image is: ");
+            //console.log(myimage);
 
             // check first 30 char in order to log the string but
             // not whole, otherwise is too long
             controlobj = myimage.substring(0,30);
             //console.log("control string 0:" + controlobj);
+
+            var link = (controlobj.match(/http/g) || []).length;// paranoid check, if this is the case, something is wrong
+            if (link > 0)
+            {                
+                return;
+            }
+
+
             var count = (controlobj.match(/jpeg/g) || []).length; // this is the only format with 4 letters instead of 3
+            
+            
             var charstoremove = 23;
             if(count > 0)
                 charstoremove = 24;
@@ -688,17 +808,28 @@ function RoomClient() {
             //console.log("control string 1:" + controlobj);
 
             if(state.usbcamera)
-            {
-                mediaDevices.showLoopBackCamera(false);
-                mediaDevices.showBitmap(myimage);
-            }
+             {
+                 mediaDevices.showLoopBackCamera(false);
+                 mediaDevices.showBitmap(myimage);
+             }
 
             // decode image and transform to a skia image
             myimage2 = Skia.Image.MakeImageFromEncoded(Skia.Data.fromBase64( myimage ));
+
+            
+            // terrible hack, it must be changed, but no time now
+            if(object.scaleX == "0.55" && object.scaleY == "0.55"){
+                // this is a decal, do nothing!
+            }
+            else{
+                // this is a background, clear all the whiteboard
+                clearScreenBoard();
+            }
             
             dispatch({type: 'ADD_IMAGE', payload:{
                 image:myimage2,
-                id:"image:" + Date.now() + Math.floor(Math.random() * 100) + 1,
+                //id:"image:" + Date.now() + Math.floor(Math.random() * 100) + 1,
+                id: object.elementID,
                 fit:"contain",
                 x:object.left,
                 y:object.top,
@@ -710,12 +841,14 @@ function RoomClient() {
         }
         else if(object.type == "rect")
         {            
+            console.log("addrect..");
             dispatch({type: 'ADD_RECT', payload:{
                 x:object.left,
                 y:object.top,
                 width:object.width,
                 height:object.height,
-                id:"rect:" + Date.now() + Math.floor(Math.random() * 100) + 1,
+                //id:"rect:" + Date.now() + Math.floor(Math.random() * 100) + 1,
+                id: object.elementID,
                 strokeColor:object.stroke,
                 strokeWidth:object.strokeWidth,
                 fillColor:object.fill,
@@ -723,12 +856,15 @@ function RoomClient() {
         }
         else if(object.type == "ellipse")
         {            
+            console.log("addellipse..");
+            //console.log(object);
             dispatch({type: 'ADD_ELLIPSE', payload:{
                 x:object.left,
                 y:object.top,
                 width:object.width,
                 height:object.height,
-                id:"ellipse:" + Date.now() + Math.floor(Math.random() * 100) + 1,
+                //id:"ellipse:" + Date.now() + Math.floor(Math.random() * 100) + 1,
+                id: object.elementID,
                 strokeColor:object.stroke,
                 strokeWidth:object.strokeWidth,
                 fillColor:object.fill,
@@ -736,6 +872,7 @@ function RoomClient() {
         }
         else if(object.type == "line")
         {            
+            console.log("addline..");
             // determine the slope of the line in order to decide 
             // what vertex is what
             var myx1, myx2, myy1, myy2
@@ -759,7 +896,8 @@ function RoomClient() {
                 y1:myy1, 
                 x2:myx2,
                 y2:myy2,
-                id:"line:" + Date.now() + Math.floor(Math.random() * 100) + 1,
+                //id:"line:" + Date.now() + Math.floor(Math.random() * 100) + 1,
+                id: object.elementID,
                 strokeColor:object.stroke,
                 strokeWidth:object.strokeWidth,                
             }});    
@@ -769,7 +907,8 @@ function RoomClient() {
             dispatch({type: 'ADD_TEXT', payload:{
                 x:object.left,
                 y:object.top,
-                id:"text:" + Date.now() + Math.floor(Math.random() * 100) + 1,
+                //id:"text:" + Date.now() + Math.floor(Math.random() * 100) + 1,
+                id: object.elementID,
                 fillColor:object.fill,
                 text:object.text,
             }});    
@@ -1121,7 +1260,9 @@ function RoomClient() {
         dispatch({type: 'CLEAR_RECTS', payload:""});
         dispatch({type: 'CLEAR_TEXTS', payload:""});
 
-        mediaDevices.showTextMessage("command_cleardisplay");
+        if(state.usbcamera){
+            mediaDevices.showTextMessage("command_cleardisplay");
+        }
     }
     
     async function produceScreenAudio(stream) {
@@ -1881,6 +2022,9 @@ function removeVideoOff(peer_id) {
         if(state.usbcamera){
             mediaDevices.showDisplay(false);
         }
+
+        // clear the board
+        clearScreenBoard();
 
     }
 
