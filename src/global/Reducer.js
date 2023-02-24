@@ -144,27 +144,39 @@ const Reducer = (state, action) => {
                 {
                     console.log("path found!");
                     
+                    if(action.payload.action == "delete")
+                    {
+                        var mypath = Skia.Path.MakeFromSVGString(path.path);
                     
-                    // rebuild the path
-                    var newdata = JSON.stringify(action.payload.target.path);     // convert to string       
-                    
-                    newdata = newdata.replace(/,/g , ' ');  // substitute comma with spaces
-                    newdata = newdata.replace(/\[/g , '');  // get rid of open parenthesis        
-                    newdata = newdata.replace(/\]/g , '');  // get rid of close parenthesis              
-                    newdata = newdata.replace(/\"/g , '');  // get rid of extra characters
-                    
-                    path.path = newdata;
-                    
-                    var mypath = Skia.Path.MakeFromSVGString(newdata);
-                    
-                    var myoffsetx = action.payload.target.left - action.payload.lastleft;
-                    var myoffsety = action.payload.target.top - action.payload.lasttop;
+                        var myoffsetx = action.payload.target.left - action.payload.lastleft;
+                        var myoffsety = action.payload.target.top - action.payload.lasttop;
+    
+                        mypath.offset(myoffsetx, myoffsety);
+                        
+                        path.path = mypath;
+                    }
+                    else
+                    {
+                        // rebuild the path
+                        var newdata = JSON.stringify(action.payload.target.path);     // convert to string       
+                        
+                        newdata = newdata.replace(/,/g , ' ');  // substitute comma with spaces
+                        newdata = newdata.replace(/\[/g , '');  // get rid of open parenthesis        
+                        newdata = newdata.replace(/\]/g , '');  // get rid of close parenthesis              
+                        newdata = newdata.replace(/\"/g , '');  // get rid of extra characters
+                        
+                        path.path = newdata;
+                        
+                        var mypath = Skia.Path.MakeFromSVGString(newdata);
+                        
+                        var myoffsetx = action.payload.target.left - action.payload.lastleft;
+                        var myoffsety = action.payload.target.top - action.payload.lasttop;
 
-                    mypath.offset(myoffsetx, myoffsety);
-                    
-                    path.path = mypath;
-                    
+                        mypath.offset(myoffsetx, myoffsety);
+                        
+                        path.path = mypath;
 
+                    }
                 }
             });
             return{

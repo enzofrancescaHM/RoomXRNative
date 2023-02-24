@@ -697,7 +697,7 @@ function RoomClient() {
         // a rare action, it tends to be replaced by clear all
 
         // prepare the fake payload
-        var object={"elementID":elementid,"target":{left:2500,top:2500}};
+        var object={"action":"delete","elementID":elementid,"target":{left:2500,top:2500}};
         
         // select different object types
         if((elementid.match(/text/g) || []).length > 0)
