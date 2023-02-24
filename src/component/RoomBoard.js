@@ -121,7 +121,7 @@ export function RoomBoard(props){
         <>
         <Canvas style={props.containerStyle} onSize={size} onLayout={event => { console.log(JSON.stringify(size)) }} ref={ref}>             
             <FitBox src={rect(0, 0, 1200, 600)} dst={rect(0, 0, size.current.width, size.current.height)}> 
-                <Group blendMode="multiply">
+                <Group blendMode="srcOver">
                     {
                         // cycle the image array and draw on the canvas
                         state.image_array.map((image) => (
@@ -138,7 +138,7 @@ export function RoomBoard(props){
                         ))          
                     }
                 </Group>
-                <Group blendMode="multiply">
+                <Group blendMode="srcOver">
                     {
                         // cycle the path array and draw on the canvas
                         state.path_array.map((path) => (
@@ -152,7 +152,7 @@ export function RoomBoard(props){
                         ))              
                     }
                 </Group>
-                <Group  blendMode="multiply">
+                <Group  blendMode="srcOver">
                
                     {
                         // cycle the path array and draw on the canvas
@@ -172,7 +172,7 @@ export function RoomBoard(props){
                         ))              
                     }
                 </Group>
-                <Group blendMode="multiply">
+                <Group blendMode="srcOver">
                     {
                         // cycle the path array and draw on the canvas
                         state.ellipse_array.map((ellipse) => (
@@ -192,7 +192,7 @@ export function RoomBoard(props){
                         ))              
                     }
                 </Group>
-                <Group blendMode="multiply">
+                <Group blendMode="srcOver">
                     {
                         // cycle the path array and draw on the canvas
                         state.line_array.map((line) => (
@@ -208,7 +208,7 @@ export function RoomBoard(props){
                         ))              
                     }
                 </Group>
-                <Group blendMode="multiply">
+                <Group blendMode="srcOver">
                 {
                         // cycle the path array and draw on the canvas
                         state.text_array.map((text) => (                    
@@ -224,7 +224,7 @@ export function RoomBoard(props){
                         ))
                     }
                 </Group>
-                <Group blendMode="multiply">
+                <Group blendMode="srcOver">
                         {
                             // draw the pointer fill in red semi transparent
                             (state.pointer_x != null && state.pointer_y != null)?(<Circle cx={state.pointer_x} cy={state.pointer_y} r={r} color="#FF000044" />):null

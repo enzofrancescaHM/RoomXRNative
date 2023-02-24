@@ -45,7 +45,7 @@ export function MainPage({ navigation }) {
     let isEnumerateAudioDevices = false;
     let isEnumerateVideoDevices = false;
     let divider = 7;
-    let buttonbck = '#00000011';
+    let buttonbck = '#00000019';
     let borderrds = 8;
 
     useEffect(function componentDidMount() {
