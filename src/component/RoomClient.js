@@ -821,6 +821,9 @@ function RoomClient() {
             if(object.scaleX == "0.55" && object.scaleY == "0.55"){
                 // this is a decal, do nothing!
             }
+            else if(object.scaleX == "0.3" && object.scaleY == "0.3"){
+                // this is an external image, do nothing
+            }
             else{
                 // this is a background, clear all the whiteboard
                 clearScreenBoard();
@@ -2024,7 +2027,11 @@ function removeVideoOff(peer_id) {
         socket.disconnect();
         // disable display and clear image on the screen if any
         if(state.usbcamera){
-            mediaDevices.showDisplay(false);
+            //mediaDevices.showDisplay(false);
+        }
+
+        if(state.usbcamera){
+            mediaDevices.showTextMessage("command_killall");
         }
 
         // clear the board

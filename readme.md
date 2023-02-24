@@ -74,7 +74,7 @@ yarn install
 - implement chat with: https://github.com/FaridSafi/react-native-gifted-chat
 - (Whiteboard) implement Decals
 - evaluate possibility to remove reanimated2 dependency
-- define difference between screenshot , images and decals.
+
 
 
 ## In Progress:
@@ -130,7 +130,10 @@ yarn install
 - [FIX] paths dont move in sync at all, stay in place.
 - give possibility to hide miniature preview of other partecipants by touching it
 - [FIX] hide pointer after a clearscreen
-
+- [FIX] blend mode to srcOver
+- [FIX] dynamic interface with better buttons
+- [FIX] manage difference between screenshot , images and decals
+- [FIX] manage the correct exit from glasses, deleting pointers and other stuff
 
 
 ## Changelist:
@@ -197,6 +200,10 @@ yarn install
 - [FIX] paths dont move in sync at all, stay in place.
 - give possibility to hide miniature preview of other partecipants by touching it
 - [FIX] hide pointer after a clearscreen
+- [FIX] blend mode to srcOver
+- [FIX] dynamic interface with better buttons
+- [FIX] manage difference between screenshot , images and decals
+- [FIX] manage the correct exit from glasses, deleting pointers and other stuff
 
 
 ## Univet Camera Procedure

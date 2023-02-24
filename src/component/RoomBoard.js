@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {Canvas, Circle, Oval, Group, Image, Paint, Path, useCanvasRef, Fill, ImageFormat} from "@shopify/react-native-skia"; 
 import {Rect, Line, vec,rect,Text, useFont, useValue,FitBox} from "@shopify/react-native-skia";
 import Store, {Context} from '../global/Store';
@@ -13,6 +13,8 @@ export function RoomBoard(props){
     const size = useValue({ width: 0, height: 0 });
     const ref = useCanvasRef();
     var timeoutHandle;
+
+    const [someNew, setSomeNew] = useState(false);
 
 
     useEffect(function componentDidMount() {
@@ -38,8 +40,10 @@ export function RoomBoard(props){
 
     useEffect(() => {
         setTimeout(() => {
-            if(state.usbcamera && state.usbcamera_ready)
+            if(state.usbcamera && state.usbcamera_ready && someNew)
             {
+                setSomeNew(false);
+                
                 // you can pass an optional rectangle
                 // to only save part of the image
                 const image = ref.current?.makeImageSnapshot();
@@ -56,65 +60,40 @@ export function RoomBoard(props){
         console.log("image array changed!");
         if(state.image_array.length > 0 && state.usbcamera)
         {
-            //const image = ref.current?.makeImageSnapshot();
-            //const bytes = image.encodeToBytes();
-            //mediaDevices.showLoopBackCamera(false);
-            //mediaDevices.showBitmap(bytes);
-        }
-        
+            setSomeNew(true);
+        }        
     }, [state.image_array])
 
     useEffect(() => {
         console.log("ellipse array changed!");
         if(state.ellipse_array.length > 0 && state.usbcamera)
         {
-            // const image = ref.current?.makeImageSnapshot();
-            // const bytes = image.encodeToBytes();
-            // mediaDevices.showLoopBackCamera(false);
-            // mediaDevices.showBitmap(bytes);
+            setSomeNew(true);
         }
-
-        
     }, [state.ellipse_array])
 
     useEffect(() => {
         console.log("rect array changed!");
         if(state.rect_array.length > 0 && state.usbcamera)
         { 
-            // const image = ref.current?.makeImageSnapshot();
-            // const bytes = image.encodeToBytes();
-            // mediaDevices.showLoopBackCamera(false);
-            // mediaDevices.showBitmap(bytes);
-            
+            setSomeNew(true);            
         }
-
-        
     }, [state.rect_array])
 
     useEffect(() => {
         console.log("line array changed!");
         if(state.line_array.length > 0 && state.usbcamera)
         {
-            // const image = ref.current?.makeImageSnapshot();
-            // const bytes = image.encodeToBytes();
-            // mediaDevices.showLoopBackCamera(false);
-            // mediaDevices.showBitmap(bytes);
+            setSomeNew(true);
         }
-
-        
     }, [state.line_array])
     
     useEffect(() => {
         console.log("path array changed!");
         if(state.path_array.length > 0 && state.usbcamera)
         {
-            // const image = ref.current?.makeImageSnapshot();
-            // const bytes = image.encodeToBytes();
-            // mediaDevices.showLoopBackCamera(false);
-            // mediaDevices.showBitmap(bytes);
-        }
-
-        
+            setSomeNew(true);
+        }        
     }, [state.path_array])
   
     return (

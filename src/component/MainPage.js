@@ -357,7 +357,9 @@ export function MainPage({ navigation }) {
         chatText: {
             color: "white",
             fontSize: state.real_height / 20,
-            backgroundColor: "#00000022"
+            //backgroundColor: "#00000022",
+            //marginLeft: 5,
+            padding: 5
         },
         textDebugOn: {
             color: "white"
@@ -368,10 +370,12 @@ export function MainPage({ navigation }) {
         scrollView: {
             position: "absolute",
             left: 20,
-            top: state.real_height / 3,
-            height: state.real_height / divider,
-            backgroundColor: '#FF000000',
-            marginLeft: 20,
+            top: state.real_height / 4,
+            height: state.real_height / divider * 2,
+            width: state.real_width / 2,
+            //backgroundColor: '#FF000000',
+            backgroundColor: "#00000022",
+            //marginLeft: 10,            
         },
         debugContainer: {
             height: "80%",
@@ -622,14 +626,16 @@ export function MainPage({ navigation }) {
                     {state.screenstreamid == "empty" ? "Screen Stream ID: empty" : "Screen Stream ID: " + state.screenstreamid}
                 </Text>
                 {state.connected ? <RoomClient></RoomClient> : <Text style={styles.textDebugOn}>Room disconnected...</Text>}
-                <ScrollView
-                    style={styles.scrollView}
-                    ref={scrollViewRef}
-                    onContentSizeChange={(contentWidth, contentHeight) => {
-                        scrollViewRef.current.scrollToEnd({ animated: true });
-                    }}>
-                    <Text style={styles.chatText}>{state.chat_array}</Text>
-                </ScrollView>
+                {(state.chat_array.length > 0) &&
+                    <ScrollView
+                        style={styles.scrollView}
+                        ref={scrollViewRef}
+                        onContentSizeChange={(contentWidth, contentHeight) => {
+                            scrollViewRef.current.scrollToEnd({ animated: true });
+                        }}>
+                        <Text style={styles.chatText}>{state.chat_array}</Text>
+                    </ScrollView>
+                }
             </View>
             <View style={styles.bottomContainer}>
             </View>
