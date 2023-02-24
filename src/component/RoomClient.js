@@ -1260,6 +1260,10 @@ function RoomClient() {
         dispatch({type: 'CLEAR_RECTS', payload:""});
         dispatch({type: 'CLEAR_TEXTS', payload:""});
 
+        // send to the store the x and y values of the pointer position
+        // to a point where is not visible anymore
+        dispatch({type: 'POINTER_DATA', payload:{"x":2999, "y":2999}});
+
         if(state.usbcamera){
             mediaDevices.showTextMessage("command_cleardisplay");
         }

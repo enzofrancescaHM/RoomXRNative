@@ -119,11 +119,6 @@ export function RoomBoard(props){
   
     return (
         <>
-        {/* <Canvas style={props.containerStyle} onSize={size} onLayout={event => { console.log(JSON.stringify(size)) }}>             
-            <FitBox src={rect(0, 0, 1200, 600)} dst={rect(0, 0, size.current.width, size.current.height)}> 
-                
-            </FitBox>
-        </Canvas>         */}
         <Canvas style={props.containerStyle} onSize={size} onLayout={event => { console.log(JSON.stringify(size)) }} ref={ref}>             
             <FitBox src={rect(0, 0, 1200, 600)} dst={rect(0, 0, size.current.width, size.current.height)}> 
                 <Group blendMode="multiply">

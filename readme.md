@@ -75,7 +75,7 @@ yarn install
 - (Whiteboard) implement Decals
 - evaluate possibility to remove reanimated2 dependency
 - define difference between screenshot , images and decals.
-- give possibility to hide miniature preview of other partecipants by touching it
+
 
 ## In Progress:
 - Save usb option to the persistent memory
@@ -128,6 +128,8 @@ yarn install
 - [FIX] Clean the board if a full picture arrive
 - [FIX] Decals show base64 decode error
 - [FIX] paths dont move in sync at all, stay in place.
+- give possibility to hide miniature preview of other partecipants by touching it
+- [FIX] hide pointer after a clearscreen
 
 
 
@@ -193,6 +195,8 @@ yarn install
 
 ### Ver. 0.8.6 Beta:
 - [FIX] paths dont move in sync at all, stay in place.
+- give possibility to hide miniature preview of other partecipants by touching it
+- [FIX] hide pointer after a clearscreen
 
 
 ## Univet Camera Procedure

@@ -397,6 +397,7 @@ const Reducer = (state, action) => {
                 ...state,
                 usbcamera_ready: action.payload
             };
+      
     
         
         default:

@@ -36,6 +36,7 @@ export function MainPage({ navigation }) {
     const [qrVisible, setQrVisible] = useState(false);
     const [displayVisible, setDisplayVisible] = useState(true);
     const [loopVisible, setLoopVisible] = useState(false);
+    const [videosVisible, setVideosVisible] = useState(true);
 
 
     // ####################################################
@@ -43,6 +44,9 @@ export function MainPage({ navigation }) {
     // ####################################################
     let isEnumerateAudioDevices = false;
     let isEnumerateVideoDevices = false;
+    let divider = 7;
+    let buttonbck = '#00000011';
+    let borderrds = 8;
 
     useEffect(function componentDidMount() {
         console.log("%c MainPage componetDidMount", "color:green;");
@@ -230,6 +234,17 @@ export function MainPage({ navigation }) {
 
     }
 
+    function toggleVideos(){
+        if(videosVisible)
+        {
+            setVideosVisible(false);
+        }
+        else
+        {
+            setVideosVisible(true);
+        }
+    }
+
    /*  async function initEnumerateAudioDevices() {
         if (isEnumerateAudioDevices) return;
         // allow the audio
@@ -354,7 +369,7 @@ export function MainPage({ navigation }) {
             position: "absolute",
             left: 20,
             top: state.real_height / 3,
-            height: state.real_height / 5,
+            height: state.real_height / divider,
             backgroundColor: '#FF000000',
             marginLeft: 20,
         },
@@ -458,29 +473,25 @@ export function MainPage({ navigation }) {
             backgroundColor: '#000000',
             alignItems: 'center'
         },
-
-        buttonScannerStyle: {
-            backgroundColor: '#485a9600',
-            borderWidth: 0.5,
-            width: state.real_height / 5,
-            height: state.real_height / 5,
-            borderRadius: 5,
-            flex: 1,
-            flexDirection: "row",
-        },
         buttonUserStyle: {
             backgroundColor: '#485a9600',
-            borderWidth: 0.5,
-            width: state.real_height / 5,
-            height: state.real_height / 5,
-            borderRadius: 5,
+            borderWidth: 0.0,
+            width: "100%",
+            height: "100%",
+            borderRadius: borderrds,
             flex: 1,
             flexDirection: "row",
+            
         },
         buttonImageIconStyle: {
-            height: state.real_height / 5,
-            width: state.real_height / 5,
+            height: state.real_height / divider - 5,
+            width: state.real_height / divider - 5,
             resizeMode: 'stretch',
+            marginLeft: "auto",
+            marginRight: "auto",
+            marginTop: "auto",
+            marginBottom: "auto"
+
         },
         buttonTextStyle: {
             color: '#fff',
@@ -492,15 +503,16 @@ export function MainPage({ navigation }) {
         buttonIconSeparatorStyle: {
             backgroundColor: '#fff',
             width: 1,
-            height: state.real_height / 5,
+            height: state.real_height / divider,
         },
         buttonContainerTop: {
             position: "absolute",
             top: 20,
             left: 20,
-            width:  state.real_height / 5,
-            height: state.real_height / 5,
-            backgroundColor: '#ff000000',
+            borderRadius: borderrds,
+            width:  state.real_height / divider,
+            height: state.real_height / divider,
+            backgroundColor: buttonbck,
             zIndex: 100,
             zOrder: 100,
         },
@@ -508,62 +520,86 @@ export function MainPage({ navigation }) {
             position: "absolute",
             bottom: 20,
             left: 20,
-            width: state.real_height / 5,
-            height: state.real_height / 5,
-            backgroundColor: '#ff000000',
+            borderRadius: borderrds,
+            width: state.real_height / divider,
+            height: state.real_height / divider,
+            backgroundColor: buttonbck,
             zIndex: 100,
             zOrder: 100,
         },
         buttonContainerShowQRCode: {
             position: "absolute",
             bottom: 20,
-            left: state.real_height / 5 + 30,
-            width: state.real_height / 5,
-            height: state.real_height / 5,
-            backgroundColor: '#ff000000',
+            borderRadius: borderrds,
+            left: state.real_height / divider + 30,
+            width: state.real_height / divider,
+            height: state.real_height / divider,
+            backgroundColor: buttonbck,
             zIndex: 100,
             zOrder: 100,
         },
         buttonContainerCleanChat: {
             position: "absolute",
             bottom: 20,
-            left: state.real_height / 5 + state.real_height / 5 + 40,
-            width: state.real_height / 5,
-            height: state.real_height / 5,
-            backgroundColor: '#ff000000',
+            borderRadius: borderrds,
+            left: state.real_height / divider + state.real_height / divider + 40,
+            width: state.real_height / divider,
+            height: state.real_height / divider,
+            backgroundColor: buttonbck,
             zIndex: 100,
             zOrder: 100,
         },
         buttonContainerDisplay: {
             position: "absolute",
             bottom: 20,
-            left: state.real_height / 5 + state.real_height / 5 + state.real_height / 5 + 50,
-            width: state.real_height / 5,
-            height: state.real_height / 5,
-            backgroundColor: '#ff000000',
+            borderRadius: borderrds,
+            left: state.real_height / divider + state.real_height / divider + state.real_height / divider + 50,
+            width: state.real_height / divider,
+            height: state.real_height / divider,
+            backgroundColor: buttonbck,
             zIndex: 100,
             zOrder: 100,
         },
         buttonContainerLoopBack: {
             position: "absolute",
             bottom: 20,
-            left: state.real_height / 5 + state.real_height / 5 + state.real_height / 5 + state.real_height / 5 + 60,
-            width: state.real_height / 5,
-            height: state.real_height / 5,
-            backgroundColor: '#ff000000',
+            borderRadius: borderrds,
+            left: state.real_height / divider + state.real_height / divider + state.real_height / divider + state.real_height / divider + 60,
+            width: state.real_height / divider,
+            height: state.real_height / divider,
+            backgroundColor: buttonbck,
             zIndex: 100,
             zOrder: 100,
         },
         qrcode:{
             position: "absolute",
-            bottom: state.real_height / 5 + 40,
+            bottom: state.real_height / divider + 40,
             left: state.real_height / 2.5 + 60,
             width: state.real_width,
             height: state.real_height / 2.5,
             backgroundColor: '000',
             zIndex: 100,
             zOrder: 100,
-        }
+        },
+        buttonContainerToggleVideos: {
+            position: "absolute",
+            bottom: 0,
+            right: 0,
+            width: "30%",
+            height: "30%",
+            backgroundColor: buttonbck,
+            zIndex: 100,
+            zOrder: 100,
+        },
+        buttonToggleStyle: {
+            backgroundColor: '#485a9600',
+            borderWidth: 0.0,
+            width: "100%",
+            height: "100%",
+            borderRadius: 5,
+            flex: 1,
+            flexDirection: "row",
+        },
 
 
 
@@ -608,7 +644,7 @@ export function MainPage({ navigation }) {
                 <RoomBoard
                     containerStyle={styles.whiteBoard}>
                 </RoomBoard>
-                {(state.remotestream != "empty") &&
+                {(state.remotestream != "empty" && videosVisible) &&
                     <RTCView
                         style={styles.remoteStream}
                         mirror={false}
@@ -617,7 +653,7 @@ export function MainPage({ navigation }) {
                         zOrder={1}>
                     </RTCView>
                 }
-                {(state.guest1stream != "empty") &&
+                {(state.guest1stream != "empty" && videosVisible) &&
                     <RTCView
                         style={styles.guest1Stream}
                         mirror={false}
@@ -626,7 +662,7 @@ export function MainPage({ navigation }) {
                         zOrder={1}>
                     </RTCView>
                 }
-                {(state.guest2stream != "empty") &&
+                {(state.guest2stream != "empty" && videosVisible) &&
                     <RTCView
                         style={styles.guest2Stream}
                         mirror={false}
@@ -639,7 +675,7 @@ export function MainPage({ navigation }) {
             </View>
             <View style={styles.buttonContainerTop}>
                 <TouchableOpacity
-                    style={styles.buttonScannerStyle}
+                    style={styles.buttonUserStyle}
                     activeOpacity={0.9}
                     onPress={invokeDisconnect}>
                     <Image
@@ -650,7 +686,7 @@ export function MainPage({ navigation }) {
             </View>
             {(!state.usbcamera)&&<View style={styles.buttonContainerSwitchCamera}>
                 <TouchableOpacity
-                    style={styles.buttonScannerStyle}
+                    style={styles.buttonUserStyle}
                     activeOpacity={0.9}
                     onPress={switchCamera}>
                     <Image
@@ -713,6 +749,19 @@ export function MainPage({ navigation }) {
                     />
                 </TouchableOpacity>
             </View>}
+
+            <View style={styles.buttonContainerToggleVideos}>
+                <TouchableOpacity
+                    style={styles.buttonToggleStyle}
+                    activeOpacity={0.9}
+                    onPress={toggleVideos}>
+                    {/* <Image
+                        source={imageClean}
+                        style={styles.buttonImageIconStyle}
+                    /> */}
+                </TouchableOpacity>
+                
+            </View>
 
         </>
     )
