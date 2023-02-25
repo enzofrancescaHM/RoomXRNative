@@ -93,12 +93,12 @@ public class UvcCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
     public UvcCapturer(String deviceId, CameraUvcStrategy uvcStrategy) {
         this.deviceId = deviceId.replaceAll("\\D", "");
 
-        Log.d(TAG, "UvcCapturer.UvcCapturer->DeviceID " + this.deviceId);
+        Log.d("USBCAPTURER", "UvcCapturer.UvcCapturer->DeviceID " + this.deviceId);
 
         try {
             mUvcStrategy = uvcStrategy;
         } catch (Exception e) {
-            Log.e(TAG, "UvcCapturer.UvcCapturer ", e);
+            Log.e("USBCAPTURER", "UvcCapturer.UvcCapturer ", e);
         }
 
        
@@ -144,6 +144,10 @@ public class UvcCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
                     VideoFrame frame = new VideoFrame(nv21Buffer, 0, System.nanoTime());
                     capturerObserver.onFrameCaptured(frame);
 
+                    
+                    //String output = String.format("showScreen: %b , showLoop: %b, pointerShow: %b",showScreen, showLoopBack, pointerShow);
+                    //Log.d("USBCAP",output );
+
                     // loopback on Univet Display
                     if(dFb != null && showScreen)
                     {
@@ -175,6 +179,9 @@ public class UvcCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
                             {                  
                                 dFb.writeImagePointer(frozenBitmap,pointerX,pointerY, false);
                             }
+                            else{
+                                dFb.writeImage(frozenBitmap,0,false);
+                            }
                         }                
                     }
 
@@ -202,7 +209,7 @@ public class UvcCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
 
     @Override
     public void dispose() {
-        Log.d(TAG, "UvcCapturer.dispose");
+        Log.d("USBCAPTURER", "UvcCapturer.dispose");
         if (mUvcStrategy != null) mUvcStrategy.stopPreview();
     }
 
@@ -216,16 +223,16 @@ public class UvcCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
         executor.execute(new Runnable() {
             @Override
             public void run() {
-                Log.d("USB-UNIVET", "Entering OnConnect...");
+                Log.d("USBCAPTURER", "Entering OnConnect...");
                 if (monitor.hasPermission(device)) 
                 {
-                    Log.d("USB-UNIVET", "permission OK!");
-                    Log.d("USB-UNIVET", "vendorID= " + device.getVendorId());
-                    Log.d("USB-UNIVET",String.format("DEV: %s - PID: %x - VID: %x", device.getProductName(), device.getProductId(), device.getVendorId()));
+                    Log.d("USBCAPTURER", "permission OK!");
+                    Log.d("USBCAPTURER", "vendorID= " + device.getVendorId());
+                    Log.d("USBCAPTURER",String.format("DEV: %s - PID: %x - VID: %x", device.getProductName(), device.getProductId(), device.getVendorId()));
 
                     if(weFoundItDisplay == false && device.getProductId() == 0xa306  )
                     {
-                            Log.d("USB-UNIVET DISPLAY", "We are in!");
+                            Log.d("USBCAPTURER", "We are in!");
                             
                             weFoundItDisplay = true;
 
@@ -233,9 +240,9 @@ public class UvcCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
                                 connection = mUsbManager.openDevice(device);
                             }
                             if (connection != null) {
-                                Log.d("USB-CAMERA DISPLAY", "Connection done!");
+                                Log.d("USBCAPTURER", "Connection done!");
                                 
-                                Log.e("name display: ", device.getDeviceName());
+                                Log.e("USBCAPTURER name display: ", device.getDeviceName());
 
                                 // initialize Univet Display Peripheral
                                 if (dFb == null) {
@@ -248,16 +255,16 @@ public class UvcCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
 
                                 // Initialize Univet IMU and Touch Peripherals
                                 if(dCdc == null){
-                                    Log.d("VARServ", "dCdc created!");
+                                    Log.d("USBCAPTURER", "dCdc created!");
                                     dCdc = new DeviceCdc(connection, device);
 
                                     
                                     try{
                                         String version = dCdc.readVersion2();
-                                        Log.d("VARServ", version);    
+                                        Log.d("USBCAPTURER", version);    
                                     }
                                     catch(UsbException e){
-                                        Log.d("VARServ", "readVersion: Reading Version FAILED");
+                                        Log.d("USBCAPTURER", "readVersion: Reading Version FAILED");
                                         e.printStackTrace();
                                     }
 
@@ -270,7 +277,7 @@ public class UvcCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
                    
                 }
                 else{
-                    Log.d("USB-UNIVET", "permission problem...");
+                    Log.d("USBCAPTURER", "permission problem...");
                 }
             }
         });
@@ -278,7 +285,7 @@ public class UvcCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
     
     @Override
     public void onDisconnect(UsbDevice device, USBMonitor.UsbControlBlock ctrlBlock) {
-      Log.d("USB-UNIVET", "ON DISCONNECT!");
+      Log.d("USBCAPTURER", "ON DISCONNECT!");
       isConnected = false;
     }
  
@@ -357,13 +364,14 @@ public class UvcCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
       public void testWrite(String mystring){
           //Log.d("testWrite start...","hey!");
            if(dFb != null)
-           {
-              
+           {              
                 if(mystring.equals("command_cleardisplay"))
                 {
-                    Bitmap cleanBmp = Bitmap.createBitmap(419, 138, Bitmap.Config.ARGB_8888);
-                    if(dFb != null)
-                      dFb.writeImage(cleanBmp,-1,false); // write black image with no battery sign    
+                    Bitmap cleanBmp = Bitmap.createBitmap(419, 138, Bitmap.Config.ARGB_8888);                    
+                    dFb.writeImage(cleanBmp,-1,false); // write black image with no battery sign    
+                }
+                else if(mystring.equals("command_killall")){
+                   Armageddon();
                 }
                 else{
                     Bitmap createBitmap = UnivetUtils.TextToBitmap(mystring);
@@ -373,14 +381,40 @@ public class UvcCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
             
            }                                    
       }
-  
+
+      // this function delete and close all the open instances
+      public void Armageddon() {
+          // un-register the usbreceiver instance  
+          ((ReactApplicationContext) context).unregisterReceiver(usbReceiver);
+
+          // close the IMU section
+          if (dCdc != null) {
+              dCdc.close();
+              dCdc = null;
+          }
+          // destroy the FrameBuffer
+          if (dFb != null) {
+              dFb = null;
+          }
+          // close the connection opened
+          if (connection != null) {
+              Log.d("USBCAPTURER", "onDestroy: Close connection");
+              connection.close();
+              connection = null;
+          }
+
+      }
+
       // enable / disable Display
       public void showDisplay(boolean showDisp) {
         showScreen = showDisp;
+
+            
   
           // clean display after half a second in order to simulate display off
           // after a disconnection
           if(!showDisp) {
+            Log.d("USBCAPTURER","display off!");
             Timer mytimer = new Timer();
             mytimer.schedule(new TimerTask() {
               public void run() {
@@ -390,18 +424,20 @@ public class UvcCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
               }
             }, 500L);
           }
+          else
+          {Log.d("USBCAPTURER","display on!");}
   
       }
   
       // enable / disable LoopBack Camera Feed on the display
       public void showLoopBackCamera(boolean showLoop) {
-          //Log.d("showLoopBackCamera start...","hey!");
+          Log.d("USBCAPTURER","showLoopBackCamera start...");
           showLoopBack = showLoop;
   
       }  
   
       public void showPointer(String message){
-        //Log.d("ciao: ",message);
+        //Log.d("enter ShowPointer: ",message);
   
         ArrayList aList= new ArrayList(Arrays.asList(message.split(",")));
         /*for(int i=0;i<aList.size();i++)
@@ -423,7 +459,7 @@ public class UvcCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
   
       // show a bitmap on the display
       public void showBitmap(String bitmap64) {
-          //Log.d("showBitmap start...","hey!");
+          Log.d("USBCAPTURER","showBitmap start...");
           try {
             byte[] decodedString = Base64.decode(bitmap64,0);
             frozenBitmap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
