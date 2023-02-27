@@ -97,8 +97,8 @@ export function MainPage({ navigation }) {
     }
 
     async function invokeDisconnect() {
-        if(timerID != 1234)
-            clearInterval(timerID);
+        //if(timerID != 1234)
+           // clearInterval(timerID);
         
         dispatch({ type: 'SET_CONNECTED', payload: false });
 
@@ -147,8 +147,8 @@ export function MainPage({ navigation }) {
             console.log("put heartbeat to usb_init");
             //mediaDevices.heartBeat("supercalifragilistiche");
             mediaDevices.showTextMessage("command_setusb");
-            /*
-            setTimerID( setInterval(function run(){
+            
+            var mytmr = setInterval(function run(){
                 //mediaDevices.showPointer("false,200,150");
                 mediaDevices.heartBeat()
                 .then((beat) => {
@@ -157,10 +157,10 @@ export function MainPage({ navigation }) {
                     }
                     else 
                     {
-                        clearInterval(timerID);
+                        clearInterval(mytmr);
                         Alert.alert(
                             "Warning",
-                            "Smart Glasses Detached... please check the cable",
+                            "Smart Glasses Detached... please check the cable connection",
                             [
                               { text: "OK", onPress: () => invokeDisconnect() }
                             ]
@@ -170,8 +170,10 @@ export function MainPage({ navigation }) {
 
                 })
                 
-            },1000))
-            */
+            },5000)
+            
+            //setTimerID( ciccio );
+            
         }
         else
         {

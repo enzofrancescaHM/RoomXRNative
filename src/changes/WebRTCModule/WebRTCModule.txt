@@ -486,12 +486,12 @@ public class WebRTCModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void heartBeat(String command) {
+   /*  public void heartBeat(String command) {
         ThreadUtils.runOnExecutor(() -> getUserMediaImpl.heartBeat(command));
-    }
-    /*public void heartBeat(Callback callback) {
-        ThreadUtils.runOnExecutor(() -> callback.invoke(getUserMediaImpl.heartBeat()));
     }*/
+    public void heartBeat(Callback callback) {
+        ThreadUtils.runOnExecutor(() -> callback.invoke(getUserMediaImpl.heartBeat()));
+    }
     @ReactMethod
     public void showTextMessage(String message) {
         ThreadUtils.runOnExecutor(() -> getUserMediaImpl.writeText(message));

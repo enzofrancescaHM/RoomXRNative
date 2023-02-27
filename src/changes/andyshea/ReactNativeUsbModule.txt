@@ -28,7 +28,7 @@ import java.util.Locale;
 
 public class ReactNativeUsbModule extends ReactContextBaseJavaModule {
 
-  private static final String TAG = "ReactNative";
+  private static final String TAG = "RN USB MODULE";
   private static final String ACTION_USB_PERMISSION = "me.andyshea.scanner.USB_PERMISSION";
   private static final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
   private static final int READ_INTERVAL = 50;
@@ -156,67 +156,11 @@ public class ReactNativeUsbModule extends ReactContextBaseJavaModule {
     connectionPromise = null;
   }
 
-  private void setDevice(UsbDevice device) {
-    //if(connectionPromise == null)
-    //return;
-    
+  private void setDevice(UsbDevice device) {    
     Log.d(TAG, "we are in setDevice of VID: " + device.getVendorId() + " PID: " + device.getProductId());
-
 
     connectionPromise.resolve("Succesfully granted: " + device.getVendorId());
     connectionPromise = null;
-    /*
-    Log.d(TAG, "setDevice " + device);
-    if (device.getInterfaceCount() != 1) {
-      rejectConnectionPromise("E103", "Could not find device interface");
-      return;
-    }
-    UsbInterface usbInterface = device.getInterface(0);
-
-    // device should have two endpoints
-    if (usbInterface.getEndpointCount() != 2) {
-      rejectConnectionPromise("E104", "Could not find device endpoints");
-      return;
-    }
-
-    // first endpoint should be of type interrupt with direction of in
-    UsbEndpoint endpointIn = usbInterface.getEndpoint(0);
-    if (endpointIn.getType() != UsbConstants.USB_ENDPOINT_XFER_INT) {
-      rejectConnectionPromise("E105", "First endpoint is not interrupt type");
-      return;
-    }
-    if (endpointIn.getDirection() != UsbConstants.USB_DIR_IN) {
-      rejectConnectionPromise("E106", "First endpoint direction is not in");
-      return;
-    }
-
-    // second endpoint should be of type interrupt with direction of out
-    UsbEndpoint endpointOut = usbInterface.getEndpoint(1);
-    if (endpointOut.getType() != UsbConstants.USB_ENDPOINT_XFER_INT) {
-      rejectConnectionPromise("E107", "Second endpoint is not interrupt type");
-      return;
-    }
-    if (endpointOut.getDirection() != UsbConstants.USB_DIR_OUT) {
-      rejectConnectionPromise("E108", "Second endpoint direction is not out");
-      return;
-    }
-
-    this.device = device;
-    this.endpointIn = endpointIn;
-    this.endpointOut = endpointOut;
-
-    UsbDeviceConnection connection = manager.openDevice(device);
-    if (connection != null && connection.claimInterface(usbInterface, true)) {
-      Log.d(TAG, "USB device opened successfully");
-      this.connection = connection;
-      Thread thread = new Thread(reader);
-      thread.start();
-      connectionPromise.resolve(null);
-      connectionPromise = null;
-    } else {
-      rejectConnectionPromise("E109", "Failed opening USB device");
-      this.connection = null;
-    }*/
   }
 
   @ReactMethod

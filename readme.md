@@ -74,16 +74,16 @@ yarn install
 - implement chat with: https://github.com/FaridSafi/react-native-gifted-chat
 - (Whiteboard) implement Decals
 - evaluate possibility to remove reanimated2 dependency
+- Save usb option to the persistent memory
+- Evaluate why scannerpage crashes sometimes, maybe because it searches for back camera and   
+  not always is present
+- [FIX] First chat message is not displayed on the Univet glasses
 
 
 
 ## In Progress:
-- Save usb option to the persistent memory
-- Evaluate why scannerpage crashes sometimes, maybe because it searches for back camera and   
-  not always is present
 - Evaluate disconnect and riconnect the Univet glasses cases, it should gracely manage those states
-- [FIX] First chat message is not displayed on the Univet glasses
-
+  at the moment we could also try to remove ReactNAtiveUsbMOdule at all and do everything at UvcCapturer level...
 
 
 ## Done:

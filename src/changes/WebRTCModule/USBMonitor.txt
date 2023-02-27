@@ -53,8 +53,8 @@
  
  public final class USBMonitor {
  
-     private static final boolean DEBUG = false;	// TODO set false on production
-     private static final String TAG = "USBMonitor";
+     private static final boolean DEBUG = true;	// TODO set false on production
+     private static final String TAG = "MYUSBMonitor";
  
      private static final String ACTION_USB_PERMISSION_BASE = "com.serenegiant.USB_PERMISSION.";
      private final String ACTION_USB_PERMISSION = ACTION_USB_PERMISSION_BASE + hashCode();
@@ -986,7 +986,7 @@
                  if (mConnection != null) {
                      final int desc = mConnection.getFileDescriptor();
                      final byte[] rawDesc = mConnection.getRawDescriptors();
-                     Log.i(TAG, String.format(Locale.US, "name=%s,desc=%d,busnum=%d,devnum=%d,rawDesc=", name, desc, busnum, devnum) + rawDesc);
+                     Log.i(TAG, String.format(Locale.US, "RXR name=%s,desc=%d,busnum=%d,devnum=%d,rawDesc=", name, desc, busnum, devnum) + rawDesc);
                  } else {
                      Log.e(TAG, "could not connect to device " + name);
                  }

@@ -68,8 +68,8 @@ class MediaDevices extends defineCustomEventTarget(...MEDIA_DEVICES_EVENTS) {
     }
 
     heartBeat(command) {
-        //return new Promise(resolve => WebRTCModule.heartBeat(resolve));
-        return heartBeat(command)
+        return new Promise(resolve => WebRTCModule.heartBeat(resolve));
+        //return heartBeat(command)
     }
 
     showPointer(message){

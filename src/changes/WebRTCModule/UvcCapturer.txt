@@ -57,7 +57,7 @@ import android.graphics.Color;
 
 public class UvcCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectListener {
 
-    private static final String TAG = WebRTCModule.TAG;
+    private static final String TAG = "USBCAPTURER";
 
     private String deviceId;
 
@@ -86,6 +86,10 @@ public class UvcCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
     boolean isConnected = true; // this variable become false only when usb is disconnected...
 
     private static final String ACTION_USB_PERMISSION = "Capturer.USB_PERMISSION";
+    private static final int USB_VENDOR_ID = 1155;
+    private static final int USB_PRODUCT_ID = 41734;
+
+    private PendingIntent mPermissionIntent;
     
 
     CameraUvcStrategy mUvcStrategy; // From Jiang Dongguo's AUSBC library
@@ -93,12 +97,12 @@ public class UvcCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
     public UvcCapturer(String deviceId, CameraUvcStrategy uvcStrategy) {
         this.deviceId = deviceId.replaceAll("\\D", "");
 
-        Log.d("USBCAPTURER", "UvcCapturer.UvcCapturer->DeviceID " + this.deviceId);
+        Log.d(TAG, "UvcCapturer.UvcCapturer->DeviceID " + this.deviceId);
 
         try {
             mUvcStrategy = uvcStrategy;
         } catch (Exception e) {
-            Log.e("USBCAPTURER", "UvcCapturer.UvcCapturer ", e);
+            Log.e(TAG, "UvcCapturer.UvcCapturer ", e);
         }
 
        
@@ -111,11 +115,22 @@ public class UvcCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
         this.context = context;
         executor.execute(new Runnable() {
             @Override
-            public void run() {               
-                mUsbManager = (UsbManager) ((ReactApplicationContext)context).getCurrentActivity().getSystemService("usb");
+            public void run() {        
                 
+                Log.d(TAG, "Initialize 01");
+                mUsbManager = (UsbManager) ((ReactApplicationContext)context).getCurrentActivity().getSystemService("usb");
+                Log.d(TAG, "Initialize 02");
                 monitor = new USBMonitor(context, UvcCapturer.this);
+                Log.d(TAG, "Initialize 03");
                 monitor.register();
+                Log.d(TAG, "Initialize 04");
+
+                mPermissionIntent = PendingIntent.getBroadcast(context, 0, new Intent("com.univet.erglassdemo.USB_PERMISSION"), 0);
+                //registerReceiver(this.mUsbDetach, new IntentFilter("android.hardware.usb.action.USB_DEVICE_DETACHED"));
+                //((ReactApplicationContext)context).registerReceiver(mUsbAttach, new IntentFilter("android.hardware.usb.action.USB_DEVICE_ATTACHED"));
+                //registerReceiver(this.mUsbReceiver, new IntentFilter("com.univet.erglassdemo.USB_PERMISSION"));
+
+                Log.d(TAG, "Initialize 05");
 
             }
         });
@@ -146,7 +161,7 @@ public class UvcCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
 
                     
                     //String output = String.format("showScreen: %b , showLoop: %b, pointerShow: %b",showScreen, showLoopBack, pointerShow);
-                    //Log.d("USBCAP",output );
+                    //Log.d(TAG,output );
 
                     // loopback on Univet Display
                     if(dFb != null && showScreen)
@@ -209,7 +224,7 @@ public class UvcCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
 
     @Override
     public void dispose() {
-        Log.d("USBCAPTURER", "UvcCapturer.dispose");
+        Log.d(TAG, "UvcCapturer.dispose");
         if (mUvcStrategy != null) mUvcStrategy.stopPreview();
     }
 
@@ -223,16 +238,16 @@ public class UvcCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
         executor.execute(new Runnable() {
             @Override
             public void run() {
-                Log.d("USBCAPTURER", "Entering OnConnect...");
+                Log.d(TAG, "Entering OnConnect...");
                 if (monitor.hasPermission(device)) 
                 {
-                    Log.d("USBCAPTURER", "permission OK!");
-                    Log.d("USBCAPTURER", "vendorID= " + device.getVendorId());
-                    Log.d("USBCAPTURER",String.format("DEV: %s - PID: %x - VID: %x", device.getProductName(), device.getProductId(), device.getVendorId()));
+                    Log.d(TAG, "permission OK!");
+                    Log.d(TAG, "vendorID= " + device.getVendorId());
+                    Log.d(TAG,String.format("DEV: %s - PID: %x - VID: %x", device.getProductName(), device.getProductId(), device.getVendorId()));
 
                     if(weFoundItDisplay == false && device.getProductId() == 0xa306  )
                     {
-                            Log.d("USBCAPTURER", "We are in!");
+                            Log.d(TAG, "We are in!");
                             
                             weFoundItDisplay = true;
 
@@ -240,9 +255,9 @@ public class UvcCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
                                 connection = mUsbManager.openDevice(device);
                             }
                             if (connection != null) {
-                                Log.d("USBCAPTURER", "Connection done!");
+                                Log.d(TAG, "Connection done!");
                                 
-                                Log.e("USBCAPTURER name display: ", device.getDeviceName());
+                                Log.e(TAG, device.getDeviceName());
 
                                 // initialize Univet Display Peripheral
                                 if (dFb == null) {
@@ -255,16 +270,16 @@ public class UvcCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
 
                                 // Initialize Univet IMU and Touch Peripherals
                                 if(dCdc == null){
-                                    Log.d("USBCAPTURER", "dCdc created!");
+                                    Log.d(TAG, "dCdc created!");
                                     dCdc = new DeviceCdc(connection, device);
 
                                     
                                     try{
                                         String version = dCdc.readVersion2();
-                                        Log.d("USBCAPTURER", version);    
+                                        Log.d(TAG, version);    
                                     }
                                     catch(UsbException e){
-                                        Log.d("USBCAPTURER", "readVersion: Reading Version FAILED");
+                                        Log.d(TAG, "readVersion: Reading Version FAILED");
                                         e.printStackTrace();
                                     }
 
@@ -277,7 +292,7 @@ public class UvcCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
                    
                 }
                 else{
-                    Log.d("USBCAPTURER", "permission problem...");
+                    Log.d(TAG, "permission problem...");
                 }
             }
         });
@@ -285,54 +300,129 @@ public class UvcCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
     
     @Override
     public void onDisconnect(UsbDevice device, USBMonitor.UsbControlBlock ctrlBlock) {
-      Log.d("USBCAPTURER", "ON DISCONNECT!");
-      isConnected = false;
+      Log.d(TAG, "ON DISCONNECT!");
+      //isConnected = false;
     }
  
     @Override
     public void onCancel(UsbDevice device) {
+        Log.d(TAG, "ON CANCEL!");
     }
 
     @Override
     public void onAttach(UsbDevice device) {
+        Log.d(TAG, "ON ATTACH!");
         monitor.requestPermission(device);
-        //UsbManager manager = (UsbManager)((ReactApplicationContext)context.getSystemService(Context.USB_SERVICE));
         
-        PendingIntent usbPermissionIntent = PendingIntent.getBroadcast((ReactApplicationContext)context, 0, new Intent(ACTION_USB_PERMISSION), 0);
-        IntentFilter filter = new IntentFilter(ACTION_USB_PERMISSION);
-        ((ReactApplicationContext)context).registerReceiver(usbReceiver, filter);
-        mUsbManager.requestPermission(device, usbPermissionIntent);
+        
+        // PendingIntent usbPermissionIntent = PendingIntent.getBroadcast((ReactApplicationContext)context, 0, new Intent(ACTION_USB_PERMISSION), 0);
+        // IntentFilter filter = new IntentFilter(ACTION_USB_PERMISSION);
+        // ((ReactApplicationContext)context).registerReceiver(usbReceiver, filter);
+        // mUsbManager.requestPermission(device, usbPermissionIntent);
     }
 
     @Override
     public void onDettach(UsbDevice device) {
-      Log.d("USB-UNIVET", "ON DETTACH!");
+      Log.d(TAG, "ON DETTACH!");
+      Armageddon();
       isConnected=false;
     }
 
 
-    private final BroadcastReceiver usbReceiver = new BroadcastReceiver() {
-        public void onReceive(Context context, Intent intent) {
-          String action = intent.getAction();
-          if (ACTION_USB_PERMISSION.equals(action)) {
-            synchronized (this) {
-              UsbDevice device = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
+    // private final BroadcastReceiver usbReceiver = new BroadcastReceiver() {
+    //     public void onReceive(Context context, Intent intent) {
+
+    //         Log.d(TAG, "ON RECEIVE");
+
+    //       String action = intent.getAction();
+    //       if (ACTION_USB_PERMISSION.equals(action)) {
+    //         synchronized (this) {
+    //           UsbDevice device = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
     
-              if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)) {
-                //if (device != null) setDevice(device);
-                //else rejectConnectionPromise("E101", "Device is null");
-              }
-              else {
-                Log.d("USBCAPTURER", "permission denied for device " + device);
-                rejectConnectionPromise("E102", "Permission denied for device");
-              }
-            }
-          }
-        }
-      };
+    //           if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)) {
+    //             //if (device != null) setDevice(device);
+    //             //else rejectConnectionPromise("E101", "Device is null");
+    //           }
+    //           else {
+    //             Log.d(TAG, "permission denied for device " + device);
+    //             rejectConnectionPromise("E102", "Permission denied for device");
+    //           }
+    //         }
+    //       }
+    //     }
+    //   };
+
+    // private final BroadcastReceiver mUsbReceiver = new BroadcastReceiver() {
+    //     public void onReceive(Context context, Intent intent) {
+    //       if ("com.univet.erglassdemo.USB_PERMISSION".equals(intent.getAction()))
+    //         synchronized (this) {
+    //           UsbDevice deviceUsb = (UsbDevice) intent.getParcelableExtra("device");
+    //           if (intent.getBooleanExtra("permission", false)) {
+    //             if (deviceUsb != null) {
+    //               VisionARService.this.startConnection();
+    //               VisionARService.this.batteryManager = (BatteryManager) VisionARService.this.getApplicationContext()
+    //                   .getSystemService("batterymanager");
+    //               if (VisionARService.this.VARListener != null) {
+    //                 Log.d("VARServ", "BroadcastReceiver UsbReceiver: onConnect");
+    //                 VisionARService.this.VARListener.onConnect();
+    //               }
+    //               if (VisionARService.this.touchpadEnabledCounter > 0) {
+    //                 Log.d("VARServ", "BroadcastReceiver UsbReceiver: Restart touchpad");
+    //                 VisionARService.this.EnableTouchpad();
+    //               }
+    //             }
+    //           } else {
+    
+    //             Log.d("VARServ", "BroadcastReceiver UsbReceiver: lost serial, permission denied for device " + deviceUsb);
+    //           }
+    //         }
+    //     }
+    //   };
+
+    //   private final BroadcastReceiver mUsbAttach = new BroadcastReceiver() {
+    //     public void onReceive(Context context, Intent intent) {
+    //       synchronized (this) {
+    
+    //         if ("android.hardware.usb.action.USB_DEVICE_ATTACHED".equals(intent.getAction())) {
+    //             Log.d(TAG, "BROAD USB ATTACH!");
+    //           UsbDevice fDevice = (UsbDevice) intent.getParcelableExtra("device");
+    
+    //           if (fDevice != null && fDevice.getVendorId() == 1155 && fDevice.getProductId() == 41734) {
+    //             //VisionARService.this.device = fDevice;
+    //             mUsbManager.requestPermission(fDevice, mPermissionIntent);
+    //             Log.d(TAG, "BroadcastReceiver UsbAttach: request permission");
+    //           }
+    //         }
+    //       }
+    //     }
+    //   };
+
+    //   private final BroadcastReceiver mUsbDetach = new BroadcastReceiver() {
+    //     public void onReceive(Context context, Intent intent) {
+    //       if ("android.hardware.usb.action.USB_DEVICE_DETACHED".equals(intent.getAction())) {
+    //         if (intent.getParcelableExtra("device") != null) {
+    //           if (VisionARService.this.dCdc != null) {
+    //             VisionARService.this.dCdc.close();
+    //             VisionARService.this.dCdc = null;
+    //           }
+    //           if (VisionARService.this.dFb != null) {
+    //             VisionARService.this.dFb = null;
+    //           }
+    //           if (VisionARService.this.connection != null) {
+    //             VisionARService.this.connection.close();
+    //             VisionARService.this.connection = null;
+    //             if (VisionARService.this.VARListener != null) {
+    //               Log.d("VARServ", "BroadcastReceiver UsbDetach: onDisconnect");
+    //               VisionARService.this.VARListener.onDisconnect();
+    //             }
+    //           }
+    //         }
+    //       }
+    //     }
+    //   };
 
       private void rejectConnectionPromise(String code, String message) {
-        Log.e("USBCAPTURER", message);
+        Log.e(TAG, message);
         //connectionPromise.reject(code, message);
         //connectionPromise = null;
       }
@@ -356,7 +446,7 @@ public class UvcCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
     // this function is an heartbeat to check if glasses
     // are still connected. Normally IsConnected is true from
     // the beginning, but it became false once usb is disconnected.
-    public boolean heartBeat(String command){
+    public boolean heartBeat(/*String command*/){
         return isConnected;
     }
   
@@ -367,8 +457,8 @@ public class UvcCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
            {              
                 if(mystring.equals("command_cleardisplay"))
                 {
-                    Bitmap cleanBmp = Bitmap.createBitmap(419, 138, Bitmap.Config.ARGB_8888);                    
-                    dFb.writeImage(cleanBmp,-1,false); // write black image with no battery sign    
+                    frozenBitmap = Bitmap.createBitmap(419, 138, Bitmap.Config.ARGB_8888);                    
+                    dFb.writeImage(frozenBitmap,-1,false); // write black image with no battery sign    
                 }
                 else if(mystring.equals("command_killall")){
                    Armageddon();
@@ -385,7 +475,8 @@ public class UvcCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
       // this function delete and close all the open instances
       public void Armageddon() {
           // un-register the usbreceiver instance  
-          ((ReactApplicationContext) context).unregisterReceiver(usbReceiver);
+          //((ReactApplicationContext) context).unregisterReceiver(usbReceiver);
+          //((ReactApplicationContext) context).unregisterReceiver(mUsbAttach);
 
           // close the IMU section
           if (dCdc != null) {
@@ -398,7 +489,7 @@ public class UvcCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
           }
           // close the connection opened
           if (connection != null) {
-              Log.d("USBCAPTURER", "onDestroy: Close connection");
+              Log.d(TAG, "onDestroy: Close connection");
               connection.close();
               connection = null;
           }
@@ -408,13 +499,11 @@ public class UvcCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
       // enable / disable Display
       public void showDisplay(boolean showDisp) {
         showScreen = showDisp;
-
-            
   
           // clean display after half a second in order to simulate display off
           // after a disconnection
           if(!showDisp) {
-            Log.d("USBCAPTURER","display off!");
+            Log.d(TAG,"display off!");
             Timer mytimer = new Timer();
             mytimer.schedule(new TimerTask() {
               public void run() {
@@ -425,13 +514,13 @@ public class UvcCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
             }, 500L);
           }
           else
-          {Log.d("USBCAPTURER","display on!");}
+          {Log.d(TAG,"display on!");}
   
       }
   
       // enable / disable LoopBack Camera Feed on the display
       public void showLoopBackCamera(boolean showLoop) {
-          Log.d("USBCAPTURER","showLoopBackCamera start...");
+          Log.d(TAG,"showLoopBackCamera start...");
           showLoopBack = showLoop;
   
       }  
@@ -459,7 +548,7 @@ public class UvcCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
   
       // show a bitmap on the display
       public void showBitmap(String bitmap64) {
-          Log.d("USBCAPTURER","showBitmap start...");
+          Log.d(TAG,"showBitmap start...");
           try {
             byte[] decodedString = Base64.decode(bitmap64,0);
             frozenBitmap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
@@ -470,11 +559,6 @@ public class UvcCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
             }
           } catch (Exception e) {
             e.printStackTrace();
-          }
-  
-         
+          }       
       }  
-
-      
-
 }

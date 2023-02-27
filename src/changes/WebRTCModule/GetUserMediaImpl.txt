@@ -313,7 +313,7 @@ class GetUserMediaImpl {
         }
     }
 
-    boolean heartBeat(String command){
+    boolean heartBeat(/*String command*/){
 
         /*Log.d(TAG,"HeartBeat");
         Log.d(TAG, command);
@@ -329,7 +329,7 @@ class GetUserMediaImpl {
         }*/
 
 
-        return /*myvideoCapturer.heartBeat()*/ false;
+        return myvideoCapturer.heartBeat();
 
     }
 
