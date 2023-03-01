@@ -65,17 +65,16 @@ yarn install
 ```
 
 ## Todo:
-- Implement Device Chooser (camera and audio)...
-- test on iOS (low priority)
-- implement login (evaluate if needed!)
-- implement room choice (evaluate if needed!)
-- explore expo compilation
-- implement voice recognition with: pocketsphynx
-- implement chat with: https://github.com/FaridSafi/react-native-gifted-chat
-- (Whiteboard) implement Decals
-- evaluate possibility to remove reanimated2 dependency
-- Save usb option to the persistent memory
-- Evaluate why scannerpage crashes sometimes, maybe because it searches for back camera and   
+- [LOW] Implement Device Chooser (camera and audio)...
+- [LOW] test on iOS
+- [EVA] implement login
+- [EVA] implement room choice
+- [LOW] explore expo compilation
+- [LOW] implement voice recognition with: pocketsphynx
+- [EVA] implement chat with: https://github.com/FaridSafi/react-native-gifted-chat
+- [EVA] possibility to remove reanimated2 dependency
+- [LOW] Save usb option to the persistent memory
+- [FIX] Evaluate why scannerpage crashes sometimes, maybe because it searches for back camera and   
   not always is present
 - [FIX] First chat message is not displayed on the Univet glasses
 
@@ -126,6 +125,7 @@ yarn install
 - [FIX] clean board whenever screen sharing starts
 - [FIX] Manage audio peripherals switch automatically
 - [FIX] Clean the board if a full picture arrive
+- (Whiteboard) implement Decals
 - [FIX] Decals show base64 decode error
 - [FIX] paths dont move in sync at all, stay in place.
 - give possibility to hide miniature preview of other partecipants by touching it
@@ -193,6 +193,7 @@ yarn install
 - [FIX] Manage audio peripherals switch automatically
 
 ### Ver. 0.8.6 Beta:
+- (Whiteboard) implement Decals
 - [FIX] Clean the board if a full picture arrive
 - [FIX] Decals show base64 decode error
 
