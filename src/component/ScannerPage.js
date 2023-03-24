@@ -68,6 +68,7 @@ export function ScannerPage({ navigation }) {
 
   function onPressFunction() {
     // come back to start page
+    dispatch({ type: 'SET_CURRENTPAGE', payload: 'StartPage' });
     navigation.replace('StartPage');
   }
   /**
@@ -99,6 +100,7 @@ export function ScannerPage({ navigation }) {
         await dispatch({ type: 'SET_ROOT', payload: dec.base });
         await dispatch({ type: 'SET_ROOM', payload: dec.room });
         // come back to start page
+        dispatch({ type: 'SET_CURRENTPAGE', payload: 'StartPage' });
         navigation.replace('StartPage');
       }
       else {

@@ -86,7 +86,8 @@ export function SplashPage({ navigation }) {
         // Start counting when the page is loaded
         timeoutHandle = setTimeout(() => {
 
-           navigation.replace('StartPage');
+            dispatch({ type: 'SET_CURRENTPAGE', payload: 'StartPage' });
+            navigation.replace('StartPage');
         }, 3000);
 
         return function componentWillUnmount() {

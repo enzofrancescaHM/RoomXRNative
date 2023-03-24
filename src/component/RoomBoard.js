@@ -8,7 +8,7 @@ export function RoomBoard(props){
     const [state, dispatch] = useContext(Context);
     const mysize = 60;
     const r = mysize * 0.33;
-    const fontSize = 42;
+    const fontSize = 100;
     const font = useFont(require("../fonts/Comfortaa-Bold.ttf"), fontSize);
     const size = useValue({ width: 0, height: 0 });
     const ref = useCanvasRef();
@@ -96,6 +96,14 @@ export function RoomBoard(props){
         }        
     }, [state.path_array])
   
+    useEffect(() => {
+        console.log("text array changed!");
+        if(state.text_array.length > 0 && state.usbcamera)
+        {
+            setSomeNew(true);
+        }        
+    }, [state.text_array])
+
     return (
         <>
         <Canvas style={props.containerStyle} onSize={size} onLayout={event => { console.log(JSON.stringify(size)) }} ref={ref}>             

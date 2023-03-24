@@ -5,6 +5,7 @@ import usb from 'react-native-usb';
 import Orientation from 'react-native-orientation-locker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { mediaDevices, registerGlobals } from "react-native-webrtc";
+import { setNavigator } from "../global/navigtionRef";
 
 
 export function StartPage({ navigation }) {
@@ -76,12 +77,14 @@ export function StartPage({ navigation }) {
 
     }
     else {
+      dispatch({ type: 'SET_CURRENTPAGE', payload: 'MainPage' });
       navigation.replace('MainPage');
     }
 
   }
 
   function scannergo() {
+    dispatch({ type: 'SET_CURRENTPAGE', payload: 'ScannerPage' });
     navigation.replace('ScannerPage');
   }
 
@@ -109,6 +112,8 @@ export function StartPage({ navigation }) {
     const room = getRoomValue();
     const root = getRootValue();
 
+    //setNavigator(navigation);
+
     console.log('00.1 ----> registerGlobals');
     registerGlobals();
     console.log('01 ----> init Enumerate Devices');
@@ -125,7 +130,7 @@ export function StartPage({ navigation }) {
       if(usbIsEnabled == true)
       {
         console.log("component mount usb permission");
-        requireUSBPermissions();
+        //requireUSBPermissions();
       }
         
 

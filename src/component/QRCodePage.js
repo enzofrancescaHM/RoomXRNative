@@ -14,6 +14,7 @@ export function QRCodePage({ navigation }) {
 
     function onPressFunction() {
         // come back to start page
+        dispatch({ type: 'SET_CURRENTPAGE', payload: 'StartPage' });
         navigation.replace('StartPage');
     }
 

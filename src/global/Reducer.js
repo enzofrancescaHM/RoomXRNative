@@ -146,7 +146,19 @@ const Reducer = (state, action) => {
                     
                     if(action.payload.action == "delete")
                     {
-                        var mypath = Skia.Path.MakeFromSVGString(path.path);
+                        const mypath = Skia.Path.Make();
+                        mypath.moveTo(128, 0);
+                        mypath.lineTo(168, 80);
+                        mypath.lineTo(256, 93);
+                        mypath.lineTo(192, 155);
+                        mypath.lineTo(207, 244);
+                        mypath.lineTo(128, 202);
+                        mypath.lineTo(49, 244);
+                        mypath.lineTo(64, 155);
+                        mypath.lineTo(0, 93);
+                        mypath.lineTo(88, 80);
+                        mypath.lineTo(128, 0);
+                        mypath.close();
                     
                         var myoffsetx = action.payload.target.left - action.payload.lastleft;
                         var myoffsety = action.payload.target.top - action.payload.lasttop;
@@ -172,7 +184,21 @@ const Reducer = (state, action) => {
                         var myoffsetx = action.payload.target.left - action.payload.lastleft;
                         var myoffsety = action.payload.target.top - action.payload.lasttop;
 
-                        mypath.offset(myoffsetx, myoffsety);
+                        
+/*
+                            const m = Skia.Matrix()
+                            m.scale(action.payload.origobj.scaleX,action.payload.origobj.scaleY);
+                            
+                            
+                            mypath.transform(m);
+  */  
+
+
+
+                        mypath.offset(myoffsetx / action.payload.origobj.scaleX, myoffsety / action.payload.origobj.scaleY);
+                        
+
+                        
                         
                         path.path = mypath;
 
@@ -201,6 +227,11 @@ const Reducer = (state, action) => {
                 {
                     ellipse.x = action.payload.target.left;
                     ellipse.y = action.payload.target.top;
+
+                    if(action.payload.transform.action == "scale"){
+                        ellipse.width = ellipse.width * action.payload.origobj.scaleX;
+                        ellipse.height = ellipse.height * action.payload.origobj.scaleY;    
+                    }
                     //image.angle = action.payload.target.angle;                    
                 }
             });
@@ -226,6 +257,12 @@ const Reducer = (state, action) => {
                 {
                     rect.x = action.payload.target.left;
                     rect.y = action.payload.target.top;
+                    
+                    rect.width = rect.width * action.payload.origobj.scaleX;
+                    rect.height = rect.height * action.payload.origobj.scaleY;
+
+                    //rect = action.payload.origobj;
+
                     //image.angle = action.payload.target.angle;                    
                 }
             });
@@ -257,14 +294,14 @@ const Reducer = (state, action) => {
                     {
                         myx1 = action.payload.target.left;
                         myy1 = action.payload.target.top;
-                        myx2 = action.payload.target.left + action.payload.target.width;
-                        myy2 = action.payload.target.top + action.payload.target.height;
+                        myx2 = action.payload.target.left + action.payload.target.width * action.payload.origobj.scaleX;
+                        myy2 = action.payload.target.top + action.payload.target.height * action.payload.origobj.scaleY;
                     }
                     else // this case is the following slope: \
                     {
                         myx1 = action.payload.target.left;
-                        myy1 = action.payload.target.top + action.payload.target.height;
-                        myx2 = action.payload.target.left + action.payload.target.width;
+                        myy1 = action.payload.target.top + action.payload.target.height * action.payload.origobj.scaleY;
+                        myx2 = action.payload.target.left + action.payload.target.width * action.payload.origobj.scaleX;
                         myy2 = action.payload.target.top;
                     }
                     
@@ -322,6 +359,9 @@ const Reducer = (state, action) => {
                 {
                     image.x = action.payload.target.left;
                     image.y = action.payload.target.top;
+                    image.scalex = action.payload.origobj.scaleX;
+                    image.scaley = action.payload.origobj.scaleY;
+
                     //image.angle = action.payload.target.angle;                    
                 }
             });
@@ -397,8 +437,18 @@ const Reducer = (state, action) => {
                 ...state,
                 usbcamera_ready: action.payload
             };
+        case 'SET_CURRENTPAGE':
+            return{
+                ...state,
+                current_page: action.payload
+            };
       
-    
+        case 'SET_EJECTED':
+            return{
+                ...state,
+                ejected: action.payload
+            };
+            
         
         default:
             return state;

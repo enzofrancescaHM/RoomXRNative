@@ -3,7 +3,7 @@ import Reducer from './Reducer'
 
 
 const initialState = {
-    app_ver: "0.8.7 beta",
+    app_ver: "0.8.8 beta",
     root_address:"empty",
     room_id: "empty",
     peer_name: "empty",
@@ -59,6 +59,8 @@ const initialState = {
     mic_array: [],
     speaker_array: [],
     cam_array: [],
+    current_page: "StartPage",
+    ejected: false,
 
 };
 

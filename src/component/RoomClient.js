@@ -19,7 +19,7 @@ let sendProgress = "sendProgress";
 let sendFilePercentage = "sendFilePercentage";
 let receiveFilePercentage = "receiveFilePercentage";
 
-function RoomClient() {
+function RoomClient({ navigation }) {
 
     useEffect(function componentDidMount() {
         //console.log("%c [RoomClientComp] componetDidMount", "color:green;");
@@ -544,7 +544,7 @@ function RoomClient() {
             'wbModify',
             function(data) {
                 console.log('[RoomClientComp] Received whiteboard modify JSON');
-                //console.log(data);
+                console.log(data);
                 var serialized = JSON.parse(data);
                 DecodeSingleModify(serialized);
             }.bind(this),
@@ -628,6 +628,15 @@ function RoomClient() {
                 //this.exit(true);
             }.bind(this),
         );
+
+        socket.on(
+            'cmd',
+            function (data) {
+                console.log("cmd received...");
+                handleCMD(data)                            
+
+            }.bind(this),
+        );
     }
 
     function convertWidth(oldx){
@@ -637,6 +646,20 @@ function RoomClient() {
         return myx;
     }
 
+    function handleCMD(data){
+        const words = data.split('|');
+        let cmd = words[0];
+        switch (cmd) {
+            case 'chat':
+                if(words[1] == 'clear')
+                {
+                    // clear chat because of remote deletion...
+                    dispatch({ type: 'CLEAR_CHAT', payload: true });
+                }
+                break;
+            //...
+        }
+    }
 
     function whiteboardAction(data, emit){
         if(emit == true)
@@ -2131,14 +2154,22 @@ function removeVideoOff(peer_id) {
         } else {
             switch (action) {
                 case 'eject':
-                    if (mpeer_id === state.peer_id || broadcast) {
+                    console.log(mpeer_id);
+                    console.log(socket.id);
+
+                    if (mpeer_id === socket.id || broadcast) {
                         //this.sound(action);
 
                         //this.peerActionProgress(from_peer_name, 'Will eject you from the room', 5000, action);
+                        console.log("frengo: " + state.current_page);
+                        dispatch({ type: 'SET_EJECTED', payload: true });
+                        //navigation.replace('StartPage');
+
+
                     }
                     break;
                 case 'mute':
-                    if (mpeer_id === state.peer_id || broadcast) {
+                    if (mpeer_id === socket.id || broadcast) {
                         closeProducer(mediaType.audio);
                         //this.updatePeerInfo(this.peer_name, this.peer_id, 'audio', false);
                         /* this.userLog(
@@ -2150,7 +2181,7 @@ function removeVideoOff(peer_id) {
                     }
                     break;
                 case 'hide':
-                    if (mpeer_id === state.peer_id || broadcast) {
+                    if (mpeer_id === socket.id || broadcast) {
                         closeProducer(mediaType.video);
                         /*this.userLog(
                             'warning',

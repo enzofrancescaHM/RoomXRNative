@@ -10,8 +10,9 @@ import RoomClient from "./RoomClient";
 import Orientation from 'react-native-orientation-locker';
 import { RoomBoard } from "./RoomBoard";
 import QRCode from "react-native-qrcode-svg";
+import { setNavigator, getCurrentRoute } from "../global/navigtionRef";
 
-export function MainPage({ navigation }) {
+export function MainPage({ navigation, route }) {
     
     const mounted = useRef()
     const [debugTest, setDebugTest] = useState("---");
@@ -30,6 +31,8 @@ export function MainPage({ navigation }) {
     const imageClean = require("../images/trash.png");
     const imageAR = require("../images/ar.png");
     const imageLoop = require("../images/loopcamera.png");
+    const imageARON = require("../images/arON.png");
+    const imageLoopON = require("../images/loopcameraON.png");
 
 
     const [qrvalue, setQrvalue] = useState('');
@@ -53,6 +56,8 @@ export function MainPage({ navigation }) {
 
         StatusBar.setHidden(true, 'none');
         Orientation.lockToLandscapeLeft();
+
+       
 
         dispatch({ type: 'SET_MEDIASOUPCLIENT', payload: mediasoupClient });
 
@@ -96,6 +101,21 @@ export function MainPage({ navigation }) {
         return true;
     }
 
+    useEffect(() => {
+        if(state.ejected == true)
+        {
+            console.log("disconnected!");
+            //const {index, routes} = navigation.dangerouslyGetState();
+            //const currentRoute = getCurrentRoute();
+            console.log('current screen', state.current_page);
+            //console.log(route.name);
+            //if (state.current_page == 'MainPage'){
+                dispatch({ type: 'SET_EJECTED', payload: 'false' });
+                navigation.replace('StartPage');    
+            //}
+        }
+    }, [state.ejected])
+
     async function invokeDisconnect() {
         //if(timerID != 1234)
            // clearInterval(timerID);
@@ -103,7 +123,7 @@ export function MainPage({ navigation }) {
         dispatch({ type: 'SET_CONNECTED', payload: false });
 
 
-
+        dispatch({ type: 'SET_CURRENTPAGE', payload: 'StartPage' });
         navigation.replace('StartPage');
 
     }
@@ -187,6 +207,10 @@ export function MainPage({ navigation }) {
 
 
     function switchCamera() {
+        // first safe mechanism
+        if(state.localstream == "empty")
+            return;
+
         state.localstream.getVideoTracks().forEach((track) => {
             console.log('sc', track);
             track._switchCamera();
@@ -741,7 +765,7 @@ export function MainPage({ navigation }) {
                     activeOpacity={0.9}
                     onPress={toggleDisplay}>
                     <Image
-                        source={imageAR}
+                        source={displayVisible ? imageARON : imageAR}
                         style={styles.buttonImageIconStyle}
                     />
                 </TouchableOpacity>
@@ -752,7 +776,7 @@ export function MainPage({ navigation }) {
                     activeOpacity={0.9}
                     onPress={toggleLoopBack}>
                     <Image
-                        source={imageLoop}
+                        source={loopVisible ? imageLoopON : imageLoop}
                         style={styles.buttonImageIconStyle}
                     />
                 </TouchableOpacity>

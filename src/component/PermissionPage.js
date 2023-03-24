@@ -4,6 +4,7 @@ import { ImageRequireSource, Linking } from 'react-native';
 import { StyleSheet, View, Text, Image } from 'react-native';
 import { Camera, CameraPermissionStatus } from 'react-native-vision-camera';
 import { CONTENT_SPACING, SAFE_AREA_PADDING } from '../global/constants';
+import { Context } from '../global/Store';
 //import type { Routes } from './Routes';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -13,6 +14,7 @@ const BANNER_IMAGE = require('../images/11.png');
 export function PermissionsPage({ navigation }) {
   const [cameraPermissionStatus, setCameraPermissionStatus] = useState('not-determined');
   const [microphonePermissionStatus, setMicrophonePermissionStatus] = useState('not-determined');
+  const [state, dispatch] = useContext(Context);
 
   const requestMicrophonePermission = useCallback(async () => {
     console.log('Requesting microphone permission...');
@@ -33,7 +35,8 @@ export function PermissionsPage({ navigation }) {
   }, []);
 
   useEffect(() => {
-    if (cameraPermissionStatus === 'authorized' && microphonePermissionStatus === 'authorized') navigation.replace('SplashPage');
+    if (cameraPermissionStatus === 'authorized' && microphonePermissionStatus === 'authorized') 
+    { dispatch({ type: 'SET_CURRENTPAGE', payload: 'StartPage' }); navigation.replace('SplashPage');}
   }, [cameraPermissionStatus, microphonePermissionStatus, navigation]);
 
   return (

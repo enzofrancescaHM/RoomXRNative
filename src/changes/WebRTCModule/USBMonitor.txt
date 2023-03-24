@@ -396,7 +396,16 @@
       * @return hasPermission
       */
      private boolean updatePermission(final UsbDevice device, final boolean hasPermission) {
-         final int deviceKey = getDeviceKey(device, true);
+        int deviceKey = 0;
+         
+         
+        try { 
+            deviceKey = getDeviceKey(device, true);
+        } catch (SecurityException e) { 
+            return false;
+        }
+         
+         
          synchronized (mHasPermissions) {
              if (hasPermission) {
                  if (mHasPermissions.get(deviceKey) == null) {
