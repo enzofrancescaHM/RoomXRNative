@@ -11,6 +11,8 @@ import Orientation from 'react-native-orientation-locker';
 import { RoomBoard } from "./RoomBoard";
 import QRCode from "react-native-qrcode-svg";
 import { setNavigator, getCurrentRoute } from "../global/navigtionRef";
+import KeepAwake from "@sayem314/react-native-keep-awake";
+
 
 export function MainPage({ navigation, route }) {
     
@@ -638,6 +640,7 @@ export function MainPage({ navigation, route }) {
 
     return (
         <>
+            <KeepAwake />
             <View style={styles.headerContainer}>
             </View>
             <View style={styles.debugContainer}>

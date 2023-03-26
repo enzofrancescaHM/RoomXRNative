@@ -39,4 +39,5 @@ copy .\src\changes\WebRTCModule\USBMonitor.txt .\node_modules\react-native-webrt
 copy .\src\changes\WebRTCModule\UsbUtils.txt .\node_modules\react-native-webrtc\android\src\main\java\com\oney\WebRTCModule\UsbUtils.java
 copy .\src\changes\WebRTCModule\UsbVendorId.txt .\node_modules\react-native-webrtc\android\src\main\java\com\oney\WebRTCModule\UsbVendorId.java
 copy .\src\changes\WebRTCModule\XmlHelper.txt .\node_modules\react-native-webrtc\android\src\main\java\com\oney\WebRTCModule\XmlHelper.java
+copy .\src\changes\WebRTCModule\BuildCheck.txt .\node_modules\react-native-webrtc\android\src\main\java\com\oney\WebRTCModule\BuildCheck.java 
 REM FINISHED!

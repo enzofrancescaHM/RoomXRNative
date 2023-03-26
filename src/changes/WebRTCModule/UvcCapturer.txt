@@ -54,6 +54,8 @@ import android.graphics.Paint;
 import android.graphics.Canvas;
 import android.graphics.Color;
 
+import android.os.BatteryManager;
+
 
 public class UvcCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectListener {
 
@@ -92,6 +94,7 @@ public class UvcCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
     private static final int USB_PRODUCT_ID = 41734;
 
     private PendingIntent mPermissionIntent;
+    private Intent batteryStatus;
     
 
     CameraUvcStrategy mUvcStrategy; // From Jiang Dongguo's AUSBC library
@@ -132,7 +135,10 @@ public class UvcCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
                 //((ReactApplicationContext)context).registerReceiver(mUsbAttach, new IntentFilter("android.hardware.usb.action.USB_DEVICE_ATTACHED"));
                 //registerReceiver(this.mUsbReceiver, new IntentFilter("com.univet.erglassdemo.USB_PERMISSION"));
 
-                Log.d(TAG, "Initialize 05");
+                Log.d(TAG, "Initialize BatteryManager");
+
+                IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
+                batteryStatus = context.registerReceiver(null, ifilter);
 
             }
         });
@@ -453,6 +459,12 @@ public class UvcCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
     // are still connected. Normally IsConnected is true from
     // the beginning, but it became false once usb is disconnected.
     public boolean heartBeat(/*String command*/){
+        // meanwhile we read also the battery status
+        int level = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
+        int scale = batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
+        float batteryPct = level * 100 / (float)scale;
+        Log.d(TAG,String.format("BATTERY: %f / 100 ", batteryPct));
+        
         return isConnected;
     }
   

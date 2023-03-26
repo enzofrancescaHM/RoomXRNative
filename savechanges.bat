@@ -39,4 +39,6 @@ copy .\node_modules\react-native-webrtc\android\src\main\java\com\oney\WebRTCMod
 copy .\node_modules\react-native-webrtc\android\src\main\java\com\oney\WebRTCModule\UsbUtils.java .\src\changes\WebRTCModule\UsbUtils.txt
 copy .\node_modules\react-native-webrtc\android\src\main\java\com\oney\WebRTCModule\UsbVendorId.java .\src\changes\WebRTCModule\UsbVendorId.txt
 copy .\node_modules\react-native-webrtc\android\src\main\java\com\oney\WebRTCModule\XmlHelper.java .\src\changes\WebRTCModule\XmlHelper.txt
+copy .\node_modules\react-native-webrtc\android\src\main\java\com\oney\WebRTCModule\BuildCheck.java .\src\changes\WebRTCModule\BuildCheck.txt
+
 REM FINISHED!
