@@ -79,10 +79,12 @@ public class UvcCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
     private Context context;
     private boolean showLoopBack = false; // disabled at start
     private boolean pointerShow = false; // disabled at start
+    private boolean chatShow = false;
     private boolean showScreen = true; // enabled at start
     private int pointerX = 200;
     private int pointerY = 100;
     private Bitmap frozenBitmap = null; // this is the last frame from video feed (for pointer and other things)
+    private Bitmap chatBitmap = null;
     boolean isConnected = true; // this variable become false only when usb is disconnected...
 
     private static final String ACTION_USB_PERMISSION = "Capturer.USB_PERMISSION";
@@ -193,6 +195,10 @@ public class UvcCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
                             if(pointerShow)
                             {                  
                                 dFb.writeImagePointer(frozenBitmap,pointerX,pointerY, false);
+                            }
+                            else if(chatShow)
+                            {
+                                dFb.writeImage(chatBitmap,0,false);   
                             }
                             else{
                                 dFb.writeImage(frozenBitmap,0,false);
@@ -464,9 +470,11 @@ public class UvcCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
                    Armageddon();
                 }
                 else{
-                    Bitmap createBitmap = UnivetUtils.TextToBitmap(mystring);
-                    if(showScreen)
-                      dFb.writeImage(createBitmap,0,false);      
+                    chatShow = true;
+                    pointerShow = false;
+                    chatBitmap = UnivetUtils.TextToBitmap(mystring);
+                    //if(showScreen)
+                      dFb.writeImage(chatBitmap,0,false);      
                 }
             
            }                                    
@@ -554,7 +562,9 @@ public class UvcCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
             frozenBitmap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
             if(dFb != null)
             {
-              if(showScreen)  
+              //if(showScreen)  
+              chatShow = false;
+                    pointerShow = false;
                 dFb.writeImage(frozenBitmap,0,false);
             }
           } catch (Exception e) {
