@@ -230,6 +230,11 @@ export function MainPage({ navigation, route }) {
 
     function cleanChat(){
         dispatch({ type: 'CLEAR_CHAT', payload: true });
+        if(state.usbcamera){
+            //mediaDevices.showLoopBackCamera(false);
+            //mediaDevices.showPointer("false,50,50");
+            mediaDevices.showTextMessage("command_clearchat"); // this clears also the chat on the glasses
+        }
         // TEST
         //mediaDevices.showPointer("false,200,150");
     }

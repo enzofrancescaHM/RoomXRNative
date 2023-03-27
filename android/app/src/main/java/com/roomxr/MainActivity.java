@@ -10,6 +10,12 @@ import android.content.res.Configuration;
 public class MainActivity extends ReactActivity {
 
   @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    setTheme(R.style.AppTheme);
+    super.onCreate(null);
+  }
+
+  @Override
   public void onConfigurationChanged(Configuration newConfig) {
     super.onConfigurationChanged(newConfig);
     Intent intent = new Intent("onConfigurationChanged");
@@ -57,8 +63,8 @@ public class MainActivity extends ReactActivity {
     }
 
     @Override
-protected void onCreate(Bundle savedInstanceState) {
-  super.onCreate(null);
-}
+    protected void onCreate(Bundle savedInstanceState) {      
+      super.onCreate(null);
+    }
   }
 }

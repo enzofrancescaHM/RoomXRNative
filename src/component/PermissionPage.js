@@ -1,5 +1,5 @@
 //import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState, useContext } from 'react';
 import { ImageRequireSource, Linking } from 'react-native';
 import { StyleSheet, View, Text, Image } from 'react-native';
 import { Camera, CameraPermissionStatus } from 'react-native-vision-camera';
