@@ -276,6 +276,8 @@ public class UvcCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
                                 if (dFb == null) {
                                     dFb = new DeviceFb(connection, device);
 
+                                    getBatteryStatus();
+
                                     Bitmap createBitmap = UnivetUtils.TextToBitmap("Univet - Holomask");
 
                                     dFb.writeImage(createBitmap,batteryPct,false);
@@ -452,6 +454,13 @@ public class UvcCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
                 .create();
     }
 
+    public void getBatteryStatus(){
+        int level = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
+        int scale = batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
+        float tempb = level * 100 / (float)scale; 
+        batteryPct = (int) tempb;
+    }
+
     ///////////////////////////////////////////////
     //        External Functions                 //
     ///////////////////////////////////////////////
@@ -461,10 +470,7 @@ public class UvcCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
     // the beginning, but it became false once usb is disconnected.
     public boolean heartBeat(/*String command*/){
         // meanwhile we read also the battery status
-        int level = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
-        int scale = batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
-        float tempb = level * 100 / (float)scale; 
-        batteryPct = (int) tempb;
+        getBatteryStatus();
         Log.d(TAG,String.format("BATTERY: %d / 100 ", batteryPct));
         
         return isConnected;
@@ -481,7 +487,7 @@ public class UvcCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
                     chatBitmap = Bitmap.createBitmap(419, 138, Bitmap.Config.ARGB_8888);    
                     chatShow = false;
                     pointerShow = false;           
-                    dFb.writeImage(frozenBitmap,batteryPct,false); 
+                    dFb.writeImage(frozenBitmap,-1,false); 
                      
                 }
                 else if(mystring.equals("command_killall")){
