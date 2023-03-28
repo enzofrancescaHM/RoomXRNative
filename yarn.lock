@@ -1331,15 +1331,15 @@
   resolved "https://registry.yarnpkg.com/@sayem314/react-native-keep-awake/-/react-native-keep-awake-1.1.0.tgz#852f9f8481c0ab38a54d6f0b85324f3024eb6031"
   integrity sha512-1k57PXJIfhZrjA4ZQr+goTEYer8MBhe1At6XjVYJq1oBuhG/CIu0gX1EH9fU9exC65e5uDs/zAwjl6Ps+3lCgg==
 
-"@shopify/react-native-skia@^0.1.165":
-  version "0.1.169"
-  resolved "https://registry.yarnpkg.com/@shopify/react-native-skia/-/react-native-skia-0.1.169.tgz#8d60e1eabc3815ba44f8d7a93aad1bfedbf2707c"
-  integrity sha512-QRZVHDbacGvhoj6+VHPet9rok2s+eRkliIopwUOciQWg/qQNd8W/ZrEnL+Yj6MCNAFhMuN+Ug+RdLmcqsL9Yow==
+"@shopify/react-native-skia@^0.1.180":
+  version "0.1.180"
+  resolved "https://registry.yarnpkg.com/@shopify/react-native-skia/-/react-native-skia-0.1.180.tgz#09ead4151ebe9a6662fe05d7307fef7fa294aa48"
+  integrity sha512-dqUK40Eh17GzIYYpPIZeydqiHDZmwNx4F62sewZbG7oax9LZh0Eisocwbq4coPKbTEZrmWnThTRNkuQVH66n/g==
   dependencies:
     "@types/pixelmatch" "^5.2.4"
     "@types/pngjs" "^6.0.1"
     "@types/ws" "^8.5.3"
-    canvaskit-wasm "0.36.1"
+    canvaskit-wasm "0.38.0"
     pixelmatch "^5.3.0"
     pngjs "^6.0.0"
     react-reconciler "^0.27.0"
@@ -2174,10 +2174,10 @@ caniuse-lite@^1.0.30001400:
   resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001441.tgz#987437b266260b640a23cd18fbddb509d7f69f3e"
   integrity sha512-OyxRR4Vof59I3yGWXws6i908EtGbMzVUi3ganaZQHmydk1iwDhRnvaPG2WaR0KcqrDFKrxVZHULT396LEPhXfg==
 
-canvaskit-wasm@0.36.1:
-  version "0.36.1"
-  resolved "https://registry.yarnpkg.com/canvaskit-wasm/-/canvaskit-wasm-0.36.1.tgz#341df38ce7894a925064beaf9eeacbf7699c6633"
-  integrity sha512-6IHlBBc9zDQBTHiGuz4Rf0j/P/ulW24q/yW+QY517e7jwQoM0nJ1+L3h4wUpfC4eQrcpVPQY8ZFbqMbUCzDxTw==
+canvaskit-wasm@0.38.0:
+  version "0.38.0"
+  resolved "https://registry.yarnpkg.com/canvaskit-wasm/-/canvaskit-wasm-0.38.0.tgz#83e6c46f3015c2ff3f6503157f47453af76a7be7"
+  integrity sha512-ZEG6lucpbQ4Ld+mY8C1Ng+PMLVP+/AX02jS0Sdl28NyMxuKSa9uKB8oGd1BYp1XWPyO2Jgr7U8pdyjJ/F3xR5Q==
 
 capture-exit@^2.0.0:
   version "2.0.0"
