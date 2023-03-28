@@ -397,6 +397,20 @@ export function MainPage({ navigation, route }) {
             //marginLeft: 5,
             padding: 5
         },
+        textLobbyOn: {
+            color: "white",
+            fontSize: state.real_height / 10,
+            position: "absolute",
+            left: 20,
+            top: state.real_height / 4,
+        },
+        textLobbyOff: {
+            color: "#00000000",
+            fontSize: state.real_height / 10,
+            position: "absolute",
+            left: 20,
+            top: state.real_height / 4,
+        },
         textDebugOn: {
             color: "white"
         },
@@ -652,16 +666,20 @@ export function MainPage({ navigation, route }) {
             <View style={styles.headerContainer}>
             </View>
             <View style={styles.debugContainer}>
+                <Text style={state.lobby ? styles.textLobbyOn : styles.textLobbyOff}>
+                    {"You are in the Lobby, waiting for approval..."}
+                </Text>
+
                 <Text style={debugIsEnabled ? styles.textDebugOn : styles.textDebugOff}>
                     {debugTest}
                 </Text>
-                <Text style={debugIsEnabled ? styles.textDebugOn : styles.textDebugOff}>
+                {/* <Text style={debugIsEnabled ? styles.textDebugOn : styles.textDebugOff}>
                     {state.localstream == "empty" ? "Local Stream: empty" : "Local Stream: " + state.localstream.toURL()} {"\n"}
                     {state.remotestream == "empty" ? "Remote Stream: empty" : "Remote Stream: " + state.remotestream.toURL()} {"\n"}
                     {state.screenstream == "empty" ? "Screen Stream: empty" : "Screen Stream: " + state.screenstream.toURL()} {"\n"}
                     {state.remotestreamid == "empty" ? "Remote Stream ID: empty" : "Remote Stream ID: " + state.remotestreamid} {"\n"}
                     {state.screenstreamid == "empty" ? "Screen Stream ID: empty" : "Screen Stream ID: " + state.screenstreamid}
-                </Text>
+                </Text> */}
                 {state.connected ? <RoomClient></RoomClient> : <Text style={styles.textDebugOn}>Room disconnected...</Text>}
                 {(state.chat_array.length > 0) &&
                     <ScrollView
@@ -673,6 +691,10 @@ export function MainPage({ navigation, route }) {
                         <Text style={styles.chatText}>{state.chat_array}</Text>
                     </ScrollView>
                 }
+                <Text style={state.lobby ? styles.textLobbyOn : styles.textLobbyOff}>
+                    {"You are in the Lobby, waiting for approval..."}
+                </Text>
+
             </View>
             <View style={styles.bottomContainer}>
             </View>

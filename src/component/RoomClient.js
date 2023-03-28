@@ -183,6 +183,13 @@ function RoomClient({ navigation }) {
                         console.log('00-WARNING ----> Room is Locked, Try to unlock by the password');
                         this.unlockTheRoom();
                         return;*/
+                        dispatch({ type: 'SET_LOCAL_STREAM', payload: "empty"});
+                        dispatch({ type: 'SET_EJECTED', payload: true });
+                        return;
+                    }
+                    if (room === 'isLobby'){
+                        dispatch({ type: 'SET_LOBBY', payload: true });
+                        return;
                     }
                     console.log("[RoomClientComp] 06b ----> joinrequest");
 
@@ -205,6 +212,24 @@ function RoomClient({ navigation }) {
         startLocalMedia();
         //console.log('07.02 ----> Start Local Media done!');
         socket.emit('getProducers');
+    }
+
+
+    // lobby and password section
+    function roomLobby(data){
+        switch (data.lobby_status) {
+            case 'waiting':
+                break;
+            case 'accept':
+                dispatch({ type: 'SET_LOBBY', payload: false });
+                joinAllowed(data.room);
+                break;
+            case 'reject':
+                dispatch({ type: 'SET_LOCAL_STREAM', payload: "empty"});
+                
+                dispatch({ type: 'SET_EJECTED', payload: true });
+                break;
+        }
     }
 
     
@@ -466,7 +491,7 @@ function RoomClient({ navigation }) {
             'roomLobby',
             function (data) {
                 console.log('Room lobby:', data);
-                //this.roomLobby(data);
+                roomLobby(data);
             }.bind(this),
         );
         socket.on(
@@ -1802,7 +1827,7 @@ function RoomClient({ navigation }) {
         console.log("[RoomClientComp] screen stream NULLIFIED!");
         dispatch({ type: 'SET_SCREEN_STREAM', payload: "empty" });
         dispatch({ type: 'SET_SCREEN_STREAM_ID', payload: "empty" });
-        dispatch({ type: 'SET_LOCAL_STREAM', payload: this.localVideoStream});
+        dispatch({ type: 'SET_LOCAL_STREAM', payload: "empty"});
         this.screenConsumerId = "empty";
         this.screenVideoStream = null;
         
@@ -2045,8 +2070,12 @@ function removeVideoOff(peer_id) {
 
         const data = await socket.request('exitRoom');
         this._isConnected = false;
-        this.consumerTransport.close();
-        this.producerTransport.close();
+        
+        if(this.consumerTransport)
+            this.consumerTransport.close();
+        if(this.producerTransport)    
+            this.producerTransport.close();
+
         cleanConsumers();
         socket.disconnect();
         // disable display and clear image on the screen if any

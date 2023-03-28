@@ -448,7 +448,12 @@ const Reducer = (state, action) => {
                 ...state,
                 ejected: action.payload
             };
-            
+        case 'SET_LOBBY':
+            return{
+                ...state,
+                lobby: action.payload
+            };
+                
         
         default:
             return state;

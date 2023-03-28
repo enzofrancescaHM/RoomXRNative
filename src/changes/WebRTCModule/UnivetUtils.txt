@@ -24,7 +24,7 @@ public class UnivetUtils
         Canvas canvas = new Canvas(bitmap);
         TextPaint paint = new TextPaint(1);
         paint.setColor(Color.rgb(255, 255, 255));
-        paint.setTextSize(44.0F);
+        paint.setTextSize(54.0F);
         paint.setShadowLayer(1.0F, 0.0F, 1.0F, -1);
         paint.setTypeface(Typeface.MONOSPACE);
         int textWidth = canvas.getWidth() - 44;
