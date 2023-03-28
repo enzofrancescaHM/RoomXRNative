@@ -121,6 +121,9 @@ export function MainPage({ navigation, route }) {
     async function invokeDisconnect() {
         //if(timerID != 1234)
            // clearInterval(timerID);
+        if(state.usbcamera){
+            mediaDevices.showTextMessage("command_disconnect");
+        }
         
         dispatch({ type: 'SET_CONNECTED', payload: false });
 

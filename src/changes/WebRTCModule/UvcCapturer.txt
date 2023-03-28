@@ -95,6 +95,7 @@ public class UvcCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
 
     private PendingIntent mPermissionIntent;
     private Intent batteryStatus;
+    int batteryPct = 100;
     
 
     CameraUvcStrategy mUvcStrategy; // From Jiang Dongguo's AUSBC library
@@ -194,7 +195,7 @@ public class UvcCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
                         if(showLoopBack)
                         {
                             frozenBitmap = BitmapFactory.decodeByteArray(jpegByteArray, 0, jpegByteArray.length);
-                            dFb.writeImage(frozenBitmap,0,false);
+                            dFb.writeImage(frozenBitmap,batteryPct,false);
                         }
                         else
                         {
@@ -204,10 +205,10 @@ public class UvcCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
                             }
                             else if(chatShow)
                             {
-                                dFb.writeImage(chatBitmap,0,false);   
+                                dFb.writeImage(chatBitmap,batteryPct,false);   
                             }
                             else{
-                                dFb.writeImage(frozenBitmap,0,false);
+                                dFb.writeImage(frozenBitmap,batteryPct,false);
                             }
                         }                
                     }
@@ -277,7 +278,7 @@ public class UvcCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
 
                                     Bitmap createBitmap = UnivetUtils.TextToBitmap("Univet - Holomask");
 
-                                    dFb.writeImage(createBitmap,0,false);
+                                    dFb.writeImage(createBitmap,batteryPct,false);
                                 }
 
                                 // Initialize Univet IMU and Touch Peripherals
@@ -462,8 +463,9 @@ public class UvcCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
         // meanwhile we read also the battery status
         int level = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
         int scale = batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
-        float batteryPct = level * 100 / (float)scale;
-        Log.d(TAG,String.format("BATTERY: %f / 100 ", batteryPct));
+        float tempb = level * 100 / (float)scale; 
+        batteryPct = (int) tempb;
+        Log.d(TAG,String.format("BATTERY: %d / 100 ", batteryPct));
         
         return isConnected;
     }
@@ -475,18 +477,32 @@ public class UvcCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
            {              
                 if(mystring.equals("command_cleardisplay"))
                 {
-                    frozenBitmap = Bitmap.createBitmap(419, 138, Bitmap.Config.ARGB_8888);                    
-                    dFb.writeImage(frozenBitmap,-1,false); // write black image with no battery sign    
+                    frozenBitmap = Bitmap.createBitmap(419, 138, Bitmap.Config.ARGB_8888);    
+                    chatBitmap = Bitmap.createBitmap(419, 138, Bitmap.Config.ARGB_8888);    
+                    chatShow = false;
+                    pointerShow = false;           
+                    dFb.writeImage(frozenBitmap,batteryPct,false); 
+                     
                 }
                 else if(mystring.equals("command_killall")){
                    Armageddon();
+                }
+                else if(mystring.equals("command_clearchat")){
+                    chatShow = true;
+                    pointerShow = false;
+                    chatBitmap = Bitmap.createBitmap(419, 138, Bitmap.Config.ARGB_8888);
+                    dFb.writeImage(chatBitmap,batteryPct,false); 
+                }
+                else if(mystring.equals("command_disconnect")){
+                    frozenBitmap = Bitmap.createBitmap(419, 138, Bitmap.Config.ARGB_8888);                    
+                    dFb.writeImage(frozenBitmap,batteryPct,false);
                 }
                 else{
                     chatShow = true;
                     pointerShow = false;
                     chatBitmap = UnivetUtils.TextToBitmap(mystring);
                     //if(showScreen)
-                      dFb.writeImage(chatBitmap,0,false);      
+                      dFb.writeImage(chatBitmap,batteryPct,false);      
                 }
             
            }                                    
@@ -529,7 +545,7 @@ public class UvcCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
               public void run() {
                   Bitmap cleanBmp = Bitmap.createBitmap(419, 138, Bitmap.Config.ARGB_8888);
                   if(dFb != null)
-                    dFb.writeImage(cleanBmp,-1,false); // write black image with no battery sign    
+                    dFb.writeImage(cleanBmp,batteryPct,false); // write black image with no battery sign    
               }
             }, 500L);
           }
@@ -577,7 +593,7 @@ public class UvcCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
               //if(showScreen)  
               chatShow = false;
                     pointerShow = false;
-                dFb.writeImage(frozenBitmap,0,false);
+                dFb.writeImage(frozenBitmap,batteryPct,false);
             }
           } catch (Exception e) {
             e.printStackTrace();

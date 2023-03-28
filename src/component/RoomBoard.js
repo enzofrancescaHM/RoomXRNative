@@ -135,7 +135,10 @@ export function RoomBoard(props){
                             style="stroke"
                             strokeWidth={path.width}
                             color={path.color}
-                            />
+                            >
+                                <Paint color={"#FF000000"} />
+                                <Paint color={path.color} style="stroke" strokeWidth={path.width} />
+                            </Path>
                         ))              
                     }
                 </Group>

@@ -655,6 +655,7 @@ function RoomClient({ navigation }) {
                 {
                     // clear chat because of remote deletion...
                     dispatch({ type: 'CLEAR_CHAT', payload: true });
+                    mediaDevices.showTextMessage("command_clearchat"); // this clears also the chat on the glasses
                 }
                 break;
             //...
