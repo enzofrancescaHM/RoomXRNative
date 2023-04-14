@@ -1,4 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          xmlns:tools="http://schemas.android.com/tools"
   package="com.roomxr">
 
    
@@ -6,7 +7,7 @@
     <uses-feature android:name="android.hardware.camera.autofocus" />
     <uses-feature android:name="android.hardware.audio.output" />
     <uses-feature android:name="android.hardware.microphone" />
-    <uses-feature android:name="android.hardware.camera" android:required="false" />
+    <uses-feature android:name="android.hardware.camera" android:required="true" />
     <uses-feature android:name="android.hardware.usb.host" android:required="true" />
     <uses-feature android:name="android.hardware.usb.*" android:required="true" />
 
@@ -16,6 +17,7 @@
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES"/>
     
     
     <application
@@ -44,5 +46,21 @@
         <meta-data android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" -->
         <!-- android:resource="@xml/device_filter" /> -->
       </activity>
+
+      <!-- Define a FileProvider for API24+ -->
+      <!-- note this is the authority name used by other modules like rn-fetch-blob, easy to have conflicts -->
+      <provider
+        android:name="androidx.core.content.FileProvider"
+        android:authorities="${applicationId}.provider"
+        android:exported="false"
+        android:grantUriPermissions="true">
+        <!-- you might need the tools:replace thing to workaround rn-fetch-blob or other definitions of provider -->
+        <!-- just make sure if you "replace" here that you include all the paths you are replacing *plus* the cache path we use -->
+        <meta-data tools:replace="android:resource"
+          android:name="android.support.FILE_PROVIDER_PATHS"
+          android:resource="@xml/filepaths" />
+      </provider>
+
+
     </application>
 </manifest>

@@ -3,7 +3,8 @@ import Reducer from './Reducer'
 
 
 const initialState = {
-    app_ver: "0.9.2 beta",
+    app_ver: "empty",
+    app_arch: "empty",
     root_address:"empty",
     room_id: "empty",
     peer_name: "empty",

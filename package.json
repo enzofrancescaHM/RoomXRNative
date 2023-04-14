@@ -1,6 +1,6 @@
 {
-  "name": "RoomXR",
-  "version": "0.0.1",
+  "name": "RoomXRPRO",
+  "version": "1.0.0",
   "private": true,
   "license": "private",
   "scripts": {
@@ -23,6 +23,8 @@
     "@shopify/react-native-skia": "^0.1.180",
     "react": "18.0.0",
     "react-native": "0.69.7",
+    "react-native-device-info": "^10.6.0",
+    "react-native-fs": "^2.20.0",
     "react-native-orientation-locker": "^1.5.0",
     "react-native-qrcode-svg": "^6.1.2",
     "react-native-reanimated": "2.10.0",
@@ -33,6 +35,7 @@
     "react-native-usb": "^0.1.1",
     "react-native-vector-icons": "^9.2.0",
     "react-native-vision-camera": "2.14.1",
+    "rn-update-apk": "^5.0.0",
     "vision-camera-code-scanner": "^0.2.0"
   },
   "devDependencies": {

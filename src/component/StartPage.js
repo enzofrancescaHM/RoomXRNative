@@ -5,6 +5,7 @@ import usb from 'react-native-usb';
 import Orientation from 'react-native-orientation-locker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { mediaDevices, registerGlobals } from "react-native-webrtc";
+import DeviceInfo from 'react-native-device-info';
 import { setNavigator } from "../global/navigtionRef";
 
 
@@ -107,6 +108,37 @@ export function StartPage({ navigation }) {
 
   useEffect(function componentDidMount() {
     console.log("%c StartPage componetDidMount", "color:green;");
+
+    const appVersion = DeviceInfo.getVersion();
+    const buildNumber = DeviceInfo.getBuildNumber();
+
+    console.log(appVersion);
+    console.log(buildNumber);
+
+    dispatch({ type: 'SET_APP_VER', payload: appVersion });
+
+    // read internal architecture
+    // first we read the 64 bit
+    var myarch = "unset";
+    DeviceInfo.supported64BitAbis().then((abis) => {
+      // ["arm64-v8a", "win_x64"]
+      // since we obtain an ordered list with the most preferrable
+      // architecture in the first place, we can take it directly, if exists
+      if (abis.length > 0)
+        myarch = abis[0];   
+      else
+      {
+        DeviceInfo.supported32BitAbis().then((abiss) => {
+          if(abiss.length > 0)
+            myarch = abiss[0];
+        });
+      }
+      console.log(myarch);
+      dispatch({ type: 'SET_APP_ARCH', payload: myarch });
+      // [ "arm64 v8", "Intel x86-64h Haswell", "arm64-v8a", "armeabi-v7a", "armeabi", "win_x86", "win_arm", "win_x64" ]
+    });
+
+    
     // read config from persistent memory        
     const user = getUserValue();
     const room = getRoomValue();
@@ -380,7 +412,7 @@ export function StartPage({ navigation }) {
         </View>
         <View style={styles.bottomContainer}>
           <Text style={styles.labelVersion}>
-            {"Version: " + state.app_ver}
+            {"v" + state.app_ver + " (" + state.app_arch +  " )"}
           </Text>
           <Text style={styles.labelUsbTextStyle}>
             {(usbIsEnabled == true) ? "USB CAMERA ON" : "USB CAMERA OFF"}

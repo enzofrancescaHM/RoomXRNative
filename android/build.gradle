@@ -9,7 +9,7 @@ buildscript {
         compileSdkVersion = 31
         targetSdkVersion = 30
 
-        supportLibVersion = '27.1.1'  // variable that can be referenced to keep support libs consistent
+        //supportLibVersion = '27.1.1'  // variable that can be referenced to keep support libs consistent
         commonLibVersion= '2.12.4'
         versionBuildTool = '27.0.3'
         versionCompiler = 30

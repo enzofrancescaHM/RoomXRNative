@@ -2,6 +2,16 @@ import { Skia, useFont } from "@shopify/react-native-skia";
 
 const Reducer = (state, action) => {
     switch (action.type) {
+        case 'SET_APP_VER':
+            return{
+                ...state,
+                app_ver: action.payload
+            };
+        case 'SET_APP_ARCH':
+            return{
+                ...state,
+                app_arch: action.payload
+            };
         case 'SET_PEER_NAME':
             return{
                 ...state,

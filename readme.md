@@ -49,7 +49,7 @@ cd android
 the apk is now in: yourProject/android/app/build/outputs/apk/debug/app-debug.apk
 
 ## Reset and Clean project
-every time we add some package we have to reset ancd rebuild the   
+every time we add some package we have to reset and rebuild the   
 project, we can do by executing the following codes from project's root:   
 ```
 watchman watch-del-all
@@ -64,6 +64,15 @@ rm -r $TMPDIR/haste-*
 yarn install
 ```
 
+## Procedure for App Update
+Every time we publish a new version we have to update the auto-update system
+This system rely on checking a file on Holomask Server and decide if there is a new
+version available.
+We need to update a lot of things:
+- bla bla bla
+- bla bla bla
+- bla bla bla
+
 ## Todo:
 - [LOW] Implement Device Chooser (camera and audio)...
 - [LOW] test on iOS
@@ -77,12 +86,13 @@ yarn install
 - [FIX] Evaluate why scannerpage crashes sometimes, maybe because it searches for back camera and   
   not always is present
 - [FIX] First chat message is not displayed on the Univet glasses
+- [FIX] Change camera required parameter in AndroidManifest to true to check if it resolves the cases in which the camera does not reconnect
 
 
 
 ## In Progress:
-- Evaluate disconnect and riconnect the Univet glasses cases, it should gracely manage those states
-  at the moment we could also try to remove ReactNAtiveUsbMOdule at all and do everything at UvcCapturer level...
+
+- [ENH] Implement auto-update
 
 
 ## Done:
@@ -134,6 +144,8 @@ yarn install
 - [FIX] dynamic interface with better buttons
 - [FIX] manage difference between screenshot , images and decals
 - [FIX] manage the correct exit from glasses, deleting pointers and other stuff
+- [FIX] Evaluate disconnect and riconnect the Univet glasses cases, it should gracely manage those states
+  at the moment we could also try to remove ReactNAtiveUsbMOdule at all and do everything at UvcCapturer level...
 
 
 ## Changelist:
