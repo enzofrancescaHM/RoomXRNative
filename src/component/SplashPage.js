@@ -4,6 +4,7 @@ import { Context } from '../global/Store';
 import Orientation from 'react-native-orientation-locker';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import DeviceInfo from 'react-native-device-info';
 //import { interpolateNode } from "react-native-reanimated";
 
 
@@ -82,6 +83,42 @@ export function SplashPage({ navigation }) {
 
         StatusBar.setHidden(true, 'none');
         Orientation.lockToLandscapeLeft();
+
+
+
+        // read bundle parameter as buildnumber and cpu architecture
+        const appVersion = DeviceInfo.getVersion();
+        const buildNumber = DeviceInfo.getBuildNumber();
+    
+        console.log("app version from device info:");
+        console.log(appVersion);
+        console.log("buildnumber from device info:");
+        console.log(buildNumber);
+    
+        dispatch({ type: 'SET_APP_VER', payload: appVersion });
+    
+        // read internal architecture
+        // first we read the 64 bit
+        var myarch = "unset";
+        DeviceInfo.supported64BitAbis().then((abis) => {
+          // ["arm64-v8a", "win_x64"]
+          // since we obtain an ordered list with the most preferrable
+          // architecture in the first place, we can take it directly, if exists
+          if (abis.length > 0)
+            myarch = abis[0];   
+          else
+          {
+            DeviceInfo.supported32BitAbis().then((abiss) => {
+              if(abiss.length > 0)
+                myarch = abiss[0];
+            });
+          }
+          console.log(myarch);
+          dispatch({ type: 'SET_APP_ARCH', payload: myarch });
+          // [ "arm64 v8", "Intel x86-64h Haswell", "arm64-v8a", "armeabi-v7a", "armeabi", "win_x86", "win_arm", "win_x64" ]
+        });
+
+
 
         // Start counting when the page is loaded
         timeoutHandle = setTimeout(() => {

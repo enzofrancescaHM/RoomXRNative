@@ -5,19 +5,84 @@ import usb from 'react-native-usb';
 import Orientation from 'react-native-orientation-locker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { mediaDevices, registerGlobals } from "react-native-webrtc";
-import DeviceInfo from 'react-native-device-info';
-import { setNavigator } from "../global/navigtionRef";
+//import DeviceInfo from 'react-native-device-info';
+import * as UpdateAPK from "rn-update-apk";
+//import { setNavigator } from "../global/navigtionRef";
 
 
 export function StartPage({ navigation }) {
 
   const [state, dispatch] = useContext(Context);
   const [usbIsEnabled, setUsbIsEnabled] = useState(false);
+  const [downloadPerc, setDownloadPerc] = useState("---");
   const imageConnect = require("../images/connect.png");
   const imageQRCode = require("../images/qrcode.png");
   var timeoutHandle;
+  var timeoutHandle2;
 
   let isEnumerateAudioDevices = false;
+  let versionURL = "---";
+
+  if(state.app_arch == "arm64-v8a")
+    versionURL = "https://holomask.eu/roomxrpro/test-version-arm64-v8a.json";
+  
+  if(state.app_arch == "win_x64")
+    versionURL = "https://holomask.eu/roomxrpro/test-version-win_x64.json";
+
+
+  var updater = new UpdateAPK.UpdateAPK({
+    iosAppId: "0000000000",
+    apkVersionUrl:
+        versionURL,
+    apkVersionOptions: {
+      method:'GET',
+      headers: {}
+    },
+    apkOptions: {
+      headers: {}
+    },
+    fileProviderAuthority: "com.roomxr.provider",
+    needUpdateApp: performUpdate => {
+      Alert.alert(
+        "Update Available",
+        "New version released, do you want to update? ",
+        [
+          { text: "Cancel", onPress: () => {} },
+          { text: "Update", onPress: () => performUpdate(true) }
+        ]
+      );
+    },
+    forceUpdateApp: () => {
+      console.log("forceUpdateApp callback called");
+    },
+    notNeedUpdateApp: () => {
+      console.log("notNeedUpdateApp callback called");
+    },
+    downloadApkStart: () => {
+      console.log("downloadApkStart callback called");
+    },
+    downloadApkProgress: progress => {
+      console.log(`downloadApkProgress callback called - ${progress}%...`);
+      setDownloadPerc(progress);
+      // This is your opportunity to provide feedback to users on download progress
+      // If you hae a state variable it is trivial to update the UI
+      // this.setState({ downloadProgress: progress });
+    },
+    
+    // This is called prior to the update. If you throw it will abort the update
+    downloadApkEnd: () => {
+      console.log("downloadApkEnd callback called");
+      setDownloadPerc("100");
+    },
+
+  // This is called if the fetch of the version or the APK fails, so should be generic
+  onError: err => {
+    console.log("onError callback called", err);
+    setDownloadPerc("ERROR");
+    Alert.alert("There was an error", err.message);
+  }    
+
+  });
 
   const getUserValue = async () => {
     try {
@@ -102,49 +167,45 @@ export function StartPage({ navigation }) {
   function toggleUsb() {
     console.log("toggle..");
     setUsbIsEnabled(previousState => !previousState);
+    
+  }
 
+  function checkUpd(){
+    // debug
+    console.log("packagename from updateapk:");
+    console.log(UpdateAPK.getInstalledPackageName());
+    console.log("versioncode from updateapk:");
+    console.log(UpdateAPK.getInstalledVersionCode());
+    console.log("versionname from updateapk:");
+    console.log(UpdateAPK.getInstalledVersionName());
+    console.log("packageinstaller from updateapk:");
+    console.log(UpdateAPK.getInstalledPackageInstaller());
+
+      
+    console.log("checking for update");
+      updater.checkUpdate();
+    
   }
 
 
   useEffect(function componentDidMount() {
     console.log("%c StartPage componetDidMount", "color:green;");
 
-    const appVersion = DeviceInfo.getVersion();
-    const buildNumber = DeviceInfo.getBuildNumber();
+    UpdateAPK.getApps().then(apps => {
+      console.log("Installed Apps: ", JSON.stringify(apps));
+      //this.setState({ allApps: apps});
+    }).catch(e => console.log("Unable to getApps?", e));
 
-    console.log(appVersion);
-    console.log(buildNumber);
-
-    dispatch({ type: 'SET_APP_VER', payload: appVersion });
-
-    // read internal architecture
-    // first we read the 64 bit
-    var myarch = "unset";
-    DeviceInfo.supported64BitAbis().then((abis) => {
-      // ["arm64-v8a", "win_x64"]
-      // since we obtain an ordered list with the most preferrable
-      // architecture in the first place, we can take it directly, if exists
-      if (abis.length > 0)
-        myarch = abis[0];   
-      else
-      {
-        DeviceInfo.supported32BitAbis().then((abiss) => {
-          if(abiss.length > 0)
-            myarch = abiss[0];
-        });
-      }
-      console.log(myarch);
-      dispatch({ type: 'SET_APP_ARCH', payload: myarch });
-      // [ "arm64 v8", "Intel x86-64h Haswell", "arm64-v8a", "armeabi-v7a", "armeabi", "win_x86", "win_arm", "win_x64" ]
-    });
+    UpdateAPK.getNonSystemApps().then(apps => {
+      console.log("Installed Non-System Apps: ", JSON.stringify(apps));
+      //this.setState({ allNonSystemApps: apps});
+    }).catch(e => console.log("Unable to getNonSystemApps?", e));
 
     
     // read config from persistent memory        
     const user = getUserValue();
     const room = getRoomValue();
     const root = getRootValue();
-
-    //setNavigator(navigation);
 
     console.log('00.1 ----> registerGlobals');
     registerGlobals();
@@ -168,12 +229,19 @@ export function StartPage({ navigation }) {
 
     }, 500);
 
+    timeoutHandle2 = setTimeout(() => {
+      checkUpd();
+    }, 1500);
+
     return function componentWillUnmount() {
       clearTimeout(timeoutHandle);
+      clearTimeout(timeoutHandle2);
       //usb.disconnect();
       console.log("%c MainPage componetWillUnmount", "color:red")
     }
   }, [])
+
+ 
 
   async function requireUSBPermissions() {
     
@@ -294,6 +362,16 @@ export function StartPage({ navigation }) {
       height: 80,
       position: "absolute",
       bottom: state.real_height / 15,
+      left: 10,
+      flexDirection: "row",
+      padding: 2,
+      backgroundColor: '#00000000',
+      zIndex: 2,
+    },
+    statusContainer: {
+      height: 50,
+      position: "absolute",
+      bottom: 10,
       left: 10,
       flexDirection: "row",
       padding: 2,
@@ -425,6 +503,11 @@ export function StartPage({ navigation }) {
             value={usbIsEnabled}
           />
 
+        </View>
+        <View style={styles.statusContainer}>
+          <Text style={styles.labelVersion}>
+            {(downloadPerc == "---") ? "" : "download status: " + downloadPerc + "%"}
+          </Text>
         </View>
       </View>
 
