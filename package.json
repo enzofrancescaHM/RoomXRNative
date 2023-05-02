@@ -35,6 +35,7 @@
     "react-native-usb": "^0.1.1",
     "react-native-vector-icons": "^9.2.0",
     "react-native-vision-camera": "2.14.1",
+    "rn-swipe-button": "^1.3.8",
     "rn-update-apk": "^5.0.0",
     "vision-camera-code-scanner": "^0.2.0"
   },

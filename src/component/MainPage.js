@@ -12,6 +12,7 @@ import { RoomBoard } from "./RoomBoard";
 import QRCode from "react-native-qrcode-svg";
 import { setNavigator, getCurrentRoute } from "../global/navigtionRef";
 import KeepAwake from "@sayem314/react-native-keep-awake";
+import SwipeButton from 'rn-swipe-button';
 
 
 export function MainPage({ navigation, route }) {
@@ -35,6 +36,8 @@ export function MainPage({ navigation, route }) {
     const imageLoop = require("../images/loopcamera.png");
     const imageARON = require("../images/arON.png");
     const imageLoopON = require("../images/loopcameraON.png");
+    const imageUnlock = require("../images/unlock.png");
+    const imageLock = require("../images/lock.png");
 
 
     const [qrvalue, setQrvalue] = useState('');
@@ -42,6 +45,7 @@ export function MainPage({ navigation, route }) {
     const [displayVisible, setDisplayVisible] = useState(true);
     const [loopVisible, setLoopVisible] = useState(false);
     const [videosVisible, setVideosVisible] = useState(true);
+    const [keysLocked, setKeysLocked] = useState(false);
 
 
     // ####################################################
@@ -119,8 +123,10 @@ export function MainPage({ navigation, route }) {
     }, [state.ejected])
 
     async function invokeDisconnect() {
-        //if(timerID != 1234)
-           // clearInterval(timerID);
+
+        if(keysLocked)
+            return;
+
         if(state.usbcamera){
             mediaDevices.showTextMessage("command_disconnect");
         }
@@ -135,6 +141,25 @@ export function MainPage({ navigation, route }) {
 
     async function invokeCreateRoomClient() {
         createRoomClient(state.usbcamera);
+    }
+
+    async function swipeAction(){       
+            console.log("keys unlocked by swipe!");
+            setKeysLocked(false);
+    }
+
+    async function toggleLock(){
+        if (keysLocked)
+        {
+            console.log("keys were locked, now are unlocked");
+            setKeysLocked(false);
+        }
+        else
+        {
+            console.log("keys were unlocked, now are locked");
+            setKeysLocked(true);
+        }
+            
     }
 
 
@@ -212,6 +237,11 @@ export function MainPage({ navigation, route }) {
 
 
     function switchCamera() {
+
+        if(keysLocked)
+        return;
+
+
         // first safe mechanism
         if(state.localstream == "empty")
             return;
@@ -223,6 +253,11 @@ export function MainPage({ navigation, route }) {
     }
 
     function addUSer() {
+
+        if(keysLocked)
+            return;
+
+
         //mediaDevices.showPointer("true,200,150");
 
         if(qrVisible)
@@ -232,6 +267,11 @@ export function MainPage({ navigation, route }) {
     }
 
     function cleanChat(){
+
+        if(keysLocked)
+        return;
+
+
         dispatch({ type: 'CLEAR_CHAT', payload: true });
         if(state.usbcamera){
             //mediaDevices.showLoopBackCamera(false);
@@ -243,6 +283,11 @@ export function MainPage({ navigation, route }) {
     }
 
     function toggleDisplay(){
+
+        if(keysLocked)
+        return;
+
+
         if(displayVisible)
         {
             setDisplayVisible(false);
@@ -257,6 +302,10 @@ export function MainPage({ navigation, route }) {
     }
 
     function toggleLoopBack(){
+        if(keysLocked)
+            return;
+
+
         if(loopVisible)
         {
             setLoopVisible(false);
@@ -271,6 +320,9 @@ export function MainPage({ navigation, route }) {
     }
 
     function toggleVideos(){
+        if(keysLocked)
+            return;
+
         if(videosVisible)
         {
             setVideosVisible(false);
@@ -570,6 +622,28 @@ export function MainPage({ navigation, route }) {
             zIndex: 100,
             zOrder: 100,
         },
+        buttonContainerTopLock: {
+            position: "absolute",
+            top: 20,
+            left: 20 +  state.real_height / divider + 20,
+            borderRadius: borderrds,
+            width:  state.real_height / divider,
+            height: state.real_height / divider,
+            backgroundColor: buttonbck,
+            zIndex: 100,
+            zOrder: 100,
+        },
+        buttonContainerTopSwipe: {
+            position: "absolute",
+            top: 16,
+            left: 200,
+            borderRadius: borderrds,
+            width:  state.real_height / divider + 180,
+            height: state.real_height / divider,
+            backgroundColor: buttonbck,
+            zIndex: 100,
+            zOrder: 100,
+        },
         buttonContainerSwitchCamera: {
             position: "absolute",
             bottom: 20,
@@ -749,6 +823,26 @@ export function MainPage({ navigation, route }) {
                     />
                 </TouchableOpacity>
             </View>
+            <View style={styles.buttonContainerTopLock}>
+                <TouchableOpacity
+                    style={styles.buttonUserStyle}
+                    activeOpacity={0.9}
+                    onPress={toggleLock}>
+                    <Image
+                        source={keysLocked ? imageLock : imageUnlock}
+                        style={styles.buttonImageIconStyle}
+                    />
+                </TouchableOpacity>
+            </View>
+             <View style={styles.buttonContainerTopSwipe}>
+                {keysLocked?<SwipeButton
+                    
+                    onSwipeSuccess={swipeAction}
+                    railBackgroundColor="#a493d6"
+                    thumbIconBackgroundColor="#FFFFFF"
+                    title="lock/unlock"
+                /> : ""}
+            </View> 
             {(!state.usbcamera)&&<View style={styles.buttonContainerSwitchCamera}>
                 <TouchableOpacity
                     style={styles.buttonUserStyle}
