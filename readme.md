@@ -92,7 +92,7 @@ We need to update a lot of things:
 
 ## In Progress:
 
-- [ENH] Implement auto-update
+- [ENH] add locking mechanism for UI
 
 
 ## Done:
@@ -146,7 +146,7 @@ We need to update a lot of things:
 - [FIX] manage the correct exit from glasses, deleting pointers and other stuff
 - [FIX] Evaluate disconnect and riconnect the Univet glasses cases, it should gracely manage those states
   at the moment we could also try to remove ReactNAtiveUsbMOdule at all and do everything at UvcCapturer level...
-
+- [ENH] added new autoupdate mechanism
 
 ## Changelist:
 
@@ -218,6 +218,10 @@ We need to update a lot of things:
 - [FIX] manage difference between screenshot , images and decals
 - [FIX] manage the correct exit from glasses, deleting pointers and other stuff
 
+### Ver. 1.0.0:
+- [ENH] added new auto update mechanism
+
+### Ver. 1.0.1:
 
 ## Univet Camera Procedure
 
