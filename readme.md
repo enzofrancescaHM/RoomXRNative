@@ -92,7 +92,7 @@ We need to update a lot of things:
 
 ## In Progress:
 
-- [ENH] add locking mechanism for UI
+
 
 
 ## Done:
@@ -147,6 +147,9 @@ We need to update a lot of things:
 - [FIX] Evaluate disconnect and riconnect the Univet glasses cases, it should gracely manage those states
   at the moment we could also try to remove ReactNAtiveUsbMOdule at all and do everything at UvcCapturer level...
 - [ENH] added new autoupdate mechanism
+- [FIX] fixed crash when eraser was used on images
+- [FIX] fixed crash when chat was cleared (only on EPSON MOVERIO)
+- [ENH] add locking mechanism for UI
 
 ## Changelist:
 
@@ -222,6 +225,9 @@ We need to update a lot of things:
 - [ENH] added new auto update mechanism
 
 ### Ver. 1.0.1:
+- [FIX] fixed crash when eraser was used on images
+- [FIX] fixed crash when chat was cleared (only on EPSON MOVERIO)
+- [ENH] add locking mechanism for UI
 
 ## Univet Camera Procedure
 

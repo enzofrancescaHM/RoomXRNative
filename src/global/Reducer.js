@@ -369,8 +369,11 @@ const Reducer = (state, action) => {
                 {
                     image.x = action.payload.target.left;
                     image.y = action.payload.target.top;
-                    image.scalex = action.payload.origobj.scaleX;
-                    image.scaley = action.payload.origobj.scaleY;
+                    if(action.payload.target.left != 2500 || action.payload.target.top != 2500)
+                    {
+                        image.scalex = action.payload.origobj.scaleX;
+                        image.scaley = action.payload.origobj.scaleY;    
+                    }
 
                     //image.angle = action.payload.target.angle;                    
                 }

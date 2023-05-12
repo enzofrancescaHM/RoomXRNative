@@ -151,8 +151,9 @@ export function MainPage({ navigation, route }) {
     async function toggleLock(){
         if (keysLocked)
         {
-            console.log("keys were locked, now are unlocked");
-            setKeysLocked(false);
+            return;
+            //console.log("keys were locked, now are unlocked");
+            //setKeysLocked(false);
         }
         else
         {
@@ -636,7 +637,7 @@ export function MainPage({ navigation, route }) {
         buttonContainerTopSwipe: {
             position: "absolute",
             top: 16,
-            left: 200,
+            left: 20 + state.real_height / divider + 40 + state.real_height / divider,
             borderRadius: borderrds,
             width:  state.real_height / divider + 180,
             height: state.real_height / divider,
@@ -840,7 +841,7 @@ export function MainPage({ navigation, route }) {
                     onSwipeSuccess={swipeAction}
                     railBackgroundColor="#a493d6"
                     thumbIconBackgroundColor="#FFFFFF"
-                    title="lock/unlock"
+                    title="Unlock"
                 /> : ""}
             </View> 
             {(!state.usbcamera)&&<View style={styles.buttonContainerSwitchCamera}>
