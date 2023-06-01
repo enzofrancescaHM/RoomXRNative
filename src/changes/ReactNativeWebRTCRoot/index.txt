@@ -40,6 +40,8 @@ function registerGlobals(): void {
     global.navigator.mediaDevices.showPointer = mediaDevices.showPointer.bind(mediaDevices);
     global.navigator.mediaDevices.showBitmap = mediaDevices.showBitmap.bind(mediaDevices);
     global.navigator.mediaDevices.showDisplay = mediaDevices.showDisplay.bind(mediaDevices);
+    global.navigator.mediaDevices.raiseCallVolume = mediaDevices.raiseCallVolume.bind(mediaDevices);
+    global.navigator.mediaDevices.lowerCallVolume = mediaDevices.lowerCallVolume.bind(mediaDevices);
 
     global.navigator.mediaDevices.addEventListener = mediaDevices.addEventListener.bind(mediaDevices);
     mediaDevices.addEventListener('deviceChange', () => {

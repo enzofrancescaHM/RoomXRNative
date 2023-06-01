@@ -38,6 +38,9 @@ export function MainPage({ navigation, route }) {
     const imageLoopON = require("../images/loopcameraON.png");
     const imageUnlock = require("../images/unlock.png");
     const imageLock = require("../images/lock.png");
+    const imageVolumeDown = require("../images/volumedown.png");
+    const imageVolumeUp = require("../images/volumeup.png");
+
 
 
     const [qrvalue, setQrvalue] = useState('');
@@ -267,7 +270,19 @@ export function MainPage({ navigation, route }) {
             setQrVisible(true);
     }
 
+
+    function raiseVolume(){
+        mediaDevices.raiseCallVolume();
+    }
+
+    function lowerVolume(){
+        mediaDevices.lowerCallVolume();
+    }
+
+
     function cleanChat(){
+
+        
 
         if(keysLocked)
         return;
@@ -700,6 +715,29 @@ export function MainPage({ navigation, route }) {
             zIndex: 100,
             zOrder: 100,
         },
+        buttonContainerLowerVolume: {
+            position: "absolute",
+            bottom: 20,
+            borderRadius: borderrds,
+            left: state.real_height / divider + state.real_height / divider + state.real_height / divider + state.real_height / divider + state.real_height / divider + 70,
+            width: state.real_height / divider,
+            height: state.real_height / divider,
+            backgroundColor: buttonbck,
+            zIndex: 100,
+            zOrder: 100,
+        },
+        buttonContainerRaiseVolume: {
+            position: "absolute",
+            bottom: 20,
+            borderRadius: borderrds,
+            left: state.real_height / divider + state.real_height / divider + state.real_height / divider + state.real_height / divider + state.real_height / divider + state.real_height / divider + 80,
+            width: state.real_height / divider,
+            height: state.real_height / divider,
+            backgroundColor: buttonbck,
+            zIndex: 100,
+            zOrder: 100,
+        },
+
         qrcode:{
             position: "absolute",
             bottom: state.real_height / divider + 40,
@@ -909,6 +947,32 @@ export function MainPage({ navigation, route }) {
                     />
                 </TouchableOpacity>
             </View>}
+
+            <View style={styles.buttonContainerLowerVolume}>
+                <TouchableOpacity
+                    style={styles.buttonUserStyle}
+                    activeOpacity={0.9}
+                    onPress={lowerVolume}>
+                    <Image
+                        source={imageVolumeDown}
+                        style={styles.buttonImageIconStyle}
+                    />
+                </TouchableOpacity>
+                
+            </View>
+
+            <View style={styles.buttonContainerRaiseVolume}>
+                <TouchableOpacity
+                    style={styles.buttonUserStyle}
+                    activeOpacity={0.9}
+                    onPress={raiseVolume}>
+                    <Image
+                        source={imageVolumeUp}
+                        style={styles.buttonImageIconStyle}
+                    />
+                </TouchableOpacity>                
+            </View>
+
 
             <View style={styles.buttonContainerToggleVideos}>
                 <TouchableOpacity

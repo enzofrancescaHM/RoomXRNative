@@ -1021,6 +1021,20 @@ public class WebRTCModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
+    public void raiseCallVolume(){
+        ThreadUtils.runOnExecutor(() -> {
+                this.dailyWebRTCDevicesManager.raiseVolume();
+        });
+    }
+
+    @ReactMethod
+    public void lowerCallVolume(){
+        ThreadUtils.runOnExecutor(() -> {
+                this.dailyWebRTCDevicesManager.lowerVolume();
+        });
+    }
+
+    @ReactMethod
     public void startMediaDevicesEventMonitor() {
         this.dailyWebRTCDevicesManager.startMediaDevicesEventMonitor();
     }

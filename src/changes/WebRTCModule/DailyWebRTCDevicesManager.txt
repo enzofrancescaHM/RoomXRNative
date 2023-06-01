@@ -192,6 +192,16 @@ public class DailyWebRTCDevicesManager {
         }
     }
 
+    public void raiseVolume() {
+        Log.d(TAG, "RAISE VOLUME!");
+        this.audioManager.adjustStreamVolume(AudioManager.STREAM_VOICE_CALL,AudioManager.ADJUST_RAISE,AudioManager.FLAG_SHOW_UI);
+    }
+    public void lowerVolume() {
+        Log.d(TAG, "LOWER VOLUME!");
+        this.audioManager.adjustStreamVolume(AudioManager.STREAM_VOICE_CALL,AudioManager.ADJUST_LOWER,AudioManager.FLAG_SHOW_UI);
+    }
+
+
     public String getAudioDevice() {
         if (this.audioManager.isBluetoothScoOn() || this.audioManager.isBluetoothA2dpOn()) {
             return AudioDeviceType.BLUETOOTH.toString();

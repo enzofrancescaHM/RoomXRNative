@@ -89,6 +89,7 @@ public class DailyAudioManager implements AudioManager.OnAudioFocusChangeListene
         executor.execute(() -> transitionToCurrentMode(null));
     }
 
+
     public void setMode(Mode mode) {
         executor.execute(() -> {
             if (mode == this.mode) {

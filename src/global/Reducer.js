@@ -235,12 +235,21 @@ const Reducer = (state, action) => {
             state.ellipse_array.forEach((ellipse) => {                
                 if(ellipse.id == action.payload.elementID)
                 {
-                    ellipse.x = action.payload.target.left;
-                    ellipse.y = action.payload.target.top;
+                    
+                    if(action.payload.action == "delete")
+                    {
+                        ellipse.x += 2500;
+                        ellipse.y += 2500;
+                    }
+                    else
+                    {                    
+                        ellipse.x = action.payload.target.left;
+                        ellipse.y = action.payload.target.top;
 
-                    if(action.payload.transform.action == "scale"){
-                        ellipse.width = ellipse.width * action.payload.origobj.scaleX;
-                        ellipse.height = ellipse.height * action.payload.origobj.scaleY;    
+                        if(action.payload.transform.action == "scale"){
+                            ellipse.width = ellipse.width * action.payload.origobj.scaleX;
+                            ellipse.height = ellipse.height * action.payload.origobj.scaleY;    
+                        }
                     }
                     //image.angle = action.payload.target.angle;                    
                 }
@@ -265,12 +274,20 @@ const Reducer = (state, action) => {
             state.rect_array.forEach((rect) => {                
                 if(rect.id == action.payload.elementID)
                 {
-                    rect.x = action.payload.target.left;
-                    rect.y = action.payload.target.top;
                     
-                    rect.width = rect.width * action.payload.origobj.scaleX;
-                    rect.height = rect.height * action.payload.origobj.scaleY;
-
+                    if(action.payload.action == "delete")
+                    {
+                        rect.x += 2500;
+                        rect.y += 2500;
+                    }
+                    else
+                    {                    
+                        rect.x = action.payload.target.left;
+                        rect.y = action.payload.target.top;
+                        
+                        rect.width = rect.width * action.payload.origobj.scaleX;
+                        rect.height = rect.height * action.payload.origobj.scaleY;
+                    }
                     //rect = action.payload.origobj;
 
                     //image.angle = action.payload.target.angle;                    
@@ -296,30 +313,39 @@ const Reducer = (state, action) => {
             state.line_array.forEach((line) => {                
                 if(line.id == action.payload.elementID)
                 {
-                    
-                    // determine the slope of the line in order to decide 
-                    // what vertex is what
-                    var myx1, myx2, myy1, myy2
-                    if(action.payload.target.x1 < 0 && action.payload.target.y1 < 0) // this case is the following slope: /
+                    if(action.payload.action == "delete")
                     {
-                        myx1 = action.payload.target.left;
-                        myy1 = action.payload.target.top;
-                        myx2 = action.payload.target.left + action.payload.target.width * action.payload.origobj.scaleX;
-                        myy2 = action.payload.target.top + action.payload.target.height * action.payload.origobj.scaleY;
-                    }
-                    else // this case is the following slope: \
-                    {
-                        myx1 = action.payload.target.left;
-                        myy1 = action.payload.target.top + action.payload.target.height * action.payload.origobj.scaleY;
-                        myx2 = action.payload.target.left + action.payload.target.width * action.payload.origobj.scaleX;
-                        myy2 = action.payload.target.top;
-                    }
-                    
-                    line.x1 = myx1; 
-                    line.y1 = myy1; 
-                    line.x2 = myx2;
-                    line.y2 = myy2;
+                        line.x1 += 2500;
+                        line.y1 += 2500;
+                        line.x2 += 2500;
+                        line.y2 += 2500;
 
+                    }
+                    else
+                    {
+                        // determine the slope of the line in order to decide 
+                        // what vertex is what
+                        var myx1, myx2, myy1, myy2
+                        if(action.payload.target.x1 < 0 && action.payload.target.y1 < 0) // this case is the following slope: /
+                        {
+                            myx1 = action.payload.target.left;
+                            myy1 = action.payload.target.top;
+                            myx2 = action.payload.target.left + action.payload.target.width * action.payload.origobj.scaleX;
+                            myy2 = action.payload.target.top + action.payload.target.height * action.payload.origobj.scaleY;
+                        }
+                        else // this case is the following slope: \
+                        {
+                            myx1 = action.payload.target.left;
+                            myy1 = action.payload.target.top + action.payload.target.height * action.payload.origobj.scaleY;
+                            myx2 = action.payload.target.left + action.payload.target.width * action.payload.origobj.scaleX;
+                            myy2 = action.payload.target.top;
+                        }
+                        
+                        line.x1 = myx1; 
+                        line.y1 = myy1; 
+                        line.x2 = myx2;
+                        line.y2 = myy2;
+                    }
                 }
             });
             return{

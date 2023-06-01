@@ -88,6 +88,15 @@ class MediaDevices extends defineCustomEventTarget(...MEDIA_DEVICES_EVENTS) {
         return WebRTCModule.setAudioDevice(device);
     }
 
+    raiseCallVolume(){
+        return WebRTCModule.raiseCallVolume();
+    }
+
+    lowerCallVolume(){
+        return WebRTCModule.lowerCallVolume();
+    }
+
+
     startMediaDevicesEventMonitor(){
         return WebRTCModule.startMediaDevicesEventMonitor();
     }
