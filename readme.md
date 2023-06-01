@@ -150,6 +150,9 @@ We need to update a lot of things:
 - [FIX] fixed crash when eraser was used on images
 - [FIX] fixed crash when chat was cleared (only on EPSON MOVERIO)
 - [ENH] add locking mechanism for UI
+- [FIX] fixed crash when eraser was used on lines, circles, rects
+- [ENH] add volume buttons on UI to compensate for phones that limit physical buttons to media volume instead of call volume
+
 
 ## Changelist:
 
@@ -228,6 +231,10 @@ We need to update a lot of things:
 - [FIX] fixed crash when eraser was used on images
 - [FIX] fixed crash when chat was cleared (only on EPSON MOVERIO)
 - [ENH] add locking mechanism for UI
+
+### Ver. 1.0.2:
+- [FIX] fixed crash when eraser was used on lines, circles, rects
+- [ENH] add volume buttons on UI to compensate for phones that limit physical buttons to media volume instead of call volume
 
 ## Univet Camera Procedure
 
