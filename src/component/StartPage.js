@@ -192,7 +192,7 @@ export function StartPage({ navigation }) {
     console.log("%c StartPage componetDidMount", "color:green;");
 
     UpdateAPK.getApps().then(apps => {
-      console.log("Installed Apps: ", JSON.stringify(apps));
+      //console.log("Installed Apps: ", JSON.stringify(apps));
       //this.setState({ allApps: apps});
     }).catch(e => console.log("Unable to getApps?", e));
 
