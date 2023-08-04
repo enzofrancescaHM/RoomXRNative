@@ -200,6 +200,11 @@ export function MainPage({ navigation, route }) {
         {
             console.log("put heartbeat to usb_init");
             //mediaDevices.heartBeat("supercalifragilistiche");
+
+            // signal also the splash special message
+            var mySplash = state.splash_message;
+            mediaDevices.showTextMessage("command_splash" + mySplash);
+
             mediaDevices.showTextMessage("command_setusb");
             
             var mytmr = setInterval(function run(){

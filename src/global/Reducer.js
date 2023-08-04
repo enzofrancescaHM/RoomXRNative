@@ -27,6 +27,11 @@ const Reducer = (state, action) => {
                 ...state,
                 room_id: action.payload
             };
+        case 'SET_SPLASH_MESSAGE':
+            return{
+                ...state,
+                splash_message: action.payload
+            };
     
         case 'SET_PEER_ID':
             return{

@@ -236,6 +236,10 @@ We need to update a lot of things:
 - [FIX] fixed crash when eraser was used on lines, circles, rects
 - [ENH] add volume buttons on UI to compensate for phones that limit physical buttons to media volume instead of call volume
 
+
+### Ver. 1.0.3:
+- [ENH] add custom splash phrase instead of Holomask - Univet
+
 ## Univet Camera Procedure
 
 1. install ReactNativeUsbModule from: https://github.com/andy-shea/react-native-usb

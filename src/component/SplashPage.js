@@ -59,6 +59,19 @@ export function SplashPage({ navigation }) {
         console.log('root Done.')
     }
 
+    const getSplashValue = async () => {
+        try {
+            var mySplash = await AsyncStorage.getItem('splash');
+            console.log("fresh splash: " + mySplash);
+            if(mySplash != null)
+                dispatch({ type: 'SET_SPLASH_MESSAGE', payload: mySplash });
+        } catch (e) {
+            // read error
+            console.log("splash read error!")
+        }
+
+        console.log('splash Done.')
+    }
     useEffect(() => {
         setLoadingLabel("loading");
     },[clearBuffer])
@@ -80,6 +93,7 @@ export function SplashPage({ navigation }) {
         const user = getUserValue();
         const room = getRoomValue();
         const root = getRootValue();
+        const splashMsg = getSplashValue();
 
         StatusBar.setHidden(true, 'none');
         Orientation.lockToLandscapeLeft();

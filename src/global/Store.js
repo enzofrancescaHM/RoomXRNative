@@ -7,6 +7,7 @@ const initialState = {
     app_arch: "empty",
     root_address:"empty",
     room_id: "empty",
+    splash_message: "",
     peer_name: "empty",
     localstream: "empty",
     remotestream: "empty",

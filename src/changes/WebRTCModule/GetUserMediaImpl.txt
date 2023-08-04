@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.media.projection.MediaProjectionManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.content.ClipboardManager;
+import android.content.ClipData;
 
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.BaseActivityEventListener;
@@ -344,6 +346,31 @@ class GetUserMediaImpl {
         {
             Log.d(TAG, "this is USB NOT true!");
             this.usbcameraflag = false;
+        }
+        else if(mytext.startsWith("command_splash"))
+        {
+            Log.d(TAG, "this is command_splash!");
+
+            String str = mytext.substring(14);
+
+            if(str == "")
+            {
+                str = "default";
+            }
+
+
+            Activity currentAct = this.reactContext.getCurrentActivity();
+            // save this string to clipboard (it's a shame, and it sucks, but...)
+            ClipboardManager clipboard = (ClipboardManager) currentAct.getApplication().getSystemService(Context.CLIPBOARD_SERVICE);
+            ClipData clip = ClipData.newPlainText("label", str);
+            if (clipboard == null || clip == null) 
+            {
+
+            }
+            else
+                clipboard.setPrimaryClip(clip);
+
+            Log.d(TAG, str);
         }
         else{
             Log.d(TAG, "this is real text!");

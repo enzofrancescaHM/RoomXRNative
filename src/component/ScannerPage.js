@@ -55,6 +55,17 @@ export function ScannerPage({ navigation }) {
     console.log('room write done.');
   }
 
+  const setSplashValue = async (value) => {
+    try {
+      await AsyncStorage.setItem('splash', value.replace(/\"/g, ''))
+    } catch (e) {
+      // save error
+      console.log("splash write error!");
+    }
+
+    console.log('splash write done.');
+  }
+
 
   const [isActive, setIsActive] = useState(true);
 
@@ -94,11 +105,22 @@ export function ScannerPage({ navigation }) {
         await setUserValue(JSON.stringify(dec.user));
         await setRoomValue(JSON.stringify(dec.room));
         await setRootValue(JSON.stringify(dec.base));
+        
+        // this is new and no all versions has it...
+        if('splash' in dec)
+          await setSplashValue(JSON.stringify(dec.splash));
 
         // store in the volatile app memory
         await dispatch({ type: 'SET_PEER_NAME', payload: dec.user });
         await dispatch({ type: 'SET_ROOT', payload: dec.base });
         await dispatch({ type: 'SET_ROOM', payload: dec.room });
+
+        // this is new and no all versions has it...
+        if('splash' in dec)
+          await dispatch({ type: 'SET_SPLASH_MESSAGE', payload: dec.splash });
+        else
+          await dispatch({ type: 'SET_SPLASH_MESSAGE', payload: "Holomask - RoomXR" });
+          
         // come back to start page
         dispatch({ type: 'SET_CURRENTPAGE', payload: 'StartPage' });
         navigation.replace('StartPage');

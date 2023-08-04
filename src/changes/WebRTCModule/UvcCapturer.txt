@@ -55,6 +55,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 
 import android.os.BatteryManager;
+import android.content.ClipboardManager;
 
 
 public class UvcCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectListener {
@@ -278,7 +279,28 @@ public class UvcCapturer implements VideoCapturer, USBMonitor.OnDeviceConnectLis
 
                                     getBatteryStatus();
 
-                                    Bitmap createBitmap = UnivetUtils.TextToBitmap("Univet - Holomask");
+                                    String text2 = "Holomask - RoomXR";
+
+                                    ClipboardManager clipboard = (ClipboardManager) ((ReactApplicationContext)context).getCurrentActivity().getSystemService(Context.CLIPBOARD_SERVICE);
+                                    try {
+                                        CharSequence text = clipboard.getPrimaryClip().getItemAt(0).getText();
+                                        text2 = text.toString();
+                                        if(text2 == "default")
+                                        {
+                                            Log.d(TAG,"default!!!");
+                                            text2 = "Holomask - RoomXR";
+                                        }
+                                        else
+                                        {
+                                            Log.d(TAG, text2);
+                                        }
+                                    } catch (Exception e) {
+                                        text2 = "Holomask - RoomXR";
+                                    }
+
+
+
+                                    Bitmap createBitmap = UnivetUtils.TextToBitmap(text2);
 
                                     dFb.writeImage(createBitmap,batteryPct,false);
                                 }
