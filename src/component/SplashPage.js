@@ -110,10 +110,37 @@ export function SplashPage({ navigation }) {
         console.log(buildNumber);
     
         dispatch({ type: 'SET_APP_VER', payload: appVersion });
+
+
+        let brand = DeviceInfo.getBrand();
+        console.log("brand: " + brand);
+        dispatch({ type: 'SET_DEVICEBRAND', payload: brand });
+    
+        DeviceInfo.getDevice().then((device) => {
+            console.log("device:" + device);
+            dispatch({ type: 'SET_DEVICENAME', payload: device });
+        });
+    
+        DeviceInfo.getHardware().then(hardware => {
+            console.log("hard:" + hardware);
+        });
+    
+        DeviceInfo.getProduct().then((product) => {
+            console.log("prod:" + product);
+        });
+      
+
     
         // read internal architecture
         // first we read the 64 bit
         var myarch = "unset";
+
+        DeviceInfo.supported32BitAbis().then((abisss) => {
+            if(abisss.length > 0)
+              myarch = abisss[0];
+            console.log("we are in support32" + myarch);
+        });
+
         DeviceInfo.supported64BitAbis().then((abis) => {
           // ["arm64-v8a", "win_x64"]
           // since we obtain an ordered list with the most preferrable
@@ -127,7 +154,7 @@ export function SplashPage({ navigation }) {
                 myarch = abiss[0];
             });
           }
-          console.log(myarch);
+          console.log("we are in support64" + myarch);
           dispatch({ type: 'SET_APP_ARCH', payload: myarch });
           // [ "arm64 v8", "Intel x86-64h Haswell", "arm64-v8a", "armeabi-v7a", "armeabi", "win_x86", "win_arm", "win_x64" ]
         });
@@ -150,6 +177,9 @@ export function SplashPage({ navigation }) {
 
 
     function setRealDimensions(rw, rh) {
+
+        console.log("dimensions: " + rw + " - " + rh);
+
         // we are always in landscape mode so adjust the values accordingly
         if (rw > rh) {
             dispatch({ type: 'SET_REAL_WIDTH', payload: rw });

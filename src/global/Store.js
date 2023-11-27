@@ -64,7 +64,8 @@ const initialState = {
     current_page: "StartPage",
     ejected: false,
     lobby: false,
-
+    device_brand: "",
+    device_name:""
 };
 
 const Store = ({children}) => {

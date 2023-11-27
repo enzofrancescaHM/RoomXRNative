@@ -1,5 +1,6 @@
-import React, { useEffect, useState, useContext } from "react";
-import { StyleSheet, Image, Text, TouchableOpacity, View, StatusBar, Alert, Switch } from "react-native";
+import React, { useEffect, useState, useContext, useRef } from "react";
+import { Button, StyleSheet, Image, Text, TouchableOpacity, View, StatusBar, Alert, Switch , TextInput} from "react-native";
+import { Dimensions, Platform, AccessibilityInfo } from 'react-native';
 import { Context } from '../global/Store';
 import usb from 'react-native-usb';
 import Orientation from 'react-native-orientation-locker';
@@ -8,6 +9,8 @@ import { mediaDevices, registerGlobals } from "react-native-webrtc";
 //import DeviceInfo from 'react-native-device-info';
 import * as UpdateAPK from "rn-update-apk";
 //import { setNavigator } from "../global/navigtionRef";
+import StaticSafeAreaInsets from 'react-native-static-safe-area-insets';
+
 
 
 export function StartPage({ navigation }) {
@@ -20,6 +23,24 @@ export function StartPage({ navigation }) {
   var timeoutHandle;
   var timeoutHandle2;
 
+  const SCR_WIDTH = Dimensions.get('window').width;
+  const SCR_HEIGHT = Platform.select({
+    android: Dimensions.get('screen').height - StaticSafeAreaInsets.safeAreaInsetsBottom,
+    ios: Dimensions.get('window').height,
+  });
+
+  const btnRef = useRef(null);
+
+  console.log("WIDTH:");
+  console.log(SCR_WIDTH);
+
+  console.log("HEIGHT:");
+  console.log(SCR_HEIGHT);
+
+  console.log(state.app_arch);
+
+
+
   let isEnumerateAudioDevices = false;
   let versionURL = "---";
 
@@ -29,6 +50,8 @@ export function StartPage({ navigation }) {
   if(state.app_arch == "win_x64")
     versionURL = "https://holomask.eu/roomxrpro/test-version-win_x64.json";
 
+  if(state.app_arch == "armeabi-v7a")
+    versionURL = "https://holomask.eu/roomxrpro/test-version-armeabi-v7a.json";
 
   var updater = new UpdateAPK.UpdateAPK({
     iosAppId: "0000000000",
@@ -164,6 +187,10 @@ export function StartPage({ navigation }) {
     }
   }, [usbIsEnabled])
 
+ 
+
+
+
   function toggleUsb() {
     console.log("toggle..");
     setUsbIsEnabled(previousState => !previousState);
@@ -190,7 +217,7 @@ export function StartPage({ navigation }) {
 
   useEffect(function componentDidMount() {
     console.log("%c StartPage componetDidMount", "color:green;");
-
+    
     UpdateAPK.getApps().then(apps => {
       //console.log("Installed Apps: ", JSON.stringify(apps));
       //this.setState({ allApps: apps});
@@ -231,6 +258,7 @@ export function StartPage({ navigation }) {
 
     timeoutHandle2 = setTimeout(() => {
       checkUpd();
+      //console.log(btnRef.current.focus());
     }, 1500);
 
     return function componentWillUnmount() {
@@ -303,7 +331,7 @@ export function StartPage({ navigation }) {
         .enumerateDevices()
         .then((devices) =>
             devices.forEach((device) => {
-                console.log("audio device: ") 
+                console.log("device: ") 
                 console.log(device);
                 let el = null;
                 if ('audioinput' === device.kind  || 'audio' === device.kind) {
@@ -456,16 +484,87 @@ export function StartPage({ navigation }) {
       marginLeft: 20,
       marginRight: 5,
     },
+    bladeButtonView:{
+       flex: 1,
+       flexDirection: "row",
+       justifyContent: 'space-between',
+      // height: 100,
+       width:"100%",
+      padding: 2,
+      backgroundColor: '#111111',
+      alignItems: 'center'
+    },
+    bladeButtonScanner:{
+    },
+    bladeButtonConnect:{
+    },
+    bladeContainer:{
+      flex: 1,
+      flexDirection: "column",
+      justifyContent: 'space-between',
+      padding: 2,
+      backgroundColor: '#000000',
+      alignItems: 'center'
+    },
+    bottomContainerBlade: {
+      height: 50,
+      flexDirection: "row",
+      padding: 2,
+      backgroundColor: '#00000000',
+      zIndex: 2,
+    },
+    statusContainerBlade: {
+      height: 50,
+      flexDirection: "row",
+      padding: 2,
+      backgroundColor: '#00000000',
+      zIndex: 2,
+    },
+
   });
 
   return (
     <>
-      <View style={styles.mainContainer}>
+      <View focusable={false} style={styles.bladeContainer}> 
+       
+        <View focusable={false} style={styles.bladeButtonView}>
+            <Button focusable style={styles.bladeButtonScanner}
+              onPress={scannergo}
+              title="QRCode"              
+              color="#111111"
+            />
+            <Button focusable ref={btnRef} style={styles.bladeButtonConnect}
+              onPress={connectgo}
+              title="Connect"
+              color="#111111"
+            > <TextInput autoFocus={true}></TextInput>
+            </Button>
+        </View>
+
+        <Text focusable={false}style={styles.labelTitle}>RoomXR PRO</Text>
+        <Text focusable={false}style={styles.labelUser}>user: {state.peer_name}, room: {state.room_id}</Text>
+
+        <View focusable={false} style={styles.bottomContainerBlade}>
+          <Text focusable={false} style={styles.labelVersion}>
+            {"v" + state.app_ver + " (" + state.app_arch +  " )"}
+          </Text>
+        </View>
+
+        <View focusable={false} style={styles.statusContainerBlade}>
+          <Text focusable={false} style={styles.labelVersion}>
+            {(downloadPerc == "---") ? "" : "download status: " + downloadPerc + "%"}
+          </Text>
+          {(state.device_name == "blade2") && <Text style={styles.labelVersion}>Vuzix BLADE 2 EDITION</Text>}
+        </View>
+
+      </View>
+
+      {(state.device_name != "blade2") && <View style={styles.mainContainer} accessible>
         <Text style={styles.labelTitle}>RoomXR PRO</Text>
         <Text style={styles.labelUser}>user: {state.peer_name}, room: {state.room_id}</Text>
         {/* <Text style={styles.labelUser}>audio mic: {state.peer_name}</Text> */}
         <View style={styles.buttonsContainer}>
-          <TouchableOpacity
+        {(state.device_name != "blade2") && <TouchableOpacity
             style={styles.buttonScannerStyle}
             activeOpacity={0.5}
             onPress={scannergo}>
@@ -475,8 +574,8 @@ export function StartPage({ navigation }) {
             />
             <View style={styles.buttonIconSeparatorStyle} />
             <Text style={styles.buttonTextStyle}>Config</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
+          </TouchableOpacity>}
+          {(state.device_name != "blade2") && <TouchableOpacity
             style={styles.buttonFacebookStyle}
             activeOpacity={0.5}
             onPress={connectgo}>
@@ -485,23 +584,24 @@ export function StartPage({ navigation }) {
               style={styles.buttonImageIconStyle}
             />
             <View style={styles.buttonIconSeparatorStyle} />
-            <Text style={styles.buttonTextStyle}>Connect</Text>
-          </TouchableOpacity>
+            {(state.device_name != "blade2") && <Text style={styles.buttonTextStyle}>Connect</Text>}           
+          </TouchableOpacity>}        
         </View>
+      
         <View style={styles.bottomContainer}>
           <Text style={styles.labelVersion}>
             {"v" + state.app_ver + " (" + state.app_arch +  " )"}
           </Text>
-          <Text style={styles.labelUsbTextStyle}>
+          {(state.device_name != "blade2") && <Text style={styles.labelUsbTextStyle}>
             {(usbIsEnabled == true) ? "USB CAMERA ON" : "USB CAMERA OFF"}
-          </Text>
-          <Switch style={styles.switchusb}
+          </Text>}
+          {(state.device_name != "blade2") && <Switch style={styles.switchusb}
             trackColor={{ false: "#767577", true: "#81b0ff" }}
             thumbColor={usbIsEnabled ? "#f5dd4b" : "#f4f3f4"}
             ios_backgroundColor="#3e3e3e"
             onValueChange={toggleUsb}
             value={usbIsEnabled}
-          />
+          />}
 
         </View>
         <View style={styles.statusContainer}>
@@ -509,7 +609,7 @@ export function StartPage({ navigation }) {
             {(downloadPerc == "---") ? "" : "download status: " + downloadPerc + "%"}
           </Text>
         </View>
-      </View>
+      </View>}
 
     </>
   )

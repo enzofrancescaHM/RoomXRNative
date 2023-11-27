@@ -1091,10 +1091,13 @@ function RoomClient({ navigation }) {
                     .then(() => {
                         dispatch({ type: 'SET_MIC_COUNT', payload: miccount });
                         dispatch({ type: 'SET_SPEAKER_COUNT', payload: speakcount });
-                        mediaDevices.setAudioDevice(state.mic_array[miccount-1]);
+                        //mediaDevices.setAudioDevice(state.mic_array[2]); // TEST tEST
+                        //mediaDevices.setAudioDevice(state.mic_array[miccount-1]);
+                        mediaDevices.setAudioDevice(getBestAudioDevice());
                     });
             })
             mediaDevices.setAudioDevice(getBestAudioDevice());
+            //mediaDevices.setAudioDevice(state.mic_array[2]); // TEST tEST
             produce(mediaType.audio, deviceid/*microphoneSelect.value*/);
         } else {
 

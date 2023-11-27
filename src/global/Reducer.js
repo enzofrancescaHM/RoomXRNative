@@ -497,8 +497,17 @@ const Reducer = (state, action) => {
                 ...state,
                 lobby: action.payload
             };
-                
-        
+        case 'SET_DEVICEBRAND':
+            return{
+                ...state,
+                device_brand: action.payload
+            };
+        case 'SET_DEVICENAME':
+            return{
+                ...state,
+                device_name: action.payload
+            };
+                    
         default:
             return state;
     }

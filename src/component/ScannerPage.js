@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useContext, useState } from 'react';
-import { StyleSheet, Text, Image, View,TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, Image, View,TouchableOpacity, BackHandler } from 'react-native';
 import { useCameraDevices } from 'react-native-vision-camera';
 import { Camera } from 'react-native-vision-camera';
 import { useScanBarcodes, BarcodeFormat} from 'vision-camera-code-scanner';
@@ -76,6 +76,24 @@ export function ScannerPage({ navigation }) {
       getBarcode(barcode.displayValue, idx)
     ));
   }, [barcodes]);
+
+
+  React.useEffect(() => {
+    const backAction = () => {
+        console.log("back!");
+          // come back to start page
+    dispatch({ type: 'SET_CURRENTPAGE', payload: 'StartPage' });
+    navigation.replace('StartPage');
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction,
+    );
+
+    return () => backHandler.remove();
+  }, []);
 
   function onPressFunction() {
     // come back to start page
@@ -181,6 +199,14 @@ export function ScannerPage({ navigation }) {
       zIndex: 100,
       zOrder:100,
   },
+  labelVersion:{
+    color:"#fff",
+    fontSize:15,
+    fontWeight:"bold"
+  },
+  textContainer:{
+    backgroundColor:'#00000066'
+  }
 
 
   });
@@ -196,16 +222,14 @@ export function ScannerPage({ navigation }) {
           frameProcessor={frameProcessor}
           frameProcessorFps={5}
         />
-        {
-        
-        /*  {barcodes.map((barcode, idx) => (
-                getBarcode(barcode.displayValue)
-           <Text key={idx} style={styles.barcodeTextURL}>
-            {barcode.displayValue}
-          </Text>
- 
-        ))} */}
-          <View style={styles.buttonContainerTop}>
+      
+          
+      {(state.device_name == "blade2") && <View style={styles.textContainer}>
+                <Text style={styles.labelVersion}>Position the QRCode in front of the camera, once read the app will come back. Tap with two fingers on the pad to go back to main page without reading the QRCode</Text>
+      </View>}
+          
+          
+      {(state.device_name != "blade2") &&<View style={styles.buttonContainerTop}>
                 <TouchableOpacity
                     style={styles.buttonScannerStyle}
                     activeOpacity={0.9}
@@ -215,7 +239,7 @@ export function ScannerPage({ navigation }) {
                         style={styles.buttonImageIconStyle}
                     />
                 </TouchableOpacity>    
-                </View>
+          </View>}
       </>
     )
   );
