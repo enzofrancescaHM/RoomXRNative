@@ -69,9 +69,14 @@ Every time we publish a new version we have to update the auto-update system
 This system rely on checking a file on Holomask Server and decide if there is a new
 version available.
 We need to update a lot of things:
-- bla bla bla
-- bla bla bla
-- bla bla bla
+- /android/app/build.grade , update versionCode and versionName adding 1 to both
+- test-version-arm64-v8a.json , change apkurl to the correspondant folder on server
+- test-version-win_x64.json , change apkurl to the correspondant folder on server
+- test-version-armeabi-v7a.json , change apkurl to the correspondant folder on server
+- compile apks
+- put apks on server
+- update also the config page in RoomXR PRO...
+
 
 ## Todo:
 - [LOW] Implement Device Chooser (camera and audio)...
