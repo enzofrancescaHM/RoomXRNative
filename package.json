@@ -12,7 +12,9 @@
     "build-android-debug-prep": "react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res",
     "build-android-debug-real": "cd android && ./gradlew assembleDebug",
     "save-changes-before-update": "savechanges.bat",
-    "copy-changes-after-update": "applychanges.bat"
+    "copy-changes-after-update": "applychanges.bat",
+    "MAC_save-changes-before-update": "savechanges.bat",
+    "MAC_copy-changes-after-update": "applychanges.bat"
   },
   "dependencies": {
     "@babel/plugin-transform-runtime": "^7.19.6",
