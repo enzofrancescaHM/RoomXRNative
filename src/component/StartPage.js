@@ -525,7 +525,7 @@ export function StartPage({ navigation }) {
 
   return (
     <>
-      <View focusable={false} style={styles.bladeContainer}> 
+      {(state.device_name == "blade2") && <View focusable={false} style={styles.bladeContainer}> 
        
         <View focusable={false} style={styles.bladeButtonView}>
             <Button focusable style={styles.bladeButtonScanner}
@@ -557,7 +557,7 @@ export function StartPage({ navigation }) {
           {(state.device_name == "blade2") && <Text style={styles.labelVersion}>Vuzix BLADE 2 EDITION</Text>}
         </View>
 
-      </View>
+      </View>}
 
       {(state.device_name != "blade2") && <View style={styles.mainContainer} accessible>
         <Text style={styles.labelTitle}>RoomXR PRO</Text>
