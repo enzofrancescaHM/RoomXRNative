@@ -507,7 +507,29 @@ const Reducer = (state, action) => {
                 ...state,
                 device_name: action.payload
             };
-                    
+
+        case 'SET_TAKEPICTURE':
+            return{
+                ...state,
+                takepicture: action.payload
+            };
+
+        case 'SET_PAUSEPRODUCER':
+            return{
+                ...state,
+                pause_producer: action.payload
+            };
+                
+        case 'SET_RESUMEPRODUCER':
+            return{
+                ...state,
+                resume_producer: action.payload
+            };                
+        case 'SET_PICTUREFILENAME':
+            return{
+                ...state,
+                picture_file_name: action.payload
+            };                               
         default:
             return state;
     }

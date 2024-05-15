@@ -65,7 +65,11 @@ const initialState = {
     ejected: false,
     lobby: false,
     device_brand: "",
-    device_name:""
+    device_name:"",
+    takepicture:false,
+    pause_producer:false,
+    resume_producer:false,
+    picture_file_name:"",
 };
 
 const Store = ({children}) => {

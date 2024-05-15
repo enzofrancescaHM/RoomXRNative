@@ -8,6 +8,7 @@ import {setIsAudio, setIsVideo, setIsScreen, getAudioConstraints, getVideoConstr
 import {getScreenConstraints, getEncoding, getMapKeyByValue, getVideoConstraintsUSB} from "../global/constraints"
 import { Skia, useImage } from "@shopify/react-native-skia";
 import socketio from "socket.io-client";
+import RNFS from 'react-native-fs';
 
 let chatMessage = "chatMessage";
 let receiveFileInfo = "receiveFileInfo";
@@ -50,6 +51,8 @@ function RoomClient({ navigation }) {
         signComponetAsMounted()
     }, [])
 
+
+
     function signComponetAsMounted() {
         mounted.current = true
     }
@@ -63,6 +66,27 @@ function RoomClient({ navigation }) {
     const mounted = useRef();
     const [state, dispatch] = useContext(Context);
     const socket = socketio.connect(state.root_address, { transports: ['websocket'] });
+    
+    useEffect(() => {
+        console.log("RC:::ECCOCI");
+        if(state.pause_producer == true)
+        {
+            dispatch({ type: 'SET_PAUSEPRODUCER', payload: false });
+            console.log("pause producer!")
+            pauseProducer(mediaType.video);
+        }
+    }, [state.pause_producer])
+
+    useEffect(() => {
+        console.log("RC:::ECCOCI");
+        if(state.resume_producer == true)
+        {
+            dispatch({ type: 'SET_RESUMEPRODUCER', payload: false });
+            console.log("resume producer!")
+            resumeProducer(mediaType.video);
+        }
+    }, [state.resume_producer])
+
 
 
     function initComp() {        
@@ -113,6 +137,21 @@ function RoomClient({ navigation }) {
         this.screenVideoStream = null;
 
 
+         // file transfer settings
+         this.fileToSend = null;
+         this.fileReader = null;
+         this.receiveBuffer = [];
+         this.receivedSize = 0;
+         this.incomingFileInfo = null;
+         this.incomingFileData = null;
+         this.sendInProgress = false;
+         this.receiveInProgress = false;
+         this.fileSharingInput = '*';
+         this.chunkSize = 1024 * 16; // 16kb/s
+         this.socket2 = socket;
+
+ 
+
 
         Object.keys(_EVENTS).forEach(
             function (evt) {
@@ -161,6 +200,11 @@ function RoomClient({ navigation }) {
         );
     }
 
+    async function testSocket() {
+        console.log("[RoomClientComp] createroom socket: " + this.socket2);
+        console.log("[RoomClientComp] createroom socketID: " + this.socket2.id);
+    }
+
     async function createRoom(room_id) {
         console.log("[RoomClientComp] createroom socket: " + socket);
         console.log("[RoomClientComp] createroom room_id: " + room_id);
@@ -174,6 +218,9 @@ function RoomClient({ navigation }) {
     }
 
     async function join(data) {
+
+        console.log("WE ARE IN JOIN!!!");
+
         socket
             .request('join', data)
             .then(
@@ -394,6 +441,10 @@ function RoomClient({ navigation }) {
     // TODO DATACHANNEL TRANSPORT
     // ####################################################
 
+
+  
+
+
     // ####################################################
     // SOCKET ON
     // ####################################################
@@ -457,17 +508,27 @@ function RoomClient({ navigation }) {
             'message',
             function (data) {
                 console.log('[RoomClientComp] New message:', data);
-                var localChatArray = data.peer_name + ": " + data.peer_msg + "\n";
-                console.log('chatarray: ', localChatArray);
-                dispatch({ type: 'ADD_CHAT_MESSAGE',  payload: localChatArray});
 
-                //Univet
-                if(state.usbcamera){
-                    mediaDevices.showLoopBackCamera(false);
-                    mediaDevices.showPointer("false,50,50");
-                    mediaDevices.showTextMessage(localChatArray);
+                // TEST TEST TEST
+                if(data.peer_msg == "takepicture")
+                {
+                    console.log("fire photo event!");
+                    dispatch({ type: 'SET_TAKEPICTURE', payload: true });
                 }
-                
+                else
+                {
+                    var localChatArray = data.peer_name + ": " + data.peer_msg + "\n";
+                    console.log('chatarray: ', localChatArray);
+                    dispatch({ type: 'ADD_CHAT_MESSAGE',  payload: localChatArray});
+    
+                    //Univet
+                    if(state.usbcamera){
+                        mediaDevices.showLoopBackCamera(false);
+                        mediaDevices.showPointer("false,50,50");
+                        mediaDevices.showTextMessage(localChatArray);
+                    }    
+                }
+
                 //this.showMessage(data);
             }.bind(this),
         );
@@ -1583,20 +1644,20 @@ function RoomClient({ navigation }) {
 
         switch (type) {
             case mediaType.audio:
-                this.event(_EVENTS.pauseAudio);
+                //this.event(_EVENTS.pauseAudio);
                 break;
             case mediaType.video:
-                this.event(_EVENTS.pauseVideo);
+                //this.event(_EVENTS.pauseVideo);
                 break;
             case mediaType.screen:
-                this.event(_EVENTS.pauseScreen);
+                //this.event(_EVENTS.pauseScreen);
                 break;
             default:
                 return;
         }
     }
 
-    function resumeProducer(type) {
+    async function resumeProducer(type) {
         if (!this.producerLabel.has(type)) {
             return console.log('There is no producer for this type ' + type);
         }
@@ -1604,15 +1665,33 @@ function RoomClient({ navigation }) {
         let producer_id = this.producerLabel.get(type);
         this.producers.get(producer_id).resume();
 
+        testSocket();
+        console.log(this.socket2);
+        console.log(this.socket2.id);
+        
+
+        // TEST TEST TEST
+        await sendFileDirectly("");
+        //console.log("[ResumePRoducer] internal socketid: " + this.socket2.id);
+        //const ciccio = await socket.request('sendFileDirectly');
+        // let data = {
+        //     peer_name: this.peer_name,
+        //     peer_id: this.peer_id,
+        //     to_peer_id: 'all',
+        //     peer_msg: "BINGO!!",
+        //     //peer_msg: translatedmes,
+        // };
+        //this.socket2.emit('message', data);
+
         switch (type) {
             case mediaType.audio:
-                this.event(_EVENTS.resumeAudio);
+                //this.event(_EVENTS.resumeAudio);
                 break;
             case mediaType.video:
-                this.event(_EVENTS.resumeVideo);
+                //this.event(_EVENTS.resumeVideo);
                 break;
             case mediaType.screen:
-                this.event(_EVENTS.resumeScreen);
+                //this.event(_EVENTS.resumeScreen);
                 break;
             default:
                 return;
@@ -1721,6 +1800,41 @@ function RoomClient({ navigation }) {
                 );
             }.bind(this),
         );
+    }
+
+    async function sendFileDirectly(file) {
+        
+        
+        // retrieve the file name stored in internal memory
+        var internal_picture = state.picture_file_name;
+
+        if(internal_picture == "")
+            return;
+
+
+        // Read the file
+        RNFS.readFile(internal_picture, 'base64')
+        .then((contents) => {
+            //console.log(contents);
+            let data = {
+                peer_name: state.peer_name,
+                to_peer_id: 'all',
+                file_data: contents
+            };
+    
+            const ciccio = this.socket2.emit('sendFileDirectly',data);
+    
+        })
+        .catch((error) => {
+            console.error(error.message);
+        });
+        
+      
+        // socket
+        //     .request('sendFileDirectly', data)            
+        //     .catch((err) => {
+        //         console.log('[RoomClientComp] sendFileDirectly ERROR:', err);
+        //     });
     }
 
     async function getConsumeStream(producerId) {

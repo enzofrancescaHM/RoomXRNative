@@ -13,6 +13,8 @@ import QRCode from "react-native-qrcode-svg";
 import { setNavigator, getCurrentRoute } from "../global/navigtionRef";
 import KeepAwake from "@sayem314/react-native-keep-awake";
 import SwipeButton from 'rn-swipe-button';
+import { Camera } from 'react-native-vision-camera';
+import { useCameraDevices } from 'react-native-vision-camera';
 
 
 export function MainPage({ navigation, route }) {
@@ -49,6 +51,12 @@ export function MainPage({ navigation, route }) {
     const [loopVisible, setLoopVisible] = useState(false);
     const [videosVisible, setVideosVisible] = useState(true);
     const [keysLocked, setKeysLocked] = useState(false);
+
+    const devices = useCameraDevices();
+    const device = devices.back;
+    const mycam = useRef();
+    const myRC = useRef();
+    const [isActive, setIsActive] = useState(false);
 
 
     // ####################################################
@@ -124,6 +132,73 @@ export function MainPage({ navigation, route }) {
             //}
         }
     }, [state.ejected])
+
+    useEffect(() => {
+        async function takepic(){
+            console.log("ci siamo..." + state.takepicture);
+            if(state.takepicture == true)
+                {
+                    console.log("****** ****** take picture!");
+                    
+                    // if(isActive == true)
+                    // {
+                    //     setIsActive(false);    
+                        
+                      
+                    // }                        
+                    //else
+                    //{
+                        dispatch({ type: 'SET_PAUSEPRODUCER', payload: true });
+
+                        var mytm = setInterval(function run(){
+                
+                            setIsActive(true);
+                            
+                            
+                            var mytm2 = setInterval(async function run(){
+                
+                               
+                                    // use camera night vision library to take screenshot
+                                    var file = await mycam.current.takePhoto();
+
+                                    setIsActive(false);
+                        
+                                    console.log("Photo Detail: H: " + file.height + " W: " + file.width);
+                                    console.log("Photo Path: " + file.path);
+
+                                    dispatch({ type: 'SET_PICTUREFILENAME', payload: file.path });    
+                                
+                                    var mytm0 = setInterval(function run(){
+                
+                                        dispatch({ type: 'SET_RESUMEPRODUCER', payload: true });    
+                                        clearInterval(mytm0);
+                            
+                                    },1500)
+    
+    
+                                clearInterval(mytm2);
+                    
+                            },1500)
+
+
+                            clearInterval(mytm);
+                
+                        },1000)
+                        
+                    //}
+                        
+        
+                
+                 
+                    // make all this as one shot
+                    dispatch({ type: 'SET_TAKEPICTURE', payload: 'false' });
+                }
+        
+        }
+        takepic();
+    }, [state.takepicture])
+
+
 
     useEffect(() => {
         const backAction = () => {
@@ -856,6 +931,18 @@ export function MainPage({ navigation, route }) {
             <View style={styles.bottomContainer}>
             </View>
             <View style={styles.mainArea}>
+                {(device != null ) &&
+                    <Camera
+                    ref={mycam}
+                    style={StyleSheet.absoluteFill}
+                    device={device}
+                    isActive={isActive}
+                    photo={true}
+                    />
+                }
+                
+                
+                
                 <RTCView
                     style={styles.localStream}
                     mirror={state.screenstream == "empty" ? false : true}

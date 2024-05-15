@@ -96,7 +96,7 @@ We need to update a lot of things:
 
 
 ## In Progress:
-
+take photo while streaming... (bah)
 
 
 
