@@ -529,7 +529,12 @@ const Reducer = (state, action) => {
             return{
                 ...state,
                 picture_file_name: action.payload
-            };                               
+            };             
+        case 'SET_BUTTONFOCUS':
+            return{
+                ...state,
+                button_focus: action.payload
+            };                             
         default:
             return state;
     }

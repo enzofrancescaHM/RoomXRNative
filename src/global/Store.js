@@ -70,6 +70,7 @@ const initialState = {
     pause_producer:false,
     resume_producer:false,
     picture_file_name:"",
+    button_focus:"connect",
 };
 
 const Store = ({children}) => {

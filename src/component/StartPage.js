@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext, useRef } from "react";
-import { Button, StyleSheet, Image, Text, TouchableOpacity, View, StatusBar, Alert, Switch , TextInput} from "react-native";
-import { Dimensions, Platform, AccessibilityInfo } from 'react-native';
+import { Button, StyleSheet, Image, Text, TouchableOpacity, View, StatusBar, Alert, Switch , TextInput, TouchableHighlight} from "react-native";
+import { Dimensions, Platform, AccessibilityInfo, NativeSyntheticEvent } from 'react-native';
 import { Context } from '../global/Store';
 import usb from 'react-native-usb';
 import Orientation from 'react-native-orientation-locker';
@@ -10,6 +10,8 @@ import { mediaDevices, registerGlobals } from "react-native-webrtc";
 import * as UpdateAPK from "rn-update-apk";
 //import { setNavigator } from "../global/navigtionRef";
 import StaticSafeAreaInsets from 'react-native-static-safe-area-insets';
+import { ExternalKeyboardView } from 'react-native-external-keyboard';
+
 
 
 
@@ -38,7 +40,6 @@ export function StartPage({ navigation }) {
   console.log(SCR_HEIGHT);
 
   console.log(state.app_arch);
-
 
 
   let isEnumerateAudioDevices = false;
@@ -145,6 +146,36 @@ export function StartPage({ navigation }) {
 
     console.log('root Done.')
   }
+
+  const onFocus = (e) => {
+    console.log(e.nativeEvent.keyCode);
+    if(e.nativeEvent.keyCode == "66")
+    {
+      console.log("pressssssssss");
+      if(state.button_focus == "qrcode")
+        {
+          scannergo();
+        }  
+        else
+        {
+          connectgo();
+        }
+    } 
+
+    if(state.button_focus == "qrcode")
+    {
+      //console.log("to connect");  
+      dispatch({ type: 'SET_BUTTONFOCUS', payload: 'connect' });
+    }  
+    else
+    {
+        //console.log("to qrcode");
+        dispatch({ type: 'SET_BUTTONFOCUS', payload: 'qrcode' });
+    }
+      
+  };
+
+  
 
   function connectgo() {
     // check if all the needed parameters are set
@@ -491,7 +522,7 @@ export function StartPage({ navigation }) {
       // height: 100,
        width:"100%",
       padding: 2,
-      backgroundColor: '#111111',
+      backgroundColor: '#000000',
       alignItems: 'center'
     },
     bladeButtonScanner:{
@@ -520,6 +551,11 @@ export function StartPage({ navigation }) {
       backgroundColor: '#00000000',
       zIndex: 2,
     },
+    button: {
+      alignItems: 'center',
+      backgroundColor: '#DDDDDD',
+      padding: 10,
+    },
 
   });
 
@@ -527,19 +563,35 @@ export function StartPage({ navigation }) {
     <>
       {(state.device_name == "blade2") && <View focusable={false} style={styles.bladeContainer}> 
        
-        <View focusable={false} style={styles.bladeButtonView}>
-            <Button focusable style={styles.bladeButtonScanner}
+    
+
+
+<ExternalKeyboardView
+        onKeyDownPress={onFocus}
+        onKeyUpPress={() => console.log('onKeyUp')}
+        canBeFocused
+      >
+    <View  style={styles.bottomContainerBlade} accessible>
+    <Button focusable 
               onPress={scannergo}
               title="QRCode"              
-              color="#111111"
+              color={(state.button_focus == "connect") ? "#000000" : "#FF0000" }
+              onFocus={()=>{console.log("happy bunny!!!!!!!!!!!!!!!!!!!!!!1")}}
+              onBlur={()=>{console.log("happy bunny!!!!!!!!!!!!!!!!!!!!!!1")}}
             />
-            <Button focusable ref={btnRef} style={styles.bladeButtonConnect}
+            <Button focusable ref={btnRef} 
               onPress={connectgo}
               title="Connect"
-              color="#111111"
+              color={(state.button_focus == "qrcode") ? "#000000" : "#FF0000" }
+              onFocus={()=>{console.log("happy bunny!!!!!!!!!!!!!!!!!!!!!!1")}}
+              onBlur={()=>{console.log("happy bunny!!!!!!!!!!!!!!!!!!!!!!1")}}
             > <TextInput autoFocus={true}></TextInput>
             </Button>
-        </View>
+    </View>
+</ExternalKeyboardView>
+
+
+     
 
         <Text focusable={false}style={styles.labelTitle}>RoomXR PRO</Text>
         <Text focusable={false}style={styles.labelUser}>user: {state.peer_name}, room: {state.room_id}</Text>

@@ -5879,6 +5879,11 @@ react-native-device-info@^10.6.0:
   resolved "https://registry.yarnpkg.com/react-native-device-info/-/react-native-device-info-10.6.0.tgz#51f1b2ec98abc32747149b0a5b7fb662b44d50e4"
   integrity sha512-/MmINdojWdw2/9rwYpH/dX+1gFP0o78p8yYPjwxiPhoySSL2rZaNi+Mq9VwC+zFi/yQmJUvHntkKSw2KUc7rFw==
 
+react-native-external-keyboard@^0.2.8:
+  version "0.2.8"
+  resolved "https://registry.yarnpkg.com/react-native-external-keyboard/-/react-native-external-keyboard-0.2.8.tgz#61fb22fb74e9574bff8be0f43c4cd981d3d9de94"
+  integrity sha512-AoS9u1kjDmTn31sEYBgde7OtAdYC3mydQCidayNK7olRp2XZU9J+j7QpUveKB44ngxO/3PFfwAXHorVEgy389A==
+
 react-native-fs@^2.16.6, react-native-fs@^2.20.0:
   version "2.20.0"
   resolved "https://registry.yarnpkg.com/react-native-fs/-/react-native-fs-2.20.0.tgz#05a9362b473bfc0910772c0acbb73a78dbc810f6"

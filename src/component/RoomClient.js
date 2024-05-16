@@ -200,10 +200,7 @@ function RoomClient({ navigation }) {
         );
     }
 
-    async function testSocket() {
-        console.log("[RoomClientComp] createroom socket: " + this.socket2);
-        console.log("[RoomClientComp] createroom socketID: " + this.socket2.id);
-    }
+   
 
     async function createRoom(room_id) {
         console.log("[RoomClientComp] createroom socket: " + socket);
@@ -512,8 +509,8 @@ function RoomClient({ navigation }) {
                 // TEST TEST TEST
                 if(data.peer_msg == "takepicture")
                 {
-                    console.log("fire photo event!");
-                    dispatch({ type: 'SET_TAKEPICTURE', payload: true });
+                    if(state.takepicture == false)
+                        dispatch({ type: 'SET_TAKEPICTURE', payload: true });
                 }
                 else
                 {
@@ -1665,23 +1662,8 @@ function RoomClient({ navigation }) {
         let producer_id = this.producerLabel.get(type);
         this.producers.get(producer_id).resume();
 
-        testSocket();
-        console.log(this.socket2);
-        console.log(this.socket2.id);
-        
-
         // TEST TEST TEST
         await sendFileDirectly("");
-        //console.log("[ResumePRoducer] internal socketid: " + this.socket2.id);
-        //const ciccio = await socket.request('sendFileDirectly');
-        // let data = {
-        //     peer_name: this.peer_name,
-        //     peer_id: this.peer_id,
-        //     to_peer_id: 'all',
-        //     peer_msg: "BINGO!!",
-        //     //peer_msg: translatedmes,
-        // };
-        //this.socket2.emit('message', data);
 
         switch (type) {
             case mediaType.audio:
@@ -1803,14 +1785,12 @@ function RoomClient({ navigation }) {
     }
 
     async function sendFileDirectly(file) {
-        
-        
+                
         // retrieve the file name stored in internal memory
         var internal_picture = state.picture_file_name;
 
         if(internal_picture == "")
             return;
-
 
         // Read the file
         RNFS.readFile(internal_picture, 'base64')
@@ -1822,19 +1802,13 @@ function RoomClient({ navigation }) {
                 file_data: contents
             };
     
-            const ciccio = this.socket2.emit('sendFileDirectly',data);
+            const myret = this.socket2.emit('sendFileDirectly',data);
     
         })
         .catch((error) => {
             console.error(error.message);
         });
-        
-      
-        // socket
-        //     .request('sendFileDirectly', data)            
-        //     .catch((err) => {
-        //         console.log('[RoomClientComp] sendFileDirectly ERROR:', err);
-        //     });
+              
     }
 
     async function getConsumeStream(producerId) {

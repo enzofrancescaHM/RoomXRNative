@@ -138,57 +138,50 @@ export function MainPage({ navigation, route }) {
             console.log("ci siamo..." + state.takepicture);
             if(state.takepicture == true)
                 {
-                    console.log("****** ****** take picture!");
+                    console.log("****** TAKE PICTURE START ******");
+                    console.log("****** TAKE PICTURE PAUSING PRODUCER ******");
                     
-                    // if(isActive == true)
-                    // {
-                    //     setIsActive(false);    
+                    dispatch({ type: 'SET_PAUSEPRODUCER', payload: true });
+
+                    var mytm = setInterval(function run(){
+            
+                        console.log("****** TAKE PICTURE ACTIVATING CAMERA ******");
+                        setIsActive(true);
                         
-                      
-                    // }                        
-                    //else
-                    //{
-                        dispatch({ type: 'SET_PAUSEPRODUCER', payload: true });
-
-                        var mytm = setInterval(function run(){
-                
-                            setIsActive(true);
-                            
-                            
-                            var mytm2 = setInterval(async function run(){
-                
-                               
-                                    // use camera night vision library to take screenshot
-                                    var file = await mycam.current.takePhoto();
-
-                                    setIsActive(false);
                         
-                                    console.log("Photo Detail: H: " + file.height + " W: " + file.width);
-                                    console.log("Photo Path: " + file.path);
-
-                                    dispatch({ type: 'SET_PICTUREFILENAME', payload: file.path });    
+                        var mytm2 = setInterval(async function run(){
+            
+                            console.log("****** TAKE PICTURE TAKING REAL PHOTO ******");                            
                                 
-                                    var mytm0 = setInterval(function run(){
+                            // use camera night vision library to take screenshot
+                            var file = await mycam.current.takePhoto();
+
+                            console.log("****** TAKE PICTURE DISABLING CAMERA ******");
+                            setIsActive(false);
                 
-                                        dispatch({ type: 'SET_RESUMEPRODUCER', payload: true });    
-                                        clearInterval(mytm0);
-                            
-                                    },1500)
-    
-    
-                                clearInterval(mytm2);
+                            console.log("Photo Detail: H: " + file.height + " W: " + file.width);
+                            console.log("Photo Path: " + file.path);
+
+                            dispatch({ type: 'SET_PICTUREFILENAME', payload: file.path });    
+                        
+                            var mytm0 = setInterval(function run(){
+        
+                                console.log("****** TAKE PICTURE RESUMING PRODUCER ******");
+                                dispatch({ type: 'SET_RESUMEPRODUCER', payload: true });    
+                                clearInterval(mytm0);
                     
                             },1500)
 
 
-                            clearInterval(mytm);
+                            clearInterval(mytm2);
                 
-                        },1000)
+                        },1500)
+
+
+                        clearInterval(mytm);
+            
+                    },1500)
                         
-                    //}
-                        
-        
-                
                  
                     // make all this as one shot
                     dispatch({ type: 'SET_TAKEPICTURE', payload: 'false' });
@@ -582,12 +575,12 @@ export function MainPage({ navigation, route }) {
         },
         scrollView: {
             position: "absolute",
-            left: 20,
-            top: state.real_height / 4,
-            height: state.real_height / divider * 2,
-            width: state.real_width / 2,
-            //backgroundColor: '#FF000000',
-            backgroundColor: "#00000022",
+            left: 15,
+            top: state.real_height / 10,
+            height: state.real_height /*/ divider * 2*/,
+            width: state.real_width -40/*/ 2*/,
+            backgroundColor: '#00000088',
+            //backgroundColor: "#00000022",
             //marginLeft: 10,            
         },
         debugContainer: {
@@ -754,11 +747,11 @@ export function MainPage({ navigation, route }) {
         },
         buttonContainerTopVuzix: {
             position: "absolute",
-            top: 20,
+            top: 10,
             left: 20,
             borderRadius: borderrds,
             width:  state.real_height,
-            height: state.real_height / divider,
+            height: state.real_height / divider / 2,
             backgroundColor: buttonbck,
             zIndex: 100,
             zOrder: 100,
