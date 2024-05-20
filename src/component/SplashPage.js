@@ -206,7 +206,7 @@ export function SplashPage({ navigation }) {
             resizeMode: 'stretch',
         },
        LogoStyle: {
-            height: state.real_height / 6,
+            height: state.real_height / 10,
             resizeMode: 'contain',
         },
         labelTitle: {

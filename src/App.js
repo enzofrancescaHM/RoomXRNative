@@ -20,6 +20,8 @@ import { MainPage } from './component/MainPage';
 import { SplashPage } from './component/SplashPage';
 import { ScannerPage } from './component/ScannerPage';
 import { QRCodePage } from './component/QRCodePage';
+import { MainPageVuzix } from './component/MainPageVuzix';
+
 
 const Stack = createNativeStackNavigator();
 const App = () => {
@@ -57,6 +59,7 @@ const App = () => {
             <Stack.Screen name="PermissionsPage" component={PermissionsPage} />
             <Stack.Screen name="StartPage" component={StartPage} />
             <Stack.Screen name="MainPage" component={MainPage} />
+            <Stack.Screen name="MainPageVuzix" component={MainPageVuzix} />
             <Stack.Screen name="ScannerPage" component={ScannerPage} />
             <Stack.Screen name="SplashPage" component={SplashPage} />
             <Stack.Screen name="QRCodePage" component={QRCodePage} />

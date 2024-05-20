@@ -71,6 +71,7 @@ const initialState = {
     resume_producer:false,
     picture_file_name:"",
     button_focus:"connect",
+    upload_picture:false,
 };
 
 const Store = ({children}) => {

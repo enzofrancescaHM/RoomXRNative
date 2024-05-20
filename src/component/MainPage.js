@@ -17,6 +17,7 @@ import { Camera } from 'react-native-vision-camera';
 import { useCameraDevices } from 'react-native-vision-camera';
 
 
+
 export function MainPage({ navigation, route }) {
     
     const mounted = useRef()
@@ -191,7 +192,7 @@ export function MainPage({ navigation, route }) {
         takepic();
     }, [state.takepicture])
 
-
+   
 
     useEffect(() => {
         const backAction = () => {
@@ -637,15 +638,7 @@ export function MainPage({ navigation, route }) {
             backgroundColor: '#00000000',
             zIndex: 1
         },
-        remoteStreamVuzix: {
-            position: "absolute",
-            right: 0,
-            bottom: -10,
-            width: "30%",
-            height: "30%",
-            backgroundColor: '#00000000',
-            zIndex: 1
-        },
+    
         guest1Stream: {
             position: "absolute",
             right: 0,
@@ -745,17 +738,7 @@ export function MainPage({ navigation, route }) {
             zIndex: 100,
             zOrder: 100,
         },
-        buttonContainerTopVuzix: {
-            position: "absolute",
-            top: 10,
-            left: 20,
-            borderRadius: borderrds,
-            width:  state.real_height,
-            height: state.real_height / divider / 2,
-            backgroundColor: buttonbck,
-            zIndex: 100,
-            zOrder: 100,
-        },
+      
         buttonContainerTopLock: {
             position: "absolute",
             top: 20,
@@ -885,6 +868,7 @@ export function MainPage({ navigation, route }) {
             flex: 1,
             flexDirection: "row",
         },
+     
 
 
 
@@ -894,20 +878,18 @@ export function MainPage({ navigation, route }) {
     return (
         <>
             <KeepAwake />
-            <View style={styles.headerContainer}>
-            </View>
-            <View style={styles.debugContainer}>
-                <Text style={state.lobby ? styles.textLobbyOn : styles.textLobbyOff}>
-                    {"You are in the Lobby, waiting for approval..."}
-                </Text>
+         
+            <View focusable={false} style={styles.debugContainer}>
+              
 
-                <Text style={debugIsEnabled ? styles.textDebugOn : styles.textDebugOff}>
+                <Text focusable={false} style={debugIsEnabled ? styles.textDebugOn : styles.textDebugOff}>
                     {debugTest}
                 </Text>
 
                 {state.connected ? <RoomClient></RoomClient> : <Text style={styles.textDebugOn}>Room disconnected...</Text>}
                 {(state.chat_array.length > 0) &&
                     <ScrollView
+                        focusable={false}
                         style={styles.scrollView}
                         ref={scrollViewRef}
                         onContentSizeChange={(contentWidth, contentHeight) => {
@@ -916,14 +898,12 @@ export function MainPage({ navigation, route }) {
                         <Text style={styles.chatText}>{state.chat_array}</Text>
                     </ScrollView>
                 }
-                <Text style={state.lobby ? styles.textLobbyOn : styles.textLobbyOff}>
+                <Text focusable={false} style={state.lobby ? styles.textLobbyOn : styles.textLobbyOff}>
                     {"You are in the Lobby, waiting for approval..."}
                 </Text>
 
             </View>
-            <View style={styles.bottomContainer}>
-            </View>
-            <View style={styles.mainArea}>
+            <View focusable={false} style={styles.mainArea}>
                 {(device != null ) &&
                     <Camera
                     ref={mycam}
@@ -937,6 +917,7 @@ export function MainPage({ navigation, route }) {
                 
                 
                 <RTCView
+                    focusable={false}
                     style={styles.localStream}
                     mirror={state.screenstream == "empty" ? false : true}
                     objectFit={'contain'}
@@ -948,7 +929,8 @@ export function MainPage({ navigation, route }) {
                 </RoomBoard>
                 {(state.remotestream != "empty" && videosVisible) &&
                     <RTCView
-                        style={state.device_name == "blade2" ? styles.remoteStreamVuzix : styles.remoteStream}
+                        focusable={false}
+                        style={styles.remoteStream}
                         mirror={false}
                         objectFit={'contain'}
                         streamURL={state.remotestream == "empty" ? "" : state.remotestream.toURL()}
@@ -957,6 +939,7 @@ export function MainPage({ navigation, route }) {
                 }
                 {(state.guest1stream != "empty" && videosVisible) &&
                     <RTCView
+                        focusable={false}    
                         style={styles.guest1Stream}
                         mirror={false}
                         objectFit={'contain'}
@@ -966,6 +949,7 @@ export function MainPage({ navigation, route }) {
                 }
                 {(state.guest2stream != "empty" && videosVisible) &&
                     <RTCView
+                        focusable={false}    
                         style={styles.guest2Stream}
                         mirror={false}
                         objectFit={'contain'}
@@ -976,7 +960,7 @@ export function MainPage({ navigation, route }) {
 
             </View>
             
-            {(state.device_name != "blade2") &&<View style={styles.buttonContainerTop}>
+            <View style={styles.buttonContainerTop}>
                 <TouchableOpacity
                     style={styles.buttonUserStyle}
                     activeOpacity={0.9}
@@ -986,14 +970,12 @@ export function MainPage({ navigation, route }) {
                         style={styles.buttonImageIconStyle}
                     />
                 </TouchableOpacity>
-            </View>}
+            </View>
 
-            {(state.device_name == "blade2") &&<View style={styles.buttonContainerTopVuzix}>
-                <Text style={styles.labelVersion}>Tap with two fingers on the pad to stop the call</Text>
-            </View>}
+      
 
 
-            {(state.device_name != "blade2") && <View style={styles.buttonContainerTopLock}>
+       <View style={styles.buttonContainerTopLock}>
                 <TouchableOpacity
                     style={styles.buttonUserStyle}
                     activeOpacity={0.9}
@@ -1003,17 +985,23 @@ export function MainPage({ navigation, route }) {
                         style={styles.buttonImageIconStyle}
                     />
                 </TouchableOpacity>
-            </View>}
-             <View style={styles.buttonContainerTopSwipe}>
-                {keysLocked?<SwipeButton
-                    
-                    onSwipeSuccess={swipeAction}
-                    railBackgroundColor="#a493d6"
-                    thumbIconBackgroundColor="#FFFFFF"
-                    title="Unlock"
-                /> : ""}
-            </View> 
-            {(!state.usbcamera && state.device_name != "blade2")&&<View style={styles.buttonContainerSwitchCamera}>
+            </View>
+            
+            
+            
+
+           <View style={styles.buttonContainerTopSwipe}>
+                            {keysLocked?<SwipeButton
+                                
+                                onSwipeSuccess={swipeAction}
+                                railBackgroundColor="#a493d6"
+                                thumbIconBackgroundColor="#FFFFFF"
+                                title="Unlock"
+                            /> : ""}
+                        </View> 
+            
+            
+            {(!state.usbcamera)&&<View style={styles.buttonContainerSwitchCamera}>
                 <TouchableOpacity
                     style={styles.buttonUserStyle}
                     activeOpacity={0.9}
@@ -1024,7 +1012,8 @@ export function MainPage({ navigation, route }) {
                     />
                 </TouchableOpacity>
             </View>}
-            {(state.device_name != "blade2") && <View style={styles.buttonContainerShowQRCode}>
+
+            <View style={styles.buttonContainerShowQRCode}>
                 <TouchableOpacity
                     style={styles.buttonUserStyle}
                     activeOpacity={0.9}
@@ -1035,8 +1024,9 @@ export function MainPage({ navigation, route }) {
                     />
                 </TouchableOpacity>
                 
-            </View>}
-            {(state.device_name != "blade2") && <View style={styles.buttonContainerCleanChat}>
+            </View>
+
+          <View style={styles.buttonContainerCleanChat}>
                 <TouchableOpacity
                     style={styles.buttonUserStyle}
                     activeOpacity={0.9}
@@ -1047,8 +1037,9 @@ export function MainPage({ navigation, route }) {
                     />
                 </TouchableOpacity>
                 
-            </View>}
-            <View style={styles.qrcode}>
+            </View>
+
+           <View style={styles.qrcode}>
                 {qrVisible?<QRCode 
                         //QR code value
                         value={qrvalue ? qrvalue : 'NA'}
@@ -1056,6 +1047,8 @@ export function MainPage({ navigation, route }) {
                         size={state.real_height / 2.5}
                 />:""}
             </View>
+
+
             {(state.usbcamera)&&<View style={styles.buttonContainerDisplay}>
                 <TouchableOpacity
                     style={styles.buttonUserStyle}
@@ -1079,7 +1072,7 @@ export function MainPage({ navigation, route }) {
                 </TouchableOpacity>
             </View>}
 
-            {(state.device_name != "blade2") && <View style={styles.buttonContainerLowerVolume}>
+          <View style={styles.buttonContainerLowerVolume}>
                 <TouchableOpacity
                     style={styles.buttonUserStyle}
                     activeOpacity={0.9}
@@ -1090,9 +1083,9 @@ export function MainPage({ navigation, route }) {
                     />
                 </TouchableOpacity>
                 
-            </View>}
+            </View>
 
-            {(state.device_name == "blade2") && <View style={styles.buttonContainerRaiseVolume}>
+            <View style={styles.buttonContainerRaiseVolume}>
                 <TouchableOpacity
                     style={styles.buttonUserStyle}
                     activeOpacity={0.9}
@@ -1102,10 +1095,10 @@ export function MainPage({ navigation, route }) {
                         style={styles.buttonImageIconStyle}
                     />
                 </TouchableOpacity>                
-            </View> }
+            </View> 
 
 
-            <View style={styles.buttonContainerToggleVideos}>
+           <View style={styles.buttonContainerToggleVideos}>
                 <TouchableOpacity
                     style={styles.buttonToggleStyle}
                     activeOpacity={0.9}

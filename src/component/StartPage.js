@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext, useRef } from "react";
-import { Button, StyleSheet, Image, Text, TouchableOpacity, View, StatusBar, Alert, Switch , TextInput, TouchableHighlight} from "react-native";
+import { Button, StyleSheet, Image, Text, TouchableOpacity, View, StatusBar, Alert, Switch, TextInput, TouchableHighlight } from "react-native";
 import { Dimensions, Platform, AccessibilityInfo, NativeSyntheticEvent } from 'react-native';
 import { Context } from '../global/Store';
 import usb from 'react-native-usb';
@@ -31,7 +31,7 @@ export function StartPage({ navigation }) {
     ios: Dimensions.get('window').height,
   });
 
-  const btnRef = useRef(null);
+  
 
   console.log("WIDTH:");
   console.log(SCR_WIDTH);
@@ -45,21 +45,21 @@ export function StartPage({ navigation }) {
   let isEnumerateAudioDevices = false;
   let versionURL = "---";
 
-  if(state.app_arch == "arm64-v8a")
+  if (state.app_arch == "arm64-v8a")
     versionURL = "https://holomask.eu/roomxrpro/test-version-arm64-v8a.json";
-  
-  if(state.app_arch == "win_x64")
+
+  if (state.app_arch == "win_x64")
     versionURL = "https://holomask.eu/roomxrpro/test-version-win_x64.json";
 
-  if(state.app_arch == "armeabi-v7a")
+  if (state.app_arch == "armeabi-v7a")
     versionURL = "https://holomask.eu/roomxrpro/test-version-armeabi-v7a.json";
 
   var updater = new UpdateAPK.UpdateAPK({
     iosAppId: "0000000000",
     apkVersionUrl:
-        versionURL,
+      versionURL,
     apkVersionOptions: {
-      method:'GET',
+      method: 'GET',
       headers: {}
     },
     apkOptions: {
@@ -71,7 +71,7 @@ export function StartPage({ navigation }) {
         "Update Available",
         "New version released, do you want to update? ",
         [
-          { text: "Cancel", onPress: () => {} },
+          { text: "Cancel", onPress: () => { } },
           { text: "Update", onPress: () => performUpdate(true) }
         ]
       );
@@ -92,19 +92,19 @@ export function StartPage({ navigation }) {
       // If you hae a state variable it is trivial to update the UI
       // this.setState({ downloadProgress: progress });
     },
-    
+
     // This is called prior to the update. If you throw it will abort the update
     downloadApkEnd: () => {
       console.log("downloadApkEnd callback called");
       setDownloadPerc("100");
     },
 
-  // This is called if the fetch of the version or the APK fails, so should be generic
-  onError: err => {
-    console.log("onError callback called", err);
-    setDownloadPerc("ERROR");
-    Alert.alert("There was an error", err.message);
-  }    
+    // This is called if the fetch of the version or the APK fails, so should be generic
+    onError: err => {
+      console.log("onError callback called", err);
+      setDownloadPerc("ERROR");
+      Alert.alert("There was an error", err.message);
+    }
 
   });
 
@@ -149,33 +149,28 @@ export function StartPage({ navigation }) {
 
   const onFocus = (e) => {
     console.log(e.nativeEvent.keyCode);
-    if(e.nativeEvent.keyCode == "66")
-    {
+    if (e.nativeEvent.keyCode == "66") {
       console.log("pressssssssss");
-      if(state.button_focus == "qrcode")
-        {
-          scannergo();
-        }  
-        else
-        {
-          connectgo();
-        }
-    } 
+      if (state.button_focus == "qrcode") {
+        scannergo();
+      }
+      else {
+        connectgo();
+      }
+    }
 
-    if(state.button_focus == "qrcode")
-    {
+    if (state.button_focus == "qrcode") {
       //console.log("to connect");  
       dispatch({ type: 'SET_BUTTONFOCUS', payload: 'connect' });
-    }  
-    else
-    {
-        //console.log("to qrcode");
-        dispatch({ type: 'SET_BUTTONFOCUS', payload: 'qrcode' });
     }
-      
+    else {
+      //console.log("to qrcode");
+      dispatch({ type: 'SET_BUTTONFOCUS', payload: 'qrcode' });
+    }
+
   };
 
-  
+
 
   function connectgo() {
     // check if all the needed parameters are set
@@ -185,7 +180,7 @@ export function StartPage({ navigation }) {
       state.root_address == null ||
       state.room_id == null ||
       state.peer_name == null
-      ) {
+    ) {
       console.log("uh-oh, something missing!");
       Alert.alert(
         "Warning",
@@ -197,8 +192,18 @@ export function StartPage({ navigation }) {
 
     }
     else {
-      dispatch({ type: 'SET_CURRENTPAGE', payload: 'MainPage' });
-      navigation.replace('MainPage');
+      if(state.device_name == "blade2")
+      {
+        dispatch({ type: 'SET_CURRENTPAGE', payload: 'MainPageVuzix' });
+        navigation.replace('MainPageVuzix');
+  
+      }
+      else
+      {
+        dispatch({ type: 'SET_CURRENTPAGE', payload: 'MainPage' });
+        navigation.replace('MainPage');
+  
+      }
     }
 
   }
@@ -211,24 +216,23 @@ export function StartPage({ navigation }) {
   useEffect(() => {
     console.log(usbIsEnabled);
     dispatch({ type: 'SET_USBCAMERA', payload: usbIsEnabled });
-    if(usbIsEnabled == true)
-    {
+    if (usbIsEnabled == true) {
       console.log("useeffect requirepermissions");
       requireUSBPermissions();
     }
   }, [usbIsEnabled])
 
- 
+
 
 
 
   function toggleUsb() {
     console.log("toggle..");
     setUsbIsEnabled(previousState => !previousState);
-    
+
   }
 
-  function checkUpd(){
+  function checkUpd() {
     // debug
     console.log("packagename from updateapk:");
     console.log(UpdateAPK.getInstalledPackageName());
@@ -239,16 +243,16 @@ export function StartPage({ navigation }) {
     console.log("packageinstaller from updateapk:");
     console.log(UpdateAPK.getInstalledPackageInstaller());
 
-      
+
     console.log("checking for update");
-      updater.checkUpdate();
-    
+    updater.checkUpdate();
+
   }
 
 
   useEffect(function componentDidMount() {
     console.log("%c StartPage componetDidMount", "color:green;");
-    
+
     UpdateAPK.getApps().then(apps => {
       //console.log("Installed Apps: ", JSON.stringify(apps));
       //this.setState({ allApps: apps});
@@ -259,7 +263,7 @@ export function StartPage({ navigation }) {
       //this.setState({ allNonSystemApps: apps});
     }).catch(e => console.log("Unable to getNonSystemApps?", e));
 
-    
+
     // read config from persistent memory        
     const user = getUserValue();
     const room = getRoomValue();
@@ -278,12 +282,11 @@ export function StartPage({ navigation }) {
       // do this at the start of the app
       console.log("before require permissions");
       // require only if USB is selected...
-      if(usbIsEnabled == true)
-      {
+      if (usbIsEnabled == true) {
         console.log("component mount usb permission");
         //requireUSBPermissions();
       }
-        
+
 
     }, 500);
 
@@ -300,10 +303,10 @@ export function StartPage({ navigation }) {
     }
   }, [])
 
- 
+
 
   async function requireUSBPermissions() {
-    
+
     //return;
     console.log("requiring permissions...")
 
@@ -322,8 +325,7 @@ export function StartPage({ navigation }) {
   }
 
   async function initEnumerateAudioDevices() {
-    if (isEnumerateAudioDevices) 
-    {
+    if (isEnumerateAudioDevices) {
       console.log("isenumerateaudiodevices = true");
       return;
     }
@@ -339,16 +341,16 @@ export function StartPage({ navigation }) {
 
     // allow the audio
     await mediaDevices
-        .getUserMedia({ audio: true })
-        .then((stream) => {
-            enumerateAudioDevices(stream);
-            dispatch({ type: 'SET_IS_AUDIO_ALLOWED', payload: true });
-            //isAudioAllowed = true;
-        })
-        .catch(() => {
-            //isAudioAllowed = false;
-            dispatch({ type: 'SET_IS_AUDIO_ALLOWED', payload: false });
-        });
+      .getUserMedia({ audio: true })
+      .then((stream) => {
+        enumerateAudioDevices(stream);
+        dispatch({ type: 'SET_IS_AUDIO_ALLOWED', payload: true });
+        //isAudioAllowed = true;
+      })
+      .catch(() => {
+        //isAudioAllowed = false;
+        dispatch({ type: 'SET_IS_AUDIO_ALLOWED', payload: false });
+      });
   }
 
   function enumerateAudioDevices(stream) {
@@ -359,44 +361,44 @@ export function StartPage({ navigation }) {
     let speakcount = 0;
 
     mediaDevices
-        .enumerateDevices()
-        .then((devices) =>
-            devices.forEach((device) => {
-                console.log("device: ") 
-                console.log(device);
-                let el = null;
-                if ('audioinput' === device.kind  || 'audio' === device.kind) {
-                  miccount++;
-                  
-                  dispatch({ type: 'ADD_MIC', payload: device.deviceId});
-                    //el = microphoneSelect;
-                    //RoomClient.DEVICES_COUNT.audio++;
-                } else if ('audiooutput' === device.kind) {
-                  //dispatch({ type: 'SET_SPEAKER_COUNT', payload: state.speakerCount + 1 });
-                  speakcount++;
-                  dispatch({ type: 'ADD_SPEAKER', payload: device.deviceId});
-                    //el = speakerSelect;
-                    //RoomClient.DEVICES_COUNT.speaker++;
-                }
-                if (!el) return;
-                //addChild(device, el);
-            }),
-        )
-        .then(() => {
-            stopTracks(stream);
-            isEnumerateAudioDevices = true;
-            dispatch({ type: 'SET_MIC_COUNT', payload: miccount });
-            dispatch({ type: 'SET_SPEAKER_COUNT', payload: speakcount });
+      .enumerateDevices()
+      .then((devices) =>
+        devices.forEach((device) => {
+          console.log("device: ")
+          console.log(device);
+          let el = null;
+          if ('audioinput' === device.kind || 'audio' === device.kind) {
+            miccount++;
 
-            //speakerSelect.disabled = !('sinkId' in HTMLMediaElement.prototype);
-        });
+            dispatch({ type: 'ADD_MIC', payload: device.deviceId });
+            //el = microphoneSelect;
+            //RoomClient.DEVICES_COUNT.audio++;
+          } else if ('audiooutput' === device.kind) {
+            //dispatch({ type: 'SET_SPEAKER_COUNT', payload: state.speakerCount + 1 });
+            speakcount++;
+            dispatch({ type: 'ADD_SPEAKER', payload: device.deviceId });
+            //el = speakerSelect;
+            //RoomClient.DEVICES_COUNT.speaker++;
+          }
+          if (!el) return;
+          //addChild(device, el);
+        }),
+      )
+      .then(() => {
+        stopTracks(stream);
+        isEnumerateAudioDevices = true;
+        dispatch({ type: 'SET_MIC_COUNT', payload: miccount });
+        dispatch({ type: 'SET_SPEAKER_COUNT', payload: speakcount });
+
+        //speakerSelect.disabled = !('sinkId' in HTMLMediaElement.prototype);
+      });
   }
 
   function stopTracks(stream) {
     stream.getTracks().forEach((track) => {
-        track.stop();
+      track.stop();
     });
-}
+  }
 
   const styles = StyleSheet.create({
     mainContainer: {
@@ -515,21 +517,21 @@ export function StartPage({ navigation }) {
       marginLeft: 20,
       marginRight: 5,
     },
-    bladeButtonView:{
-       flex: 1,
-       flexDirection: "row",
-       justifyContent: 'space-between',
+    bladeButtonView: {
+      flex: 1,
+      flexDirection: "row",
+      justifyContent: 'space-between',
       // height: 100,
-       width:"100%",
+      width: "100%",
       padding: 2,
       backgroundColor: '#000000',
       alignItems: 'center'
     },
-    bladeButtonScanner:{
+    bladeButtonScanner: {
     },
-    bladeButtonConnect:{
+    bladeButtonConnect: {
     },
-    bladeContainer:{
+    bladeContainer: {
       flex: 1,
       flexDirection: "column",
       justifyContent: 'space-between',
@@ -561,44 +563,38 @@ export function StartPage({ navigation }) {
 
   return (
     <>
-      {(state.device_name == "blade2") && <View focusable={false} style={styles.bladeContainer}> 
-       
-    
+     
+     
+     { /* caso BLADE 2 */
+      (state.device_name == "blade2") && <View focusable={false} style={styles.bladeContainer}>
 
+        <ExternalKeyboardView
+          onKeyDownPress={onFocus}
+          onKeyUpPress={() => console.log('onKeyUp')}
+          canBeFocused>
 
-<ExternalKeyboardView
-        onKeyDownPress={onFocus}
-        onKeyUpPress={() => console.log('onKeyUp')}
-        canBeFocused
-      >
-    <View  style={styles.bottomContainerBlade} accessible>
-    <Button focusable 
+          <View style={styles.bottomContainerBlade} accessible>
+            <Button focusable
               onPress={scannergo}
-              title="QRCode"              
-              color={(state.button_focus == "connect") ? "#000000" : "#FF0000" }
-              onFocus={()=>{console.log("happy bunny!!!!!!!!!!!!!!!!!!!!!!1")}}
-              onBlur={()=>{console.log("happy bunny!!!!!!!!!!!!!!!!!!!!!!1")}}
+              title="QRCode"
+              color={(state.button_focus == "connect") ? "#000000" : "#FF0000"}
             />
-            <Button focusable ref={btnRef} 
+            <Button focusable
               onPress={connectgo}
               title="Connect"
-              color={(state.button_focus == "qrcode") ? "#000000" : "#FF0000" }
-              onFocus={()=>{console.log("happy bunny!!!!!!!!!!!!!!!!!!!!!!1")}}
-              onBlur={()=>{console.log("happy bunny!!!!!!!!!!!!!!!!!!!!!!1")}}
-            > <TextInput autoFocus={true}></TextInput>
+              color={(state.button_focus == "qrcode") ? "#000000" : "#FF0000"}
+            > 
             </Button>
-    </View>
-</ExternalKeyboardView>
+          </View>
 
+        </ExternalKeyboardView>
 
-     
-
-        <Text focusable={false}style={styles.labelTitle}>RoomXR PRO</Text>
-        <Text focusable={false}style={styles.labelUser}>user: {state.peer_name}, room: {state.room_id}</Text>
+        <Text focusable={false} style={styles.labelTitle}>RoomXR PRO</Text>
+        <Text focusable={false} style={styles.labelUser}>user: {state.peer_name}, room: {state.room_id}</Text>
 
         <View focusable={false} style={styles.bottomContainerBlade}>
           <Text focusable={false} style={styles.labelVersion}>
-            {"v" + state.app_ver + " (" + state.app_arch +  " )"}
+            {"v" + state.app_ver + " (" + state.app_arch + " )"}
           </Text>
         </View>
 
@@ -609,14 +605,19 @@ export function StartPage({ navigation }) {
           {(state.device_name == "blade2") && <Text style={styles.labelVersion}>Vuzix BLADE 2 EDITION</Text>}
         </View>
 
-      </View>}
+      </View>
+    }
 
-      {(state.device_name != "blade2") && <View style={styles.mainContainer} accessible>
+
+
+
+      {/* caso Occhiale Normale */
+      (state.device_name != "blade2") && <View style={styles.mainContainer} accessible>
         <Text style={styles.labelTitle}>RoomXR PRO</Text>
         <Text style={styles.labelUser}>user: {state.peer_name}, room: {state.room_id}</Text>
         {/* <Text style={styles.labelUser}>audio mic: {state.peer_name}</Text> */}
         <View style={styles.buttonsContainer}>
-        {(state.device_name != "blade2") && <TouchableOpacity
+          {(state.device_name != "blade2") && <TouchableOpacity
             style={styles.buttonScannerStyle}
             activeOpacity={0.5}
             onPress={scannergo}>
@@ -636,13 +637,13 @@ export function StartPage({ navigation }) {
               style={styles.buttonImageIconStyle}
             />
             <View style={styles.buttonIconSeparatorStyle} />
-            {(state.device_name != "blade2") && <Text style={styles.buttonTextStyle}>Connect</Text>}           
-          </TouchableOpacity>}        
+            {(state.device_name != "blade2") && <Text style={styles.buttonTextStyle}>Connect</Text>}
+          </TouchableOpacity>}
         </View>
-      
+
         <View style={styles.bottomContainer}>
           <Text style={styles.labelVersion}>
-            {"v" + state.app_ver + " (" + state.app_arch +  " )"}
+            {"v" + state.app_ver + " (" + state.app_arch + " )"}
           </Text>
           {(state.device_name != "blade2") && <Text style={styles.labelUsbTextStyle}>
             {(usbIsEnabled == true) ? "USB CAMERA ON" : "USB CAMERA OFF"}
@@ -661,7 +662,8 @@ export function StartPage({ navigation }) {
             {(downloadPerc == "---") ? "" : "download status: " + downloadPerc + "%"}
           </Text>
         </View>
-      </View>}
+      </View>
+      }
 
     </>
   )

@@ -534,7 +534,13 @@ const Reducer = (state, action) => {
             return{
                 ...state,
                 button_focus: action.payload
-            };                             
+            };
+        case 'SET_UPLOADPICTURE':
+            return{
+                ...state,
+                upload_picture: action.payload
+            };
+    
         default:
             return state;
     }

@@ -87,7 +87,16 @@ function RoomClient({ navigation }) {
         }
     }, [state.resume_producer])
 
-
+    useEffect(() => {
+        console.log("RC:::SENDPICTURE");
+        if(state.upload_picture == true)
+        {
+            sendFileDirectly();
+            dispatch({ type: 'SET_UPLOADPICTURE', payload: false });
+            console.log("UPLOADING PICTURE");
+            
+        }
+    }, [state.upload_picture])
 
     function initComp() {        
         this.eventListeners = new Map();
@@ -1654,7 +1663,9 @@ function RoomClient({ navigation }) {
         }
     }
 
-    async function resumeProducer(type) {
+    
+
+    function resumeProducer(type) {
         if (!this.producerLabel.has(type)) {
             return console.log('There is no producer for this type ' + type);
         }
@@ -1663,7 +1674,7 @@ function RoomClient({ navigation }) {
         this.producers.get(producer_id).resume();
 
         // TEST TEST TEST
-        await sendFileDirectly("");
+       // await sendFileDirectly("");
 
         switch (type) {
             case mediaType.audio:
@@ -1784,7 +1795,7 @@ function RoomClient({ navigation }) {
         );
     }
 
-    async function sendFileDirectly(file) {
+    async function sendFileDirectly() {
                 
         // retrieve the file name stored in internal memory
         var internal_picture = state.picture_file_name;
