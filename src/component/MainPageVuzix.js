@@ -85,6 +85,8 @@ export function MainPageVuzix({ navigation, route }) {
         // or, in general: base + /join/ + room + ?name= + user + &notify=0
         setQrvalue(state.root_address + "/join/" + state.room_id + "?name=" + state.peer_name + "&notify=0")
 
+        dispatch({ type: 'SET_BUTTONFOCUS', payload: 'neutral' });
+
         invokeCreateRoomClient();
 
         return function componentWillUnmount() {
@@ -200,7 +202,7 @@ export function MainPageVuzix({ navigation, route }) {
             //stopTracks(state.localstream);
             cleanChat();
           }
-          else {
+          else if(state.button_focus == "connect"){
             invokeDisconnect();
           }
         }
@@ -210,8 +212,11 @@ export function MainPageVuzix({ navigation, route }) {
                 //console.log("to connect");  
                 dispatch({ type: 'SET_BUTTONFOCUS', payload: 'connect' });
               }
-              else {
+            else if(state.button_focus == "connect") {
                 //console.log("to qrcode");
+                dispatch({ type: 'SET_BUTTONFOCUS', payload: 'qrcode' });
+              }
+              else{
                 dispatch({ type: 'SET_BUTTONFOCUS', payload: 'qrcode' });
               }
         }
@@ -613,16 +618,14 @@ export function MainPageVuzix({ navigation, route }) {
                         <Button focusable={false}
                         
                         title="Clean"
-                        color={(state.button_focus == "connect") ? "#000000" : "#FF0000"}
+                        color={(state.button_focus == "connect" || state.button_focus == "neutral") ? "#000000" : "#FF0000"}
                         />
                         <Button focusable={false}
                         
                         title="Exit"
-                        color={(state.button_focus == "qrcode") ? "#000000" : "#FF0000"}
+                        color={(state.button_focus == "qrcode" || state.button_focus == "neutral") ? "#000000" : "#FF0000"}
                         > 
                         </Button>
-                     
-                    
                 
                     </View>
 
@@ -709,9 +712,11 @@ export function MainPageVuzix({ navigation, route }) {
                     />
                 }
 
-                <Text focusable={false} style={state.lobby ? styles.textLobbyOn : styles.textLobbyOff}>
+                {(state.lobby == true) &&
+                <Text focusable={false} style={styles.textLobbyOn}>
                             {"You are in the Lobby, waiting for approval..."}
                 </Text>
+                }
 
            </ExternalKeyboardView>
     

@@ -147,26 +147,59 @@ export function StartPage({ navigation }) {
     console.log('root Done.')
   }
 
+  // const onFocus = (e) => {
+  //   console.log(e.nativeEvent.keyCode);
+  //   if (e.nativeEvent.keyCode == "66") {
+  //     console.log("pressssssssss");
+  //     if (state.button_focus == "qrcode") {
+  //       scannergo();
+  //     }
+  //     else {
+  //       connectgo();
+  //     }
+  //   }
+
+  //   if (state.button_focus == "qrcode") {
+  //     //console.log("to connect");  
+  //     dispatch({ type: 'SET_BUTTONFOCUS', payload: 'connect' });
+  //   }
+  //   else {
+  //     //console.log("to qrcode");
+  //     dispatch({ type: 'SET_BUTTONFOCUS', payload: 'qrcode' });
+  //   }
+
+  // };
+
+
   const onFocus = (e) => {
     console.log(e.nativeEvent.keyCode);
+    console.log(state.button_focus );
     if (e.nativeEvent.keyCode == "66") {
       console.log("pressssssssss");
       if (state.button_focus == "qrcode") {
+        //stopTracks(state.localstream);
         scannergo();
       }
-      else {
-        connectgo();
+      else if(state.button_focus == "connect"){
+       connectgo();
       }
     }
+    else{
+        console.log("change focus...");
+        if (state.button_focus == "qrcode") {
+            //console.log("to connect");  
+            dispatch({ type: 'SET_BUTTONFOCUS', payload: 'connect' });
+          }
+        else if(state.button_focus == "connect") {
+            //console.log("to qrcode");
+            dispatch({ type: 'SET_BUTTONFOCUS', payload: 'qrcode' });
+          }
+          else{
+            dispatch({ type: 'SET_BUTTONFOCUS', payload: 'qrcode' });
+          }
+    }
 
-    if (state.button_focus == "qrcode") {
-      //console.log("to connect");  
-      dispatch({ type: 'SET_BUTTONFOCUS', payload: 'connect' });
-    }
-    else {
-      //console.log("to qrcode");
-      dispatch({ type: 'SET_BUTTONFOCUS', payload: 'qrcode' });
-    }
+
 
   };
 
@@ -252,6 +285,7 @@ export function StartPage({ navigation }) {
 
   useEffect(function componentDidMount() {
     console.log("%c StartPage componetDidMount", "color:green;");
+    dispatch({ type: 'SET_BUTTONFOCUS', payload: 'neutral' });
 
     UpdateAPK.getApps().then(apps => {
       //console.log("Installed Apps: ", JSON.stringify(apps));
@@ -577,12 +611,12 @@ export function StartPage({ navigation }) {
             <Button focusable
               onPress={scannergo}
               title="QRCode"
-              color={(state.button_focus == "connect") ? "#000000" : "#FF0000"}
+              color={(state.button_focus == "connect" || state.button_focus == "neutral") ? "#000000" : "#FF0000"}
             />
             <Button focusable
               onPress={connectgo}
               title="Connect"
-              color={(state.button_focus == "qrcode") ? "#000000" : "#FF0000"}
+              color={(state.button_focus == "qrcode" || state.button_focus == "neutral") ? "#000000" : "#FF0000"}
             > 
             </Button>
           </View>
