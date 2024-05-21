@@ -245,14 +245,15 @@ export function PermissionsPage({ navigation }) {
         <View style={styles.buttonContainerTopVuzix}>
 
         <View focusable={false} style={styles.bottomContainerBlade} accessible>
-            <Button focusable={false}
             
-            title="Grant Camera"
+            <Button focusable={false}            
+            title={cameraPermissionStatus == 'authorized' ? "Camera OK!" : "Grant Camera"}     
             color={(state.button_focus == "connect" || state.button_focus == "neutral") ? "#000000" : "#FF0000"}
-            />
-            <Button focusable={false}
-            
-            title="Grant Microphone"
+            > 
+            </Button>
+
+            <Button focusable={false}            
+            title={microphonePermissionStatus == 'authorized' ? "Mic OK!" : "Grant Microphone"}                 
             color={(state.button_focus == "qrcode" || state.button_focus == "neutral") ? "#000000" : "#FF0000"}
             > 
             </Button>

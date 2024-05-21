@@ -1,6 +1,6 @@
 // react realated imports
 import React, { useEffect, useRef, useState, useContext } from "react";
-import { Button, StyleSheet, Alert, Image, Text, TouchableOpacity, View, StatusBar, ScrollView, BackHandler } from "react-native";
+import { Button, StyleSheet, Alert, Text, View, StatusBar, ScrollView, BackHandler } from "react-native";
 import { RTCView, mediaDevices} from "react-native-webrtc";
 // mediasoup import
 import * as mediasoupClient from "mediasoup-client";
@@ -9,10 +9,8 @@ import Store, { Context } from '../global/Store';
 import RoomClient from "./RoomClient";
 import Orientation from 'react-native-orientation-locker';
 import { RoomBoard } from "./RoomBoard";
-import QRCode from "react-native-qrcode-svg";
 import { setNavigator, getCurrentRoute } from "../global/navigtionRef";
 import KeepAwake from "@sayem314/react-native-keep-awake";
-import SwipeButton from 'rn-swipe-button';
 import { Camera } from 'react-native-vision-camera';
 import { useCameraDevices } from 'react-native-vision-camera';
 import { ExternalKeyboardView } from 'react-native-external-keyboard';
@@ -21,53 +19,20 @@ import { ExternalKeyboardView } from 'react-native-external-keyboard';
 export function MainPageVuzix({ navigation, route }) {
     
     const mounted = useRef()
-    const [debugTest, setDebugTest] = useState("---");
-    const [rc, setRc] = useState(null);
-    const [debugLine, setDebugLine] = useState("this is the debug line... ;)")
     const [state, dispatch] = useContext(Context);
-    const [debugIsEnabled, setDebugIsEnabled] = useState(false);
-    //const toggleDebug = () => setDebugIsEnabled(previousState => !previousState);
     const scrollViewRef = useRef();
-
-    const [timerID, setTimerID] = useState(1234);
-
-    const imageBack = require("../images/back.png");
-    const imageFlip = require("../images/flip.png");
-    const imageUser = require("../images/adduser.png");
-    const imageClean = require("../images/trash.png");
-    const imageAR = require("../images/ar.png");
-    const imageLoop = require("../images/loopcamera.png");
-    const imageARON = require("../images/arON.png");
-    const imageLoopON = require("../images/loopcameraON.png");
-    const imageUnlock = require("../images/unlock.png");
-    const imageLock = require("../images/lock.png");
-    const imageVolumeDown = require("../images/volumedown.png");
-    const imageVolumeUp = require("../images/volumeup.png");
-
-
-
-    const [qrvalue, setQrvalue] = useState('');
-    const [qrVisible, setQrVisible] = useState(false);
-    const [displayVisible, setDisplayVisible] = useState(true);
-    const [loopVisible, setLoopVisible] = useState(false);
-    const [videosVisible, setVideosVisible] = useState(true);
-    const [keysLocked, setKeysLocked] = useState(false);
-
+    const [timerID, setTimerID] = useState(1234);    
     const devices = useCameraDevices();
     const device = devices.back;
     const mycam = useRef();
-    const myRC = useRef();
     const [isActive, setIsActive] = useState(false);
 
 
     // ####################################################
     // DYNAMIC SETTINGS
     // ####################################################
-    let isEnumerateAudioDevices = false;
+    
     let isEnumerateVideoDevices = false;
-    let divider = 7;
-    let buttonbck = '#00000019';
-    let borderrds = 8;
 
     useEffect(function componentDidMount() {
         console.log("%c MainPage componetDidMount", "color:green;");
@@ -75,15 +40,7 @@ export function MainPageVuzix({ navigation, route }) {
         StatusBar.setHidden(true, 'none');
         Orientation.lockToLandscapeLeft();
 
-       
-
         dispatch({ type: 'SET_MEDIASOUPCLIENT', payload: mediasoupClient });
-
-        // compose qrcode guest link
-        // the format is the following: 
-        // https://roomxr.eu:5001/join/holomask-test?name=ciccio&notify=0
-        // or, in general: base + /join/ + room + ?name= + user + &notify=0
-        setQrvalue(state.root_address + "/join/" + state.room_id + "?name=" + state.peer_name + "&notify=0")
 
         dispatch({ type: 'SET_BUTTONFOCUS', payload: 'neutral' });
 
@@ -242,18 +199,25 @@ export function MainPageVuzix({ navigation, route }) {
 
     async function invokeDisconnect() {
 
-        if(keysLocked)
-            return;
 
-        if(state.usbcamera){
-            mediaDevices.showTextMessage("command_disconnect");
-        }
-        
-        dispatch({ type: 'SET_CONNECTED', payload: false });
+        Alert.alert(
+            "Warning",
+            "Connection will be closed! Are you sure?",
+            [
+              { text: "YES", onPress: () => {
+                    console.log("OK Pressed")
+                    if(state.usbcamera){
+                        mediaDevices.showTextMessage("command_disconnect");
+                    }                    
+                    dispatch({ type: 'SET_CONNECTED', payload: false });
+                    dispatch({ type: 'SET_CURRENTPAGE', payload: 'StartPage' });
+                    navigation.replace('StartPage');                
+                } },
+                { text: "CANCEL", onPress: () => console.log("Cancel Pressed!")}
+            ]
+        );
 
-
-        dispatch({ type: 'SET_CURRENTPAGE', payload: 'StartPage' });
-        navigation.replace('StartPage');
+    
 
     }
 
@@ -261,26 +225,9 @@ export function MainPageVuzix({ navigation, route }) {
         createRoomClient(state.usbcamera);
     }
 
-    async function swipeAction(){       
-            console.log("keys unlocked by swipe!");
-            setKeysLocked(false);
-    }
+ 
 
-    async function toggleLock(){
-        if (keysLocked)
-        {
-            return;
-            //console.log("keys were locked, now are unlocked");
-            //setKeysLocked(false);
-        }
-        else
-        {
-            console.log("keys were unlocked, now are locked");
-            setKeysLocked(true);
-        }
-            
-    }
-
+ 
 
     async function createRoomClient(usbcameracase) {
 
@@ -294,8 +241,8 @@ export function MainPageVuzix({ navigation, route }) {
             .then((devices) =>
                 devices.forEach((device) => {
                     console.log("device: ", device);
-                    dText = dText + "dev: " + JSON.stringify(device) + "\n";
-                    setDebugTest(dText);
+                    //dText = dText + "dev: " + JSON.stringify(device) + "\n";
+                    //setDebugTest(dText);
                     if ('videoinput' === device.kind) {
                     }
                 }),
@@ -305,86 +252,10 @@ export function MainPageVuzix({ navigation, route }) {
         checkMedia();
         console.log('04 ----> Who are you');
         dispatch({ type: 'SET_CONNECTED', payload: true });
-
-        if(state.usbcamera)
-        {
-            console.log("put heartbeat to usb_init");
-            //mediaDevices.heartBeat("supercalifragilistiche");
-
-            // signal also the splash special message
-            var mySplash = state.splash_message;
-            mediaDevices.showTextMessage("command_splash" + mySplash);
-
-            mediaDevices.showTextMessage("command_setusb");
-            
-            var mytmr = setInterval(function run(){
-                //mediaDevices.showPointer("false,200,150");
-                mediaDevices.heartBeat()
-                .then((beat) => {
-                    if(beat){
-                        console.log("heart beat");
-                    }
-                    else 
-                    {
-                        clearInterval(mytmr);
-                        Alert.alert(
-                            "Warning",
-                            "Smart Glasses Detached... please check the cable connection",
-                            [
-                              { text: "OK", onPress: () => invokeDisconnect() }
-                            ]
-                          );
-                        
-                    }
-
-                })
-                
-            },5000)
-            
-            //setTimerID( ciccio );
-            
-        }
-        else
-        {
-            console.log("put heartbeat to NOusb_init");
-            //mediaDevices.heartBeat("notsupercalifragilistiche");
-            mediaDevices.showTextMessage("command_notsetusb");
-        }
-
+        console.log("put heartbeat to NOusb_init");
+        //mediaDevices.heartBeat("notsupercalifragilistiche");
+        mediaDevices.showTextMessage("command_notsetusb");
     }
-
-
-
-    function switchCamera() {
-
-        if(keysLocked)
-        return;
-
-
-        // first safe mechanism
-        if(state.localstream == "empty")
-            return;
-
-        state.localstream.getVideoTracks().forEach((track) => {
-            console.log('sc', track);
-            track._switchCamera();
-        })
-    }
-
-    function addUSer() {
-
-        if(keysLocked)
-            return;
-
-
-        //mediaDevices.showPointer("true,200,150");
-
-        if(qrVisible)
-            setQrVisible(false);
-        else
-            setQrVisible(true);
-    }
-
 
     function raiseVolume(){
         mediaDevices.raiseCallVolume();
@@ -396,10 +267,6 @@ export function MainPageVuzix({ navigation, route }) {
 
 
     function cleanChat(){
-
-        if(keysLocked)
-        return;
-
         dispatch({ type: 'CLEAR_CHAT', payload: true });
         if(state.usbcamera){
             mediaDevices.showTextMessage("command_clearchat"); // this clears also the chat on the glasses
@@ -434,11 +301,9 @@ export function MainPageVuzix({ navigation, route }) {
                     dText = dText + "dev: " + JSON.stringify(device) + "\n";
                     setDebugTest(dText);
                     if ('videoinput' === device.kind) {
-                        //el = videoSelect;
-                        //RoomClient.DEVICES_COUNT.video++;
                     }
                     if (!el) return;
-                    //addChild(device, el);
+
                 }),
             )
             .then(() => {
@@ -642,7 +507,7 @@ export function MainPageVuzix({ navigation, route }) {
                     zOrder={1}>
                 </RTCView>
 
-                {(state.remotestream != "empty" && videosVisible) &&
+                {(state.remotestream != "empty") &&
                     <RTCView
                         focusable={false}
                         style={styles.remoteStreamVuzix}
@@ -653,7 +518,7 @@ export function MainPageVuzix({ navigation, route }) {
                     </RTCView>
                 }
 
-                {(state.guest1stream != "empty" && videosVisible) &&
+                {(state.guest1stream != "empty") &&
                     <RTCView
                         focusable={false}    
                         style={styles.guest1StreamVuzix}
@@ -664,7 +529,7 @@ export function MainPageVuzix({ navigation, route }) {
                     </RTCView>
                 }
                 
-                {(state.guest2stream != "empty" && videosVisible) &&
+                {(state.guest2stream != "empty") &&
                     <RTCView
                         focusable={false}    
                         style={styles.guest2StreamVuzix}

@@ -285,6 +285,8 @@ export function StartPage({ navigation }) {
     console.log("%c StartPage componetDidMount", "color:green;");
     dispatch({ type: 'SET_BUTTONFOCUS', payload: 'neutral' });
 
+    // at this point I can inject the OS Name with the glasses name
+    // so that the desktop version of RoomXR PRO can change some UI accordingly
     if(state.device_name == "blade2")
       dispatch({ type: 'SET_OSNAME', payload: 'Blade2' });
 
@@ -553,7 +555,7 @@ export function StartPage({ navigation }) {
       marginRight: 5,
     },
     labelWarning: {
-      fontSize: state.real_height / 16,
+      fontSize: state.real_height / 20,
       color: '#aaa',
       marginTop: -1,
       marginLeft: -5,
