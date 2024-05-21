@@ -6,9 +6,7 @@ import usb from 'react-native-usb';
 import Orientation from 'react-native-orientation-locker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { mediaDevices, registerGlobals } from "react-native-webrtc";
-//import DeviceInfo from 'react-native-device-info';
 import * as UpdateAPK from "rn-update-apk";
-//import { setNavigator } from "../global/navigtionRef";
 import StaticSafeAreaInsets from 'react-native-static-safe-area-insets';
 import { ExternalKeyboardView } from 'react-native-external-keyboard';
 
@@ -287,6 +285,9 @@ export function StartPage({ navigation }) {
     console.log("%c StartPage componetDidMount", "color:green;");
     dispatch({ type: 'SET_BUTTONFOCUS', payload: 'neutral' });
 
+    if(state.device_name == "blade2")
+      dispatch({ type: 'SET_OSNAME', payload: 'Blade2' });
+
     UpdateAPK.getApps().then(apps => {
       //console.log("Installed Apps: ", JSON.stringify(apps));
       //this.setState({ allApps: apps});
@@ -547,8 +548,15 @@ export function StartPage({ navigation }) {
     labelVersion: {
       fontSize: state.real_height / 16,
       color: '#aaa',
-      marginTop: 7,
+      marginTop: 6,
       marginLeft: 20,
+      marginRight: 5,
+    },
+    labelWarning: {
+      fontSize: state.real_height / 16,
+      color: '#aaa',
+      marginTop: -1,
+      marginLeft: -5,
       marginRight: 5,
     },
     bladeButtonView: {
@@ -636,7 +644,13 @@ export function StartPage({ navigation }) {
           <Text focusable={false} style={styles.labelVersion}>
             {(downloadPerc == "---") ? "" : "download status: " + downloadPerc + "%"}
           </Text>
-          {(state.device_name == "blade2") && <Text style={styles.labelVersion}>Vuzix BLADE 2 EDITION</Text>}
+          {(state.device_name == "blade2" && !(state.root_address != "empty" &&
+      state.room_id != "empty" &&
+      state.peer_name != "empty" &&
+      state.root_address != null &&
+      state.room_id != null &&
+      state.peer_name != null
+    )) && <Text style={styles.labelWarning}>App not configured properly, please read the config QRCODE</Text>}
         </View>
 
       </View>

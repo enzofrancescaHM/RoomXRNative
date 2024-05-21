@@ -7,7 +7,7 @@ import { CONTENT_SPACING, SAFE_AREA_PADDING } from '../global/constants';
 import { Context } from '../global/Store';
 import Orientation from 'react-native-orientation-locker';
 import DeviceInfo from 'react-native-device-info';
-//import type { Routes } from './Routes';
+import { ExternalKeyboardView } from 'react-native-external-keyboard';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const BANNER_IMAGE = require('../images/11.png');
@@ -71,6 +71,8 @@ export function PermissionsPage({ navigation }) {
 
   useEffect(function componentDidMount() {
     console.log("%c Permission Page componetDidMount", "color:green;");
+
+    dispatch({ type: 'SET_BUTTONFOCUS', payload: 'neutral' });
 
     StatusBar.setHidden(true, 'none');
     Orientation.lockToLandscapeLeft();
@@ -189,34 +191,83 @@ export function PermissionsPage({ navigation }) {
     textAlign: "center",
     // marginBottom: state.real_height / 10,
   },
+  bottomContainerBlade: {
+    height: 40,
+    flexDirection: "row",
+    padding: 2,
+    backgroundColor: '#00000000',
+    zIndex: 2,
+  },
   });
+
+  const onFocus = (e) => {
+    console.log(e.nativeEvent.keyCode);
+    console.log(state.button_focus );
+    if (e.nativeEvent.keyCode == "66") {
+      console.log("pressssssssss");
+      if (state.button_focus == "qrcode") {
+        //stopTracks(state.localstream);
+        requestCameraPermission();
+      }
+      else if(state.button_focus == "connect"){
+        requestMicrophonePermission();
+      }
+    }
+    else{
+        console.log("change focus...");
+        if (state.button_focus == "qrcode") {
+            //console.log("to connect");  
+            dispatch({ type: 'SET_BUTTONFOCUS', payload: 'connect' });
+          }
+        else if(state.button_focus == "connect") {
+            //console.log("to qrcode");
+            dispatch({ type: 'SET_BUTTONFOCUS', payload: 'qrcode' });
+          }
+          else{
+            dispatch({ type: 'SET_BUTTONFOCUS', payload: 'qrcode' });
+          }
+    }
+
+
+
+  };
 
   return (
     <>
-    {(state.device_name == "blade2") && <View style={styles.bladeContainer}>
+    {(state.device_name == "blade2") && 
       
-         <View style={styles.bladeButtonView}>
-        <Button
-          onPress={requestCameraPermission}
-          title="Grant Cam"
-          color="#111111"
-          accessibilityLabel="Learn more about this purple button"
-        />
+    <ExternalKeyboardView style={styles.bladeContainer}
+            onKeyDownPress={onFocus}
+            onKeyUpPress={() => console.log('onKeyUp')}
+            canBeFocused>
 
-         <Button
-          onPress={requestMicrophonePermission}
-          title="Grant Mic"
-          color="#111111"
-          accessibilityLabel="Learn more about this purple button"
-        />
+
+        <View style={styles.buttonContainerTopVuzix}>
+
+        <View focusable={false} style={styles.bottomContainerBlade} accessible>
+            <Button focusable={false}
+            
+            title="Grant Camera"
+            color={(state.button_focus == "connect" || state.button_focus == "neutral") ? "#000000" : "#FF0000"}
+            />
+            <Button focusable={false}
+            
+            title="Grant Microphone"
+            color={(state.button_focus == "qrcode" || state.button_focus == "neutral") ? "#000000" : "#FF0000"}
+            > 
+            </Button>
+
         </View>
-        <Text style={styles.labelTitle}>Permissions</Text>
-        <Text style={styles.labelUser}>RoomXR PRO need Permissions to access:</Text>
-        <Text style={styles.labelUser}>- Internal VideoCamera</Text>
-        <Text style={styles.labelUser}>- System Microphone</Text>
-        <Text style={styles.labelUser}>Please select the two buttons above and grant permissions in order to the app to work correctly</Text>
 
-    </View>}
+        </View>
+
+        <Text focusable={false} style={styles.labelTitle}>Permissions</Text>
+        <Text focusable={false} style={styles.labelUser}>RoomXR PRO need Permissions to access:</Text>
+        <Text focusable={false} style={styles.labelUser}>- Internal VideoCamera</Text>
+        <Text focusable={false} style={styles.labelUser}>- System Microphone</Text>
+        <Text focusable={false} style={styles.labelUser}>Please select the two buttons above and grant permissions in order to the app to work correctly</Text>
+
+    </ExternalKeyboardView>}
 
     {(state.device_name != "blade2") && <View style={styles.container}>
      <Image source={BANNER_IMAGE} style={styles.banner} />

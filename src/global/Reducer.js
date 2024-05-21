@@ -540,6 +540,13 @@ const Reducer = (state, action) => {
                 ...state,
                 upload_picture: action.payload
             };
+
+        case 'SET_OSNAME':
+            return{
+                ...state,
+                os_name: action.payload
+            };
+    
     
         default:
             return state;
