@@ -224,12 +224,16 @@ export function ScannerPage({ navigation }) {
         />
       
           
-      {(state.device_name == "blade2") && <View style={styles.textContainer}>
+      {( (state.device_name == "blade2") )  && <View style={styles.textContainer}>
                 <Text style={styles.labelVersion}>Position the QRCode in front of the camera, once read the app will come back. Tap with two fingers on the pad to go back to main page without reading the QRCode</Text>
+      </View>}
+
+      {( (state.device_name=="m4000") )  && <View style={styles.textContainer}>
+                <Text style={styles.labelVersion}>Position the QRCode in front of the camera, once read the app will come back. Tap with two fingers on the pad or long press any button to go back</Text>
       </View>}
           
           
-      {(state.device_name != "blade2") &&<View style={styles.buttonContainerTop}>
+      {( (state.device_name != "blade2") && (state.device_name != "m4000"))  &&<View style={styles.buttonContainerTop}>
                 <TouchableOpacity
                     style={styles.buttonScannerStyle}
                     activeOpacity={0.9}

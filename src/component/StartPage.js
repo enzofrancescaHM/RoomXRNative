@@ -172,30 +172,69 @@ export function StartPage({ navigation }) {
   const onFocus = (e) => {
     console.log(e.nativeEvent.keyCode);
     console.log(state.button_focus );
-    if (e.nativeEvent.keyCode == "66") {
-      console.log("pressssssssss");
-      if (state.button_focus == "qrcode") {
-        //stopTracks(state.localstream);
-        scannergo();
+
+    if(state.device_name == "blade2")
+      {
+
+        if (e.nativeEvent.keyCode == "66") {
+          console.log("pressssssssss");
+          if (state.button_focus == "qrcode") {
+            //stopTracks(state.localstream);
+            scannergo();
+          }
+          else if(state.button_focus == "connect"){
+           connectgo();
+          }
+        }
+        else{
+            console.log("change focus...");
+            if (state.button_focus == "qrcode") {
+                //console.log("to connect");  
+                dispatch({ type: 'SET_BUTTONFOCUS', payload: 'connect' });
+              }
+            else if(state.button_focus == "connect") {
+                //console.log("to qrcode");
+                dispatch({ type: 'SET_BUTTONFOCUS', payload: 'qrcode' });
+              }
+              else{
+                dispatch({ type: 'SET_BUTTONFOCUS', payload: 'qrcode' });
+              }
+        }
+    
+
       }
-      else if(state.button_focus == "connect"){
-       connectgo();
+
+
+  if(state.device_name == "m4000")
+      {
+
+        if (e.nativeEvent.keyCode == "23") {
+          console.log("pressssssssss");
+          if (state.button_focus == "qrcode") {
+            //stopTracks(state.localstream);
+            scannergo();
+          }
+          else if(state.button_focus == "connect"){
+           connectgo();
+          }
+        }
+        else{
+            console.log("change focus...");
+            if (state.button_focus == "qrcode") {
+                //console.log("to connect");  
+                dispatch({ type: 'SET_BUTTONFOCUS', payload: 'connect' });
+              }
+            else if(state.button_focus == "connect") {
+                //console.log("to qrcode");
+                dispatch({ type: 'SET_BUTTONFOCUS', payload: 'qrcode' });
+              }
+              else{
+                dispatch({ type: 'SET_BUTTONFOCUS', payload: 'qrcode' });
+              }
+        }
+    
+
       }
-    }
-    else{
-        console.log("change focus...");
-        if (state.button_focus == "qrcode") {
-            //console.log("to connect");  
-            dispatch({ type: 'SET_BUTTONFOCUS', payload: 'connect' });
-          }
-        else if(state.button_focus == "connect") {
-            //console.log("to qrcode");
-            dispatch({ type: 'SET_BUTTONFOCUS', payload: 'qrcode' });
-          }
-          else{
-            dispatch({ type: 'SET_BUTTONFOCUS', payload: 'qrcode' });
-          }
-    }
 
 
 
@@ -223,12 +262,18 @@ export function StartPage({ navigation }) {
 
     }
     else {
-      if(state.device_name == "blade2")
+      if(state.device_name == "blade2" )      
       {
         dispatch({ type: 'SET_CURRENTPAGE', payload: 'MainPageVuzix' });
         navigation.replace('MainPageVuzix');
   
       }
+      else if(state.device_name == "m4000")      
+      {
+        dispatch({ type: 'SET_CURRENTPAGE', payload: 'MainPageM4000' });
+        navigation.replace('MainPageM4000');
+  
+      }  
       else
       {
         dispatch({ type: 'SET_CURRENTPAGE', payload: 'MainPage' });
@@ -289,6 +334,10 @@ export function StartPage({ navigation }) {
     // so that the desktop version of RoomXR PRO can change some UI accordingly
     if(state.device_name == "blade2")
       dispatch({ type: 'SET_OSNAME', payload: 'Blade2' });
+
+    if(state.device_name == "m4000")
+      dispatch({ type: 'SET_OSNAME', payload: 'M4000' });
+
 
     UpdateAPK.getApps().then(apps => {
       //console.log("Installed Apps: ", JSON.stringify(apps));
@@ -602,6 +651,11 @@ export function StartPage({ navigation }) {
       backgroundColor: '#DDDDDD',
       padding: 10,
     },
+    m4000container: {
+      backgroundColor: '#000000',
+      alignItems: 'center',
+      height: state.real_height,
+    },
 
   });
 
@@ -610,7 +664,7 @@ export function StartPage({ navigation }) {
      
      
      { /* caso BLADE 2 */
-      (state.device_name == "blade2") && <View focusable={false} style={styles.bladeContainer}>
+     ( (state.device_name == "blade2") ) && <View focusable={false} style={styles.bladeContainer}>
 
         <ExternalKeyboardView
           onKeyDownPress={onFocus}
@@ -619,12 +673,12 @@ export function StartPage({ navigation }) {
 
           <View style={styles.bottomContainerBlade} accessible>
             <Button focusable
-              onPress={scannergo}
+              //onPress={scannergo}
               title="QRCode"
               color={(state.button_focus == "connect" || state.button_focus == "neutral") ? "#000000" : "#FF0000"}
             />
             <Button focusable
-              onPress={connectgo}
+              //onPress={connectgo}
               title="Connect"
               color={(state.button_focus == "qrcode" || state.button_focus == "neutral") ? "#000000" : "#FF0000"}
             > 
@@ -646,7 +700,7 @@ export function StartPage({ navigation }) {
           <Text focusable={false} style={styles.labelVersion}>
             {(downloadPerc == "---") ? "" : "download status: " + downloadPerc + "%"}
           </Text>
-          {(state.device_name == "blade2" && !(state.root_address != "empty" &&
+          {(!(state.root_address != "empty" &&
       state.room_id != "empty" &&
       state.peer_name != "empty" &&
       state.root_address != null &&
@@ -658,11 +712,121 @@ export function StartPage({ navigation }) {
       </View>
     }
 
+{ /* caso M4000 */
+     ( (state.device_name=="m40000000") ) && <View focusable={false} style={styles.bladeContainer}>
+
+        <ExternalKeyboardView 
+          onKeyDownPress={onFocus}
+          onKeyUpPress={() => console.log('onKeyUp')}
+          canBeFocused>
+
+          <View style={styles.bottomContainerBlade} >
+            <Button focusable
+              onPress={scannergo}
+              title="QRCode"
+              color={(state.button_focus == "connect" || state.button_focus == "neutral") ? "#000000" : "#FF0000"}
+            />
+            <Button focusable
+              onPress={connectgo}
+              title="Connect"
+              color={(state.button_focus == "qrcode" || state.button_focus == "neutral") ? "#000000" : "#FF0000"}
+            > 
+            </Button>
+          </View>
+
+         
+          <Text enableFocusRing={false}  selectionColor="red" style={styles.labelTitle}>RoomXR PRO</Text>
+         
+          
+        <Text focusable={false} style={styles.labelUser}>user: {state.peer_name}, room: {state.room_id}</Text>
+        <View focusable={false} style={styles.bottomContainerBlade}>
+          <Text focusable={false} style={styles.labelVersion}>
+            {"v" + state.app_ver + " (" + state.app_arch + " )"}
+          </Text>
+        </View>
+
+        <View focusable={false} style={styles.statusContainerBlade}>
+          <Text focusable={false} style={styles.labelVersion}>
+            {(downloadPerc == "---") ? "" : "download status: " + downloadPerc + "%"}
+          </Text>
+          {(!(state.root_address != "empty" &&
+      state.room_id != "empty" &&
+      state.peer_name != "empty" &&
+      state.root_address != null &&
+      state.room_id != null &&
+      state.peer_name != null
+    )) && <Text focusable={false} style={styles.labelWarning}>App not configured properly, please read the config QRCODE</Text>}
+        </View>
+
+        </ExternalKeyboardView>
+
+     
+
+    
+
+      </View>
+    }
+
+
+
+    { /* caso M4000 */
+        ( (state.device_name=="m4000") ) && 
+          
+            <ExternalKeyboardView accessible={true}
+              style={styles.m4000container} 
+              onKeyDownPress={onFocus}
+              onKeyUpPress={() => console.log('onKeyUp')}
+              canBeFocused>
+
+            
+              <Button focusable 
+                //onPress={}
+                title="QRCode"
+                color={(state.button_focus == "connect" || state.button_focus == "neutral") ? "#000000" : "#FF0000"}
+              />
+              <Button focusable 
+                //onPress={connectgo}
+                title="Connect"
+                color={(state.button_focus == "qrcode" || state.button_focus == "neutral") ? "#000000" : "#FF0000"}
+              > 
+              </Button>
+            
+            
+              <Text accessible={false} style={styles.labelTitle}>RoomXR PRO</Text>
+
+              <Text accessible={false} style={styles.labelUser}>user: {state.peer_name}, room: {state.room_id}</Text>
+
+              <View accessible={false} style={styles.bottomContainerBlade}>
+                <Text accessible={false} style={styles.labelVersion}>
+                  {"v" + state.app_ver + " (" + state.app_arch + " )"}
+                </Text>
+              </View>
+
+              <View accessible={false} style={styles.statusContainerBlade}>
+                
+                <Text accessible={false} style={styles.labelVersion}>
+                  {(downloadPerc == "---") ? "" : "download status: " + downloadPerc + "%"}
+                </Text>
+                
+                {(!(state.root_address != "empty" &&
+                    state.room_id != "empty" &&
+                    state.peer_name != "empty" &&
+                    state.root_address != null &&
+                    state.room_id != null &&
+                    state.peer_name != null
+                  )) && <Text accessible={false} style={styles.labelWarning}>App not configured properly, please read the config QRCODE</Text>}
+              
+              </View>
+
+            </ExternalKeyboardView>    
+    }
+
+
 
 
 
       {/* caso Occhiale Normale */
-      (state.device_name != "blade2") && <View style={styles.mainContainer} accessible>
+      ( (state.device_name != "blade2") && (state.device_name != "m4000"))&& <View style={styles.mainContainer} accessible>
         <Text style={styles.labelTitle}>RoomXR PRO</Text>
         <Text style={styles.labelUser}>user: {state.peer_name}, room: {state.room_id}</Text>
         {/* <Text style={styles.labelUser}>audio mic: {state.peer_name}</Text> */}

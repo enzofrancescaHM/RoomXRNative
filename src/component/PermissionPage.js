@@ -200,33 +200,104 @@ export function PermissionsPage({ navigation }) {
   },
   });
 
+  // const onFocus = (e) => {
+  //   console.log(e.nativeEvent.keyCode);
+  //   console.log(state.button_focus );
+  //   if (e.nativeEvent.keyCode == "66") {
+  //     console.log("pressssssssss");
+  //     if (state.button_focus == "qrcode") {
+  //       //stopTracks(state.localstream);
+  //       requestCameraPermission();
+  //     }
+  //     else if(state.button_focus == "connect"){
+  //       requestMicrophonePermission();
+  //     }
+  //   }
+  //   else{
+  //       console.log("change focus...");
+  //       if (state.button_focus == "qrcode") {
+  //           //console.log("to connect");  
+  //           dispatch({ type: 'SET_BUTTONFOCUS', payload: 'connect' });
+  //         }
+  //       else if(state.button_focus == "connect") {
+  //           //console.log("to qrcode");
+  //           dispatch({ type: 'SET_BUTTONFOCUS', payload: 'qrcode' });
+  //         }
+  //         else{
+  //           dispatch({ type: 'SET_BUTTONFOCUS', payload: 'qrcode' });
+  //         }
+  //   }
+
+
+
+  // };
+
   const onFocus = (e) => {
     console.log(e.nativeEvent.keyCode);
     console.log(state.button_focus );
-    if (e.nativeEvent.keyCode == "66") {
-      console.log("pressssssssss");
-      if (state.button_focus == "qrcode") {
-        //stopTracks(state.localstream);
-        requestCameraPermission();
+
+    if(state.device_name == "blade2")
+      {
+
+        if (e.nativeEvent.keyCode == "66") {
+          console.log("pressssssssss");
+          if (state.button_focus == "qrcode") {
+            //stopTracks(state.localstream);
+            requestCameraPermission();
+          }
+          else if(state.button_focus == "connect"){
+            requestMicrophonePermission();
+          }
+        }
+        else{
+            console.log("change focus...");
+            if (state.button_focus == "qrcode") {
+                //console.log("to connect");  
+                dispatch({ type: 'SET_BUTTONFOCUS', payload: 'connect' });
+              }
+            else if(state.button_focus == "connect") {
+                //console.log("to qrcode");
+                dispatch({ type: 'SET_BUTTONFOCUS', payload: 'qrcode' });
+              }
+              else{
+                dispatch({ type: 'SET_BUTTONFOCUS', payload: 'qrcode' });
+              }
+        }
+    
+
       }
-      else if(state.button_focus == "connect"){
-        requestMicrophonePermission();
+
+
+  if(state.device_name == "m4000")
+      {
+
+        if (e.nativeEvent.keyCode == "23") {
+          console.log("pressssssssss");
+          if (state.button_focus == "qrcode") {
+            //stopTracks(state.localstream);
+            requestCameraPermission();
+          }
+          else if(state.button_focus == "connect"){
+            requestMicrophonePermission();
+          }
+        }
+        else{
+            console.log("change focus...");
+            if (state.button_focus == "qrcode") {
+                //console.log("to connect");  
+                dispatch({ type: 'SET_BUTTONFOCUS', payload: 'connect' });
+              }
+            else if(state.button_focus == "connect") {
+                //console.log("to qrcode");
+                dispatch({ type: 'SET_BUTTONFOCUS', payload: 'qrcode' });
+              }
+              else{
+                dispatch({ type: 'SET_BUTTONFOCUS', payload: 'qrcode' });
+              }
+        }
+    
+
       }
-    }
-    else{
-        console.log("change focus...");
-        if (state.button_focus == "qrcode") {
-            //console.log("to connect");  
-            dispatch({ type: 'SET_BUTTONFOCUS', payload: 'connect' });
-          }
-        else if(state.button_focus == "connect") {
-            //console.log("to qrcode");
-            dispatch({ type: 'SET_BUTTONFOCUS', payload: 'qrcode' });
-          }
-          else{
-            dispatch({ type: 'SET_BUTTONFOCUS', payload: 'qrcode' });
-          }
-    }
 
 
 
@@ -234,7 +305,7 @@ export function PermissionsPage({ navigation }) {
 
   return (
     <>
-    {(state.device_name == "blade2") && 
+    {( (state.device_name == "blade2") ) && 
       
     <ExternalKeyboardView style={styles.bladeContainer}
             onKeyDownPress={onFocus}
@@ -270,7 +341,44 @@ export function PermissionsPage({ navigation }) {
 
     </ExternalKeyboardView>}
 
-    {(state.device_name != "blade2") && <View style={styles.container}>
+
+    {( (state.device_name=="m4000") ) && 
+      
+      <ExternalKeyboardView style={styles.bladeContainer}
+              onKeyDownPress={onFocus}
+              onKeyUpPress={() => console.log('onKeyUp')}
+              canBeFocused>
+  
+  
+          <View style={styles.buttonContainerTopVuzix}>
+  
+          <View focusable={false} style={styles.bottomContainerBlade} accessible>
+              
+              <Button focusable={false}            
+              title={cameraPermissionStatus == 'authorized' ? "Camera OK!" : "Grant Camera"}     
+              color={(state.button_focus == "connect" || state.button_focus == "neutral") ? "#000000" : "#FF0000"}
+              > 
+              </Button>
+  
+              <Button focusable={false}            
+              title={microphonePermissionStatus == 'authorized' ? "Mic OK!" : "Grant Microphone"}                 
+              color={(state.button_focus == "qrcode" || state.button_focus == "neutral") ? "#000000" : "#FF0000"}
+              > 
+              </Button>
+  
+          </View>
+  
+          </View>
+  
+          <Text accessible={false} style={styles.labelTitle}>Permissions</Text>
+          <Text accessible={false} style={styles.labelUser}>RoomXR PRO need Permissions to access:</Text>
+          <Text accessible={false} style={styles.labelUser}>- Internal VideoCamera</Text>
+          <Text accessible={false} style={styles.labelUser}>- System Microphone</Text>
+          <Text accessible={false} style={styles.labelUser}>Please select the two buttons above and grant permissions in order to the app to work correctly</Text>
+  
+      </ExternalKeyboardView>}
+
+    {( (state.device_name != "blade2") && (state.device_name != "m4000")) && <View style={styles.container}>
      <Image source={BANNER_IMAGE} style={styles.banner} />
       <Text style={styles.welcome}>Welcome to{'\n'}RoomXR PRO.</Text>
       <View style={styles.permissionsContainer}>
@@ -302,6 +410,7 @@ export function PermissionsPage({ navigation }) {
         )}
 
       </View>
+
     </View>}
     </>
   );
