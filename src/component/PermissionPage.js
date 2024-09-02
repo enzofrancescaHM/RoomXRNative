@@ -268,7 +268,7 @@ export function PermissionsPage({ navigation }) {
       }
 
 
-  if(state.device_name == "m4000")
+  if(state.device_name == "m4000" || state.device_name == "m400")
       {
 
         if (e.nativeEvent.keyCode == "23") {
@@ -342,7 +342,7 @@ export function PermissionsPage({ navigation }) {
     </ExternalKeyboardView>}
 
 
-    {( (state.device_name=="m4000") ) && 
+    {( (state.device_name=="m4000") || (state.device_name == "m400")) && 
       
       <ExternalKeyboardView style={styles.bladeContainer}
               onKeyDownPress={onFocus}
@@ -378,9 +378,9 @@ export function PermissionsPage({ navigation }) {
   
       </ExternalKeyboardView>}
 
-    {( (state.device_name != "blade2") && (state.device_name != "m4000")) && <View style={styles.container}>
+    {( (state.device_name != "blade2") && (state.device_name != "m4000") && (state.device_name != "m400")) && <View style={styles.container}>
      <Image source={BANNER_IMAGE} style={styles.banner} />
-      <Text style={styles.welcome}>Welcome to{'\n'}RoomXR PRO.</Text>
+      <Text style={styles.welcome}>Welcome to{'\n'}RoomXR PRO .</Text>
       <View style={styles.permissionsContainer}>
         {cameraPermissionStatus !== 'authorized' && (
           <Text style={styles.permissionText}>

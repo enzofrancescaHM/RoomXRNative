@@ -205,7 +205,7 @@ export function StartPage({ navigation }) {
       }
 
 
-  if(state.device_name == "m4000")
+  if(state.device_name == "m4000" || state.device_name == "m400")
       {
 
         if (e.nativeEvent.keyCode == "23") {
@@ -268,7 +268,7 @@ export function StartPage({ navigation }) {
         navigation.replace('MainPageVuzix');
   
       }
-      else if(state.device_name == "m4000")      
+      else if(state.device_name == "m4000" || state.device_name == "m400")      
       {
         dispatch({ type: 'SET_CURRENTPAGE', payload: 'MainPageM4000' });
         navigation.replace('MainPageM4000');
@@ -335,7 +335,7 @@ export function StartPage({ navigation }) {
     if(state.device_name == "blade2")
       dispatch({ type: 'SET_OSNAME', payload: 'Blade2' });
 
-    if(state.device_name == "m4000")
+    if(state.device_name == "m4000" || state.device_name == "m400")
       dispatch({ type: 'SET_OSNAME', payload: 'M4000' });
 
 
@@ -770,7 +770,7 @@ export function StartPage({ navigation }) {
 
 
     { /* caso M4000 */
-        ( (state.device_name=="m4000") ) && 
+        ( (state.device_name=="m4000") || (state.device_name == "m400")) && 
           
             <ExternalKeyboardView accessible={true}
               style={styles.m4000container} 
@@ -826,7 +826,7 @@ export function StartPage({ navigation }) {
 
 
       {/* caso Occhiale Normale */
-      ( (state.device_name != "blade2") && (state.device_name != "m4000"))&& <View style={styles.mainContainer} accessible>
+      ( (state.device_name != "blade2") && (state.device_name != "m4000") && (state.device_name != "m400"))&& <View style={styles.mainContainer} accessible>
         <Text style={styles.labelTitle}>RoomXR PRO</Text>
         <Text style={styles.labelUser}>user: {state.peer_name}, room: {state.room_id}</Text>
         {/* <Text style={styles.labelUser}>audio mic: {state.peer_name}</Text> */}

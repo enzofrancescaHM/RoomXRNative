@@ -92,11 +92,12 @@ We need to update a lot of things:
   not always is present
 - [FIX] First chat message is not displayed on the Univet glasses
 - [FIX] Change camera required parameter in AndroidManifest to true to check if it resolves the cases in which the camera does not reconnect
+- [ENH] UPGRADE REACT TO LATEST
 
 
 
 ## In Progress:
-take photo while streaming... (bah)
+
 
 
 
@@ -157,7 +158,10 @@ take photo while streaming... (bah)
 - [ENH] add locking mechanism for UI
 - [FIX] fixed crash when eraser was used on lines, circles, rects
 - [ENH] add volume buttons on UI to compensate for phones that limit physical buttons to media volume instead of call volume
-
+- [ENH] add initial support for Blade2
+- [ENH] add initial support for M4000
+- [ENH] HD Picture support for Blade2
+- [FIX] remove debug tool by shaking device (MainApplication.java)
 
 ## Changelist:
 
@@ -244,6 +248,18 @@ take photo while streaming... (bah)
 
 ### Ver. 1.0.3:
 - [ENH] add custom splash phrase instead of Holomask - Univet
+
+
+### Ver. 1.0.6:
+- [ENH] initial support for Blade2
+
+
+### Ver. 1.0.7:
+- [ENH] HD Picture support for Blade2
+- [ENH] initial support for M4000
+
+### Ver 1.0.8:
+- [FIX] removed debug menu by shacking device (MainApplication.java)
 
 ## Univet Camera Procedure
 
